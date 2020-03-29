@@ -13,6 +13,8 @@ namespace AddressService.Repo.EntityFramework.Entities
 
         public int Id { get; set; }
         public string PostalCode { get; set; }
+        public int ChampionCount { get; set; }
+        public int VolunteerCount { get; set; }
 
         public virtual ICollection<AddressDetails> AddressDetails { get; set; }
     }

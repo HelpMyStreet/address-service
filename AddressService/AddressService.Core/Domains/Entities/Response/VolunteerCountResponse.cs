@@ -9,6 +9,5 @@ namespace AddressService.Core.Domains.Entities.Response
     {
         public int ChampionCount { get; set; }
         public int VolunteerCount { get; set; }
-
     }
 }

@@ -8,7 +8,8 @@ namespace AddressService.Core.Dto
     {
         public int Id { get; set; }
         public string PostalCode { get; set; }
-
+        public int ChampionCount { get; set; }
+        public int VolunteerCount { get; set; }
         public List<AddressDetailsDTO> AddressDetails { get; set; }
     }
 }

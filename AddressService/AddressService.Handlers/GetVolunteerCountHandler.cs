@@ -21,12 +21,8 @@ namespace AddressService.Handlers
 
         public Task<VolunteerCountResponse> Handle(GetVolunteerCountRequest request, CancellationToken cancellationToken)
         {
-            var response = new VolunteerCountResponse()
-            {
-                VolunteerCount = 1,
-                ChampionCount = 2
-            };
-            return Task.FromResult(response);
+            var response = _repository.GetVolunteerCount();
+            return response;
         }
     }
 }

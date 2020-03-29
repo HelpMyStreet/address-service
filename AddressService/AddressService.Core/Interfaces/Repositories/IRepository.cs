@@ -1,4 +1,5 @@
-﻿using AddressService.Core.Dto;
+﻿using AddressService.Core.Domains.Entities.Response;
+using AddressService.Core.Dto;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,5 +11,6 @@ namespace AddressService.Core.Interfaces.Repositories
     {
         Task AddPostCode(PostCodeDTO postCodeDTO);
         Task AddAddress(AddressDetailsDTO addressDetailsDTO);
+        Task<VolunteerCountResponse> GetVolunteerCount();
     }
 }

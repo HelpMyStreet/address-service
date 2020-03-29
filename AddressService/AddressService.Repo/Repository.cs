@@ -5,6 +5,7 @@ using AddressService.Repo.EntityFramework.Entities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AddressService.Core.Domains.Entities.Response;
 
 namespace AddressService.Repo
 {
@@ -39,6 +40,20 @@ namespace AddressService.Repo
                 string a = exc.ToString();
             }
 
+        }
+
+        public Task<VolunteerCountResponse> GetVolunteerCount()
+        {
+            int volunteerCount = _context.PostCode.Sum(x => x.VolunteerCount);
+            int championCount = _context.PostCode.Sum(x => x.ChampionCount);
+
+            var result = new VolunteerCountResponse()
+            {
+                ChampionCount = championCount,
+                VolunteerCount = volunteerCount
+            };
+
+            return Task.FromResult(result);
         }
     }
 }

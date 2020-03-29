@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
-    public class FunctionAHandler : IRequestHandler<GetPostCodeRequest, GetPostCodeResponse>
+    public class GetPostCodeHandler : IRequestHandler<GetPostCodeRequest, GetPostCodeResponse>
     {
         private readonly IRepository _repository;
 
-        public FunctionAHandler(IRepository repository)
+        public GetPostCodeHandler(IRepository repository)
         {
             _repository = repository;
         }

@@ -20,14 +20,14 @@ namespace AddressService.AzureFunction
 
         [FunctionName("FunctionB")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] FunctionBRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] GetNearbyPostCodesRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                FunctionBResponse response = await _mediator.Send(req);
+                GetNearbyPostCodesResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)

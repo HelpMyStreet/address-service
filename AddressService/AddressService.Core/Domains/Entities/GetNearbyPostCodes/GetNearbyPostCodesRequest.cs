@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AddressService.Core.Domains.Entities.GetNearbyPostCodes
 {
-    public class FunctionBRequest : IRequest<FunctionBResponse>
+    public class GetNearbyPostCodesRequest : IRequest<GetNearbyPostCodesResponse>
     {
         public string Name { get; set; }
         public string UserName { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AddressService.Core.Domains.Entities.GetNearbyPostCodes
 {
-    public class FunctionBResponse
+    public class GetNearbyPostCodesResponse
     {
         public string Status { get; set; }
     }

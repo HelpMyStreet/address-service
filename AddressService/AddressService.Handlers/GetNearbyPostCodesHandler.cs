@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
-    public class FunctionBHandler : IRequestHandler<FunctionBRequest, FunctionBResponse>
+    public class GetNearbyPostCodesHandler : IRequestHandler<GetNearbyPostCodesRequest, GetNearbyPostCodesResponse>
     {
-        public Task<FunctionBResponse> Handle(FunctionBRequest request, CancellationToken cancellationToken)
+        public Task<GetNearbyPostCodesResponse> Handle(GetNearbyPostCodesRequest request, CancellationToken cancellationToken)
         {
-            var response = new FunctionBResponse()
+            var response = new GetNearbyPostCodesResponse()
             {
                 Status = "Active"
             };

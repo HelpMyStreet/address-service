@@ -58,5 +58,29 @@ namespace AddressService.Repo
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task DecrementChampionCount(string postCode)
+        {
+            PostCode p = _context.PostCode.Where(x => x.PostalCode == postCode).First();
+
+            if (p != null)
+            {
+                p.ChampionCount -= 1;
+                _context.Attach(p).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DecrementVolunteerCount(string postCode)
+        {
+            PostCode p = _context.PostCode.Where(x => x.PostalCode == postCode).First();
+
+            if (p != null)
+            {
+                p.VolunteerCount -= 1;
+                _context.Attach(p).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

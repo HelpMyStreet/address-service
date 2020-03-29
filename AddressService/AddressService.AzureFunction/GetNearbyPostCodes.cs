@@ -5,7 +5,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using AddressService.Core.Domains.Entities.GetNearbyPostCodes;
+using AddressService.Core.Domains.Entities.Request;
+using AddressService.Core.Domains.Entities.Response;
+
 
 namespace AddressService.AzureFunction
 {
@@ -18,7 +20,7 @@ namespace AddressService.AzureFunction
             _mediator = mediator;
         }
 
-        [FunctionName("FunctionB")]
+        [FunctionName("GetNearbyPostCodes")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] GetNearbyPostCodesRequest req,
             ILogger log)
@@ -27,7 +29,7 @@ namespace AddressService.AzureFunction
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                GetNearbyPostCodesResponse response = await _mediator.Send(req);
+                PostCodeResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)

@@ -1,4 +1,5 @@
-﻿using AddressService.Core.Domains.Entities.GetPostCode;
+﻿using AddressService.Core.Domains.Entities.Request;
+using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Interfaces.Repositories;
 using MediatR;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
-    public class GetPostCodeHandler : IRequestHandler<GetPostCodeRequest, GetPostCodeResponse>
+    public class GetPostCodeHandler : IRequestHandler<GetPostCodeRequest, PostCodeResponse>
     {
         private readonly IRepository _repository;
 
@@ -18,15 +19,20 @@ namespace AddressService.Handlers
             _repository = repository;
         }
 
-        public Task<GetPostCodeResponse> Handle(GetPostCodeRequest request, CancellationToken cancellationToken)
+        public Task<PostCodeResponse> Handle(GetPostCodeRequest request, CancellationToken cancellationToken)
         {
-            _repository.AddPostCode(new Core.Dto.PostCodeDTO()
+            var response = new PostCodeResponse()
             {
-                PostalCode = "PG"
-            });
-            var response = new GetPostCodeResponse()
-            {
-                Status = "Active"
+                PostCode = request.PostCode,
+                VolunteerCount = 1,
+                ChampionCount = 2,
+                Addresses = new List<Core.Dto.AddressDetailsDTO>()
+                {
+                    new Core.Dto.AddressDetailsDTO()
+                    {
+                        HouseName = "Holly Cottage"
+                    }
+                }
             };
             return Task.FromResult(response);
         }

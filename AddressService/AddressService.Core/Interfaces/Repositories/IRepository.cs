@@ -9,8 +9,6 @@ namespace AddressService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
-        Task AddPostCode(PostCodeDTO postCodeDTO);
-        Task AddAddress(AddressDetailsDTO addressDetailsDTO);
         Task<VolunteerCountResponse> GetVolunteerCount();
         Task IncrementChampionCount(string postCode);
         Task IncrementVolunteerCount(string postCode);

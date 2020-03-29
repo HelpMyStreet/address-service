@@ -22,7 +22,7 @@ namespace AddressService.AzureFunction
 
         [FunctionName("GetNearbyPostCodes")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] GetNearbyPostCodesRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetNearbyPostCodesRequest req,
             ILogger log)
         {
             try

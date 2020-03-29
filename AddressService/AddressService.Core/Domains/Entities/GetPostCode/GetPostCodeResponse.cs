@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AddressService.Core.Domains.Entities
+namespace AddressService.Core.Domains.Entities.GetPostCode
 {
-    public class FunctionAResponse
+    public class GetPostCodeResponse
     {
         public string Status { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿using AddressService.Core.Domains.Entities;
+﻿using AddressService.Core.Domains.Entities.GetPostCode;
 using AddressService.Core.Interfaces.Repositories;
 using MediatR;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
-    public class FunctionAHandler : IRequestHandler<FunctionARequest, FunctionAResponse>
+    public class FunctionAHandler : IRequestHandler<GetPostCodeRequest, GetPostCodeResponse>
     {
         private readonly IRepository _repository;
 
@@ -18,13 +18,13 @@ namespace AddressService.Handlers
             _repository = repository;
         }
 
-        public Task<FunctionAResponse> Handle(FunctionARequest request, CancellationToken cancellationToken)
+        public Task<GetPostCodeResponse> Handle(GetPostCodeRequest request, CancellationToken cancellationToken)
         {
             _repository.AddPostCode(new Core.Dto.PostCodeDTO()
             {
                 PostalCode = "PG"
             });
-            var response = new FunctionAResponse()
+            var response = new GetPostCodeResponse()
             {
                 Status = "Active"
             };

@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AddressService.Core.Domains.Entities
+namespace AddressService.Core.Domains.Entities.GetNearbyPostCodes
 {
-    public class FunctionARequest : IRequest<FunctionAResponse>
+    public class FunctionBRequest : IRequest<FunctionBResponse>
     {
         public string Name { get; set; }
         public string UserName { get; set; }

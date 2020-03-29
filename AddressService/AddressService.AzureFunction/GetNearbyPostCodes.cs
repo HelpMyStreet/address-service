@@ -5,15 +5,15 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using AddressService.Core.Domains.Entities;
+using AddressService.Core.Domains.Entities.GetNearbyPostCodes;
 
 namespace AddressService.AzureFunction
 {
-    public class FunctionB
+    public class GetNearbyPostCodes
     {
         private readonly IMediator _mediator;
 
-        public FunctionB(IMediator mediator)
+        public GetNearbyPostCodes(IMediator mediator)
         {
             _mediator = mediator;
         }

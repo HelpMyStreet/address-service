@@ -5,29 +5,29 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
-using AddressService.Core.Domains.Entities;
+using AddressService.Core.Domains.Entities.GetPostCode;
 
 namespace AddressService.AzureFunction
 {
-    public class FunctionA
+    public class GetPostCode
     {
         private readonly IMediator _mediator;
 
-        public FunctionA(IMediator mediator)
+        public GetPostCode(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [FunctionName("FunctionA")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] FunctionARequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetPostCodeRequest req,
             ILogger log)
         {
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                FunctionAResponse response = await _mediator.Send(req);
+                GetPostCodeResponse response = await _mediator.Send(req);
                 return new OkObjectResult(response);
             }
             catch (Exception exc)

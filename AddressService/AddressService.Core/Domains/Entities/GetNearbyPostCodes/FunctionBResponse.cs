@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AddressService.Core.Domains.Entities
+namespace AddressService.Core.Domains.Entities.GetNearbyPostCodes
 {
     public class FunctionBResponse
     {

@@ -40,11 +40,11 @@ namespace AddressService.Handlers
 
             PostCodeIoNearestRootResponse postCodeIoResponse = await _postcodeIoService.GetNearbyPostCodesAsync(postcode);
 
-            ImmutableHashSet<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance).Select(x => x.Postcode).ToImmutableHashSet();
+            ImmutableHashSet<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance).Select(x => PostcodeCleaner.CleanPostcode(x.Postcode)).ToImmutableHashSet();
 
             // get postcodes from database
-            IEnumerable<PostcodeDto> postcodes = await _repository.GetPostcodes(nearestPostcodes);
-            ImmutableHashSet<string> postcodesFromDbHashSet = postcodes.Select(x => x.Postcode).ToImmutableHashSet();
+            IEnumerable<PostcodeDto> postcodesFromDb = await _repository.GetPostcodes(nearestPostcodes);
+            ImmutableHashSet<string> postcodesFromDbHashSet = postcodesFromDb.Select(x => x.Postcode).ToImmutableHashSet();
 
             // find missing postcodes
             List<string> missingPostcodes = nearestPostcodes.Where(x => !postcodesFromDbHashSet.Contains(x)).ToList();
@@ -55,7 +55,7 @@ namespace AddressService.Handlers
 
             foreach (string missingPostcode in missingPostcodes)
             {
-                Task<QasSearchRootResponse> qasResponseTask = _qasService.GetGlobalIntuitiveSearchResponse(PostcodeCleaner.CleanPostcode(missingPostcode));
+                Task<QasSearchRootResponse> qasResponseTask = _qasService.GetGlobalIntuitiveSearchResponseAsync(PostcodeCleaner.CleanPostcode(missingPostcode));
                 qasSearchResponseTasks.Add(qasResponseTask);
             }
 
@@ -76,13 +76,13 @@ namespace AddressService.Handlers
                 List<Task<QasFormatRootResponse>> qasFormatResponseTasks = new List<Task<QasFormatRootResponse>>();
                 foreach (string missingQasFormatId in missingQasFormatIds)
                 {
-                    Task<QasFormatRootResponse> qasFormatResponseTask = _qasService.GetGlobalIntuitiveFormatResponse(missingQasFormatId);
+                    Task<QasFormatRootResponse> qasFormatResponseTask = _qasService.GetGlobalIntuitiveFormatResponseAsync(missingQasFormatId);
                     qasFormatResponseTasks.Add(qasFormatResponseTask);
                 }
 
                 List<QasFormatRootResponse> qasFormatResponses = new List<QasFormatRootResponse>();
 
-                while (qasSearchResponseTasks.Count > 0)
+                while (qasFormatResponseTasks.Count > 0)
                 {
                     Task<QasFormatRootResponse> finishedQasFormatResponseTask = await Task.WhenAny(qasFormatResponseTasks);
                     qasFormatResponseTasks.Remove(finishedQasFormatResponseTask);
@@ -97,11 +97,19 @@ namespace AddressService.Handlers
             await _repository.SavePostcodes(postcodeDtos);
 
             // add missing postcodes to those from DB
-            IEnumerable<PostcodeDto> allPostcodeDtos = postcodes.Concat(postcodes);
+            IEnumerable<PostcodeDto> allPostcodeDtos = postcodesFromDb.Concat(postcodeDtos);
 
             // create response
             GetNearbyPostcodesResponse getNearbyPostcodesResponse = new GetNearbyPostcodesResponse();
             getNearbyPostcodesResponse.Postcodes = _mapper.Map<IEnumerable<PostcodeDto>, IEnumerable<PostcodeResponse>>(allPostcodeDtos);
+
+            foreach (var postcodeResponse in getNearbyPostcodesResponse.Postcodes)
+            {
+                foreach (var addressDetails in postcodeResponse.AddressDetails)
+                {
+                    addressDetails.Postcode = postcodeResponse.PostCode;
+                }
+            }
 
             return getNearbyPostcodesResponse;
         }

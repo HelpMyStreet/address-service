@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -33,7 +34,19 @@ namespace AddressService.Core.Utils
             var responseWrapper = new ResponseWrapper()
             {
                 IsSuccessful = false,
-                Errors = validationResults.Select(x=>x.ErrorMessage)
+                Errors = validationResults.Select(x => x.ErrorMessage)
+            };
+
+            return responseWrapper;
+        }
+
+        //  shouldn't be exposing exceptions in the response...
+        public static ResponseWrapper CreateUnsuccessfulResponse(Exception exception)
+        {
+            var responseWrapper = new ResponseWrapper()
+            {
+                IsSuccessful = false,
+                Errors = new List<string>() { exception.ToString() }
             };
 
             return responseWrapper;

@@ -19,23 +19,42 @@ namespace AddressService.Mappers
             
             foreach (var qasFormatRootResponse in qasFormatRootResponses)
             {
-                foreach (var address in qasFormatRootResponse.Address)
+                AddressDetailsDto addressDetailsDto = new AddressDetailsDto(); 
+
+                foreach (QasFormatAddressReponse address in qasFormatRootResponse.Address) // to deal with strange way results are returned ...
                 {
-                    address.PostalCode = PostcodeCleaner.CleanPostcode(address.PostalCode);
-
-                    postcodeDto.AddressDetails.Add(new AddressDetailsDto()
+                    if (!String.IsNullOrWhiteSpace(address.AddressLine1))
                     {
-                        AddressLine1 = address.AddressLine1,
-                        AddressLine2 = address.AddressLine2,
-                        AddressLine3 = address.AddressLine3,
-                        Locality = address.Locality,
-                        PostalCode = postcode,
-                    });
-
-                    if (address.PostalCode != postcode)
-                    {
-                        throw new Exception("This method should map addresses for a single postcode");
+                        addressDetailsDto.AddressLine1 = address.AddressLine1;
                     }
+                    else if(!String.IsNullOrWhiteSpace(address.AddressLine2))
+                    {
+                        addressDetailsDto.AddressLine2 = address.AddressLine2;
+                    }
+                    else if (!String.IsNullOrWhiteSpace(address.AddressLine3))
+                    {
+                        addressDetailsDto.AddressLine3 = address.AddressLine3;
+                    }
+                    else if (!String.IsNullOrWhiteSpace(address.Locality))
+                    {
+                        addressDetailsDto.Locality = address.Locality;
+                    }
+                    else if (!String.IsNullOrWhiteSpace(address.PostalCode))
+                    {
+                        addressDetailsDto.PostalCode = PostcodeCleaner.CleanPostcode(address.PostalCode);
+                    }
+                }
+
+                if (String.IsNullOrWhiteSpace(addressDetailsDto.PostalCode))
+                {
+                    continue;
+                }
+
+                postcodeDto.AddressDetails.Add(addressDetailsDto);
+
+                if (addressDetailsDto.PostalCode != postcode)
+                {
+                    throw new Exception("This method should map addresses for a single postcode");
                 }
             }
 

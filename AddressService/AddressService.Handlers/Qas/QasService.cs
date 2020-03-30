@@ -17,7 +17,7 @@ namespace AddressService.Handlers.Qas
             _httpClientWrapper = httpClientWrapper;
         }
 
-        public async Task<QasSearchRootResponse> GetGlobalIntuitiveSearchResponse(string postcode)
+        public async Task<QasSearchRootResponse> GetGlobalIntuitiveSearchResponseAsync(string postcode)
         {
             postcode = postcode.Replace(" ", "");
 
@@ -37,7 +37,7 @@ namespace AddressService.Handlers.Qas
             return qasSearchRootResponse;
         }
 
-        public async Task<QasFormatRootResponse> GetGlobalIntuitiveFormatResponse(string id)
+        public async Task<QasFormatRootResponse> GetGlobalIntuitiveFormatResponseAsync(string id)
         {
 
             string path = $"capture/address/v2/format";

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Core.Config;
 using AddressService.Core.Dto;
@@ -17,7 +18,7 @@ namespace AddressService.Handlers.Qas
             _httpClientWrapper = httpClientWrapper;
         }
 
-        public async Task<QasSearchRootResponse> GetGlobalIntuitiveSearchResponseAsync(string postcode)
+        public async Task<QasSearchRootResponse> GetGlobalIntuitiveSearchResponseAsync(string postcode, CancellationToken cancellationToken)
         {
             postcode = postcode.Replace(" ", "");
 
@@ -26,7 +27,7 @@ namespace AddressService.Handlers.Qas
             string absolutePath = $"{path}?{query}";
 
             QasSearchRootResponse qasSearchRootResponse;
-            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.Qas, absolutePath).ConfigureAwait(false))
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.Qas, absolutePath, cancellationToken).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
@@ -37,7 +38,7 @@ namespace AddressService.Handlers.Qas
             return qasSearchRootResponse;
         }
 
-        public async Task<QasFormatRootResponse> GetGlobalIntuitiveFormatResponseAsync(string id)
+        public async Task<QasFormatRootResponse> GetGlobalIntuitiveFormatResponseAsync(string id, CancellationToken cancellationToken)
         {
 
             string path = $"capture/address/v2/format";
@@ -45,7 +46,7 @@ namespace AddressService.Handlers.Qas
             string absolutePath = $"{path}?{query}";
 
             QasFormatRootResponse qasSearchRootResponse;
-            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.Qas, absolutePath).ConfigureAwait(false))
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.Qas, absolutePath, cancellationToken).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();

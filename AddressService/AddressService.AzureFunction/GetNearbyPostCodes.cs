@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -24,6 +25,7 @@ namespace AddressService.AzureFunction
         [FunctionName("GetNearbyPostcodes")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetNearbyPostcodesRequest req,
+            CancellationToken cancellationToken,
             ILogger log)
         {
             try
@@ -32,7 +34,7 @@ namespace AddressService.AzureFunction
 
                 if (req.IsValid(out var validationResults))
                 {
-                    GetNearbyPostcodesResponse response = await _mediator.Send(req);
+                    GetNearbyPostcodesResponse response = await _mediator.Send(req, cancellationToken);
                     return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse>.CreateSuccessfulResponse(response));
                 }
                 else

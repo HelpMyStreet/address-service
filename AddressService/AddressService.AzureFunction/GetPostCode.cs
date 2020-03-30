@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
+using System.Threading;
 using AddressService.Core.Domains.Entities.Request;
 using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Utils;
@@ -23,6 +24,7 @@ namespace AddressService.AzureFunction
         [FunctionName("GetPostcode")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetPostcodeRequest req,
+            CancellationToken cancellationToken,
             ILogger log)
         {
 
@@ -32,7 +34,7 @@ namespace AddressService.AzureFunction
 
                 if (req.IsValid(out var validationResults))
                 {
-                    PostcodeResponse response = await _mediator.Send(req);
+                    PostcodeResponse response = await _mediator.Send(req, cancellationToken);
                     return new OkObjectResult(ResponseWrapper<PostcodeResponse>.CreateSuccessfulResponse(response));
                 }
                 else

@@ -6,11 +6,11 @@ namespace AddressService.Mappers
 {
     public class QasMapper : IQasMapper
     {
-        public PostCodeResponse MapResponse(QasRootResponse qasRootResponse)
+        public PostcodeResponse MapResponse(QasRootResponse qasRootResponse)
         {
-            var postcodeResponse = new PostCodeResponse()
+            var postcodeResponse = new PostcodeResponse()
             {
-                PostCode = qasRootResponse.Postcode,
+                Postcode = qasRootResponse.Postcode,
                 Addresses = qasRootResponse.Results.Select(y => y.Suggestion).ToList()
             };
 

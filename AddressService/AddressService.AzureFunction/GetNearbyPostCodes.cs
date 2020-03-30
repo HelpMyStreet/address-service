@@ -1,31 +1,29 @@
-﻿using System.Threading.Tasks;
+﻿using AddressService.Core.Domains.Entities.Request;
+using AddressService.Core.Domains.Entities.Response;
+using AddressService.Core.Utils;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using MediatR;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using AddressService.Core.Domains.Entities.Request;
-using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Utils;
+using System.Threading.Tasks;
 
 
 namespace AddressService.AzureFunction
 {
-    public class GetNearbyPostCodes
+    public class GetNearbyPostcodes
     {
         private readonly IMediator _mediator;
 
-        public GetNearbyPostCodes(IMediator mediator)
+        public GetNearbyPostcodes(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [FunctionName("GetNearbyPostCodes")]
+        [FunctionName("GetNearbyPostcodes")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetNearbyPostCodesRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetNearbyPostcodesRequest req,
             ILogger log)
         {
             try
@@ -34,8 +32,8 @@ namespace AddressService.AzureFunction
 
                 if (req.IsValid(out var validationResults))
                 {
-                    GetNearbyPostCodesResponse response = await _mediator.Send(req);
-                    return new OkObjectResult(ResponseWrapper<GetNearbyPostCodesResponse>.CreateSuccessfulResponse(response));
+                    GetNearbyPostcodesResponse response = await _mediator.Send(req);
+                    return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse>.CreateSuccessfulResponse(response));
                 }
                 else
                 {

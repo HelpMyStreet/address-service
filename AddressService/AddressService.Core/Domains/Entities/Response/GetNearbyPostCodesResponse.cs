@@ -2,8 +2,8 @@
 
 namespace AddressService.Core.Domains.Entities.Response
 {
-    public class GetNearbyPostCodesResponse
+    public class GetNearbyPostcodesResponse
     {
-        public IEnumerable<PostCodeResponse> PostCodes { get; set; } = new List<PostCodeResponse>();
+        public IEnumerable<PostcodeResponse> Postcodes { get; set; } = new List<PostcodeResponse>();
     }
 }

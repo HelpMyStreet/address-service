@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AddressService.Core.Dto
 {
-    public class PostCodeDTO
+    public class PostcodeDTO
     {
         public int Id { get; set; }
         public string PostalCode { get; set; }

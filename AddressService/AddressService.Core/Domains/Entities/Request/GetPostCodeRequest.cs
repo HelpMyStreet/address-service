@@ -1,13 +1,13 @@
 ﻿using AddressService.Core.Domains.Entities.Response;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace AddressService.Core.Domains.Entities.Request
 {
-    public class GetPostCodeRequest : IRequest<PostCodeResponse>
+    public class GetPostcodeRequest : IRequest<PostcodeResponse>
     {
-        public string PostCode { get; set; }
+        [Required]
+        [RegularExpression(Validation.PostcodeRegex, ErrorMessage = "Invalid Postcode")]
+        public string Postcode { get; set; }
     }
 }

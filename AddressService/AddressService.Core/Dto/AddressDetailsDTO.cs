@@ -12,7 +12,7 @@ namespace AddressService.Core.Dto
         public string Street { get; set; }
         public string City { get; set; }
         public string County { get; set; }
-        public int PostCodeId { get; set; }
-        public PostCodeDTO PostCode { get; set; }
+        public int PostcodeId { get; set; }
+        public PostcodeDTO Postcode { get; set; }
     }
 }

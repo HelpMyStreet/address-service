@@ -5,6 +5,6 @@ namespace AddressService.Mappers
 {
     public interface IQasMapper
     {
-        PostCodeResponse MapResponse(QasRootResponse qasRootResponse);
+        PostcodeResponse MapResponse(QasRootResponse qasRootResponse);
     }
 }

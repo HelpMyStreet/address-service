@@ -12,14 +12,14 @@ using AddressService.Handlers.Qas;
 
 namespace AddressService.Handlers
 {
-    public class GetPostCodeHandler : IRequestHandler<GetPostCodeRequest, PostCodeResponse>
+    public class GetPostcodeHandler : IRequestHandler<GetPostcodeRequest, PostcodeResponse>
     {
         private readonly IRepository _repository;
         private readonly IPostcodeIoService _postcodeIoService;
         private readonly IQasService _qasService;
         private readonly IQasMapper _qasMapper;
 
-        public GetPostCodeHandler(IRepository repository, IPostcodeIoService postcodeIoService, IQasService qasService, IQasMapper qasMapper)
+        public GetPostcodeHandler(IRepository repository, IPostcodeIoService postcodeIoService, IQasService qasService, IQasMapper qasMapper)
         {
             _repository = repository;
             _postcodeIoService = postcodeIoService;
@@ -27,15 +27,15 @@ namespace AddressService.Handlers
             _qasMapper = qasMapper;
         }
 
-        public async Task<PostCodeResponse> Handle(GetPostCodeRequest request, CancellationToken cancellationToken)
+        public async Task<PostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
         {
-            string postcode = PostcodeCleaner.CleanPostcode(request.PostCode);
+            string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
 
             QasRootResponse qasRootResponse = await _qasService.GetGlobalIntuitiveSearchResponse(postcode);
 
-            PostCodeResponse postCodeResponse = _qasMapper.MapResponse(qasRootResponse);
+            PostcodeResponse postcodeResponse = _qasMapper.MapResponse(qasRootResponse);
 
-            return postCodeResponse;
+            return postcodeResponse;
         }
     }
 }

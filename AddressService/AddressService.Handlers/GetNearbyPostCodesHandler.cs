@@ -13,14 +13,14 @@ using AddressService.Mappers;
 
 namespace AddressService.Handlers
 {
-    public class GetNearbyPostCodesHandler : IRequestHandler<GetNearbyPostCodesRequest, GetNearbyPostCodesResponse>
+    public class GetNearbyPostcodesHandler : IRequestHandler<GetNearbyPostcodesRequest, GetNearbyPostcodesResponse>
     {
         private readonly IRepository _repository;
         private readonly IPostcodeIoService _postcodeIoService;
         private readonly IQasService _qasService;
         private readonly IQasMapper _qasMapper;
 
-        public GetNearbyPostCodesHandler(IRepository repository, IPostcodeIoService postcodeIoService, IQasService qasService, IQasMapper qasMapper)
+        public GetNearbyPostcodesHandler(IRepository repository, IPostcodeIoService postcodeIoService, IQasService qasService, IQasMapper qasMapper)
         {
             _repository = repository;
             _postcodeIoService = postcodeIoService;
@@ -28,16 +28,16 @@ namespace AddressService.Handlers
             _qasMapper = qasMapper;
         }
 
-        public async Task<GetNearbyPostCodesResponse> Handle(GetNearbyPostCodesRequest request, CancellationToken cancellationToken)
+        public async Task<GetNearbyPostcodesResponse> Handle(GetNearbyPostcodesRequest request, CancellationToken cancellationToken)
         {
-            string postcode = PostcodeCleaner.CleanPostcode(request.PostCode);
+            string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
 
             PostCodeIoNearestRootResponse postCodeIoResponse = await _postcodeIoService.GetNearbyPostCodesAsync(postcode);
 
             List<Task<QasRootResponse>> qasResponseTasks = new List<Task<QasRootResponse>>();
-            List<PostCodeResponse> postcodeResponses = new List<PostCodeResponse>();
+            List<PostcodeResponse> postcodeResponses = new List<PostcodeResponse>();
 
-            GetNearbyPostCodesResponse getNearbyPostCodesResponse = new GetNearbyPostCodesResponse();
+            GetNearbyPostcodesResponse getNearbyPostcodesResponse = new GetNearbyPostcodesResponse();
 
             foreach (PostCodeIoNearestResponse nearestPostCodeResult in postCodeIoResponse.Result)
             {
@@ -50,13 +50,13 @@ namespace AddressService.Handlers
                 Task<QasRootResponse> finishedQasResponseTask = await Task.WhenAny(qasResponseTasks);
                 qasResponseTasks.Remove(finishedQasResponseTask);
                 QasRootResponse qasResponse = await finishedQasResponseTask;
-                PostCodeResponse postCodeResponse = _qasMapper.MapResponse(qasResponse);
-                postcodeResponses.Add(postCodeResponse);
+                PostcodeResponse postcodeResponse = _qasMapper.MapResponse(qasResponse);
+                postcodeResponses.Add(postcodeResponse);
             }
 
-            getNearbyPostCodesResponse.PostCodes = postcodeResponses;
+            getNearbyPostcodesResponse.Postcodes = postcodeResponses;
 
-            return getNearbyPostCodesResponse;
+            return getNearbyPostcodesResponse;
         }
     }
 }

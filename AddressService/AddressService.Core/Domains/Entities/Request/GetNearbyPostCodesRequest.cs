@@ -1,10 +1,13 @@
-﻿using AddressService.Core.Domains.Entities.Response;
+﻿using System.ComponentModel.DataAnnotations;
+using AddressService.Core.Domains.Entities.Response;
 using MediatR;
 
 namespace AddressService.Core.Domains.Entities.Request
 {
-    public class GetNearbyPostCodesRequest : IRequest<GetNearbyPostCodesResponse>
+    public class GetNearbyPostcodesRequest : IRequest<GetNearbyPostcodesResponse>
     {
-        public string PostCode { get; set; }
+        [Required]
+        [RegularExpression(Validation.PostcodeRegex, ErrorMessage = "Invalid Postcode")]
+        public string Postcode { get; set; }
     }
 }

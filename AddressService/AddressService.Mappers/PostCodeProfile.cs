@@ -11,9 +11,9 @@ namespace AddressService.Mappers
     {
         public PostCodeProfile()
         {
-            CreateMap<PostCode, PostCodeDTO>()
+            CreateMap<PostCode, PostcodeDTO>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
-            CreateMap<PostCodeDTO, PostCode>()
+            CreateMap<PostcodeDTO, PostCode>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
         }
     }

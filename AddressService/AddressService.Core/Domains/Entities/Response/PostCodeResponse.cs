@@ -2,9 +2,9 @@
 
 namespace AddressService.Core.Domains.Entities.Response
 {
-    public class PostCodeResponse
+    public class PostcodeResponse
     {
-        public string PostCode { get; set; }
+        public string Postcode { get; set; }
         public List<string> Addresses { get; set; }
 
     }

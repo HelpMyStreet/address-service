@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using AutoMapper;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
@@ -72,10 +74,13 @@ namespace AddressService.AzureFunction
                     {
                         c.DefaultRequestHeaders.Add(header.Key, header.Value);
                     }
+                    c.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                    c.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
 
                 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                 {
-                    MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15
+                    MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15,
+                    AutomaticDecompression =  DecompressionMethods.GZip | DecompressionMethods.Deflate
                 });
 
             }

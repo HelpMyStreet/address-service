@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,7 +45,8 @@ namespace AddressService.AzureFunction
             }
             catch (Exception exc)
             {
-                return new BadRequestObjectResult(exc);
+                log.LogError(exc, "Unhandled error in GetNearbyPostcodes");
+                return new StatusCodeResult(500);
             }
         }
     }

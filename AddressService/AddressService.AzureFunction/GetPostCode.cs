@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using AddressService.Core.Domains.Entities.Request;
 using AddressService.Core.Domains.Entities.Response;
@@ -44,7 +45,8 @@ namespace AddressService.AzureFunction
             }
             catch (Exception exc)
             {
-                return new BadRequestObjectResult(exc);
+                log.LogError(exc, "Unhandled error in GetPostcode");
+                return new StatusCodeResult(500);
             }
         }
     }

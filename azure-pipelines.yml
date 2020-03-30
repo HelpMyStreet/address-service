@@ -47,6 +47,7 @@ steps:
     command: 'publish'
     publishWebProjects: true
     zipAfterPublish: true
+    projects: '**/**/*.csproj'
 
 - task: AzureFunctionApp@1
   inputs:

@@ -46,6 +46,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: true
+    zipAfterPublish: true
 
 - task: AzureFunctionApp@1
   inputs:

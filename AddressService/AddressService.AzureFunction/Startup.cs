@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using AutoMapper;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
 using AddressService.Mappers;
@@ -8,6 +11,13 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using AddressService.Core.Config;
+using AddressService.Core.Utils;
+using AddressService.Handlers.PostcodeIo;
+using AddressService.Handlers.Qas;
+using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
 namespace AddressService.AzureFunction
@@ -16,6 +26,65 @@ namespace AddressService.AzureFunction
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            ExecutionContextOptions executioncontextoptions = builder.Services.BuildServiceProvider()
+               .GetService<IOptions<ExecutionContextOptions>>().Value;
+            string currentDirectory = executioncontextoptions.AppDirectory;
+
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+                .SetBasePath(currentDirectory)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
+                .AddEnvironmentVariables();
+
+            string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            if (aspNetCoreEnv?.ToLower().Trim() == "localdev")
+            {
+                configBuilder.AddUserSecrets(Assembly.GetExecutingAssembly(), false);
+                Console.Write("User secrets added");
+            }
+            else
+            {
+                Console.Write("User secrets not added as ASPNETCORE_ENVIRONMENT environment variable doesn't contain \"localdev\"");
+            }
+
+            IConfigurationRoot config = configBuilder.Build();
+
+
+            Dictionary<HttpClientConfigName, ApiConfig> httpClientConfigs = config.GetSection("Apis").Get<Dictionary<HttpClientConfigName, ApiConfig>>();
+
+            foreach (KeyValuePair<HttpClientConfigName, ApiConfig> httpClientConfig in httpClientConfigs)
+            {
+                if (httpClientConfig.Key == HttpClientConfigName.Qas && !httpClientConfig.Value.Headers.ContainsKey("auth-token"))
+                {
+                    throw new Exception("Qas requires auth-token header");
+                }
+
+                builder.Services.AddHttpClient(httpClientConfig.Key.ToString(), c =>
+                {
+                    c.BaseAddress = new Uri(httpClientConfig.Value.BaseAddress);
+
+                    c.Timeout = httpClientConfig.Value.Timeout ?? new TimeSpan(0, 0, 0, 15);
+
+                    foreach (var header in httpClientConfig.Value.Headers)
+                    {
+                        c.DefaultRequestHeaders.Add(header.Key, header.Value);
+                    }
+
+                }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15
+                });
+
+            }
+
+            builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
+            
+            builder.Services.AddTransient<IQasMapper, QasMapper>();
+            builder.Services.AddTransient<IQasService, QasService>();
+
+            builder.Services.AddTransient<IPostcodeIoService, PostcodeIoService>();
+
             builder.Services.AddMediatR(typeof(GetPostCodeHandler).Assembly);
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
 

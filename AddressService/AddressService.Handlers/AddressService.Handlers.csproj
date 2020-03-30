@@ -10,7 +10,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Core\AddressService.Core.csproj">
-			<Name >AddressService.Core</Name>
+			<Name>AddressService.Core</Name>
 		</ProjectReference>
+		<ProjectReference Include="..\AddressService.Mappers\AddressService.Mappers.csproj" />
 	</ItemGroup>
 </Project>

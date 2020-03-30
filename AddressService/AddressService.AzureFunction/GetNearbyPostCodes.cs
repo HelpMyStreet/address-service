@@ -5,8 +5,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using AddressService.Core.Domains.Entities.Request;
 using AddressService.Core.Domains.Entities.Response;
+using AddressService.Core.Utils;
 
 
 namespace AddressService.AzureFunction
@@ -29,8 +32,15 @@ namespace AddressService.AzureFunction
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
 
-                PostCodeResponse response = await _mediator.Send(req);
-                return new OkObjectResult(response);
+                if (req.IsValid(out var validationResults))
+                {
+                    GetNearbyPostCodesResponse response = await _mediator.Send(req);
+                    return new OkObjectResult(ResponseWrapper<GetNearbyPostCodesResponse>.CreateSuccessfulResponse(response));
+                }
+                else
+                {
+                    return new OkObjectResult(ResponseWrapper.CreateUnsuccessfulResponse(validationResults));
+                }
             }
             catch (Exception exc)
             {

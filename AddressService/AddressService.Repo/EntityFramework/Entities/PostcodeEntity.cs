@@ -1,4 +1,6 @@
-﻿namespace AddressService.Repo.EntityFramework.Entities
+﻿using System;
+
+namespace AddressService.Repo.EntityFramework.Entities
 {
     using System.Collections.Generic;
 
@@ -13,6 +15,7 @@
 
             public int Id { get; set; }
             public string Postcode { get; set; }
+            public DateTime LastUpdated { get; set; }
 
             public virtual ICollection<AddressDetailsEntity> AddressDetails { get; set; }
         }

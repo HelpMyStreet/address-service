@@ -1,11 +1,10 @@
 ﻿using AddressService.Core.Dto;
+using AddressService.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
-using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Utils;
 
 namespace AddressService.Mappers
 {
@@ -16,7 +15,8 @@ namespace AddressService.Mappers
             postcode = PostcodeCleaner.CleanPostcode(postcode);
             PostcodeDto postcodeDto = new PostcodeDto();
             postcodeDto.Postcode = postcode;
-
+            postcodeDto.LastUpdated = DateTime.UtcNow;
+            
             foreach (var qasFormatRootResponse in qasFormatRootResponses)
             {
                 foreach (var address in qasFormatRootResponse.Address)

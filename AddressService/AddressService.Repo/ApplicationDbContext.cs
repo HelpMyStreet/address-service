@@ -76,6 +76,9 @@ namespace AddressService.Repo
                     .IsRequired()
                     .HasMaxLength(10)
                     .IsUnicode(false);
+
+                entity.Property(e => e.LastUpdated)
+                    .HasColumnType("datetime2(0)");
             });
         }
     }

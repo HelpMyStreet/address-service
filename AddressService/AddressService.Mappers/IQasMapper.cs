@@ -1,10 +1,13 @@
-﻿using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AddressService.Mappers
 {
     public interface IQasMapper
     {
-        PostcodeResponse MapResponse(QasRootResponse qasRootResponse);
+        PostcodeDTO MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses);
+
+        ILookup<string, string> GetFormatIds(IEnumerable<QasSearchRootResponse> qasSearchRootResponses);
     }
 }

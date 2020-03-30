@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AddressService.Core.Dto
 {
-    public class QasRootResponse
+    public class QasSearchRootResponse
     {
         [JsonIgnore]
         public string Postcode { get; set; }
@@ -15,6 +15,6 @@ namespace AddressService.Core.Dto
         public int Count { get; set; }
 
         [JsonProperty("results")]
-        public List<QasResult> Results { get; set; }
+        public List<QasSearchResponse> Results { get; set; }
     }
 }

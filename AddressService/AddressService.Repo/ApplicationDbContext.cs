@@ -1,6 +1,6 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
+using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AddressService.Repo
 {
@@ -15,8 +15,8 @@ namespace AddressService.Repo
         {
         }
 
-        public virtual DbSet<AddressDetails> AddressDetails { get; set; }
-        public virtual DbSet<PostCode> PostCode { get; set; }
+        public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }
+        public virtual DbSet<PostcodeEntity> PostCode { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,48 +27,52 @@ namespace AddressService.Repo
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AddressDetails>(entity =>
+            modelBuilder.Entity<AddressDetailsEntity>(entity =>
             {
                 entity.ToTable("AddressDetails", "Address");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Id).HasColumnName("Id");
 
-                entity.Property(e => e.City)
+                entity.Property(x => x.Id).ValueGeneratedOnAdd();
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(e => e.AddressLine1)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.County)
+                entity.Property(e => e.AddressLine2)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.HouseName)
+                entity.Property(e => e.AddressLine3)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.HouseNumber)
+                entity.Property(e => e.Locality)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.PostCodeId).HasColumnName("PostCodeID");
-
-                entity.Property(e => e.Street)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
+                entity.Property(e => e.PostCodeId).HasColumnName("PostCodeId");
+                
                 entity.HasOne(d => d.PostCode)
                     .WithMany(p => p.AddressDetails)
                     .HasForeignKey(d => d.PostCodeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_AddressDetails_PostCodeID");
+                    .HasConstraintName("FK_AddressDetails_Address_PostCode");
             });
 
-            modelBuilder.Entity<PostCode>(entity =>
+            modelBuilder.Entity<PostcodeEntity>(entity =>
             {
                 entity.ToTable("PostCode", "Address");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Id).HasColumnName("Id");
 
-                entity.Property(e => e.PostalCode)
+                entity.Property(x => x.Id).ValueGeneratedOnAdd();
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(e => e.Postcode)
                     .IsRequired()
                     .HasMaxLength(10)
                     .IsUnicode(false);

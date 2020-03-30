@@ -5,6 +5,8 @@ namespace AddressService.Handlers.Qas
 {
     public interface IQasService
     {
-        Task<QasRootResponse> GetGlobalIntuitiveSearchResponse(string postcode);
+        Task<QasSearchRootResponse> GetGlobalIntuitiveSearchResponse(string postcode);
+
+        Task<QasFormatRootResponse> GetGlobalIntuitiveFormatResponse(string id);
     }
 }

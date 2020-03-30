@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace AddressService.Core.Domains.Entities.Response
 {
+    [DataContract(Name = "postcode")]
     public class PostcodeResponse
     {
-        public string Postcode { get; set; }
-        public List<string> Addresses { get; set; }
+        public string PostCode { get; set; }
+        public List<AddressDetailsResponse> AddressDetails { get; set; }
 
     }
 }

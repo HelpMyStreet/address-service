@@ -1,9 +1,7 @@
-﻿using AutoMapper;
+﻿using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Dto;
 using AddressService.Repo.EntityFramework.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using AutoMapper;
 
 namespace AddressService.Mappers
 {
@@ -11,8 +9,9 @@ namespace AddressService.Mappers
     {
         public AddressDetailsProfile()
         {
-            CreateMap<AddressDetails, AddressDetailsDTO>();
-            CreateMap<AddressDetailsDTO, AddressDetails>();
+            CreateMap<AddressDetailsEntity, AddressDetailsDto>();
+            CreateMap<AddressDetailsDto, AddressDetailsEntity>();
+            CreateMap<AddressDetailsDto, AddressDetailsResponse>();
         }
     }
 }

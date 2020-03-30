@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
-using AddressService.Repo.EntityFramework.Entities;
+using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AddressService.Core.Domains.Entities.Response;
-using Microsoft.EntityFrameworkCore;
 
 namespace AddressService.Repo
 {
@@ -21,66 +21,23 @@ namespace AddressService.Repo
             _mapper = mapper;
         }
 
-        public Task<VolunteerCountResponse> GetVolunteerCount()
+        // todo test GetMissingPostcodes is fast enough without using TVPs
+        public async Task<IEnumerable<PostcodeDto>> GetPostcodes(IEnumerable<string> postCodes)
         {
-            int volunteerCount = _context.PostCode.Sum(x => x.VolunteerCount);
-            int championCount = _context.PostCode.Sum(x => x.ChampionCount);
+            List<PostcodeEntity> missingPostCodeEntities = await _context.PostCode.Where(x => !postCodes.Contains(x.Postcode)).Include(x => x.AddressDetails).ToListAsync();
 
-            var result = new VolunteerCountResponse()
-            {
-                ChampionCount = championCount,
-                VolunteerCount = volunteerCount
-            };
+            IEnumerable<PostcodeDto> missingPostCodes = _mapper.Map<IEnumerable<PostcodeEntity>, IEnumerable<PostcodeDto>>(missingPostCodeEntities);
 
-            return Task.FromResult(result);
+            return missingPostCodes;
         }
 
-        public async Task IncrementChampionCount(string postCode)
+        // todo test GetPostcodes is fast enough without using TVPs (the answer will be no...)
+        public async Task SavePostcodes(IEnumerable<PostcodeDto> postCodes)
         {
-            PostCode p = _context.PostCode.Where(x => x.PostalCode == postCode).First();
+            IEnumerable<PostcodeEntity> missingPostCodesEntities = _mapper.Map<IEnumerable<PostcodeDto>, IEnumerable<PostcodeEntity>>(postCodes);
 
-            if(p!=null)
-            {
-                p.ChampionCount += 1;
-                _context.Attach(p).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task IncrementVolunteerCount(string postCode)
-        {
-            PostCode p = _context.PostCode.Where(x => x.PostalCode == postCode).First();
-
-            if (p != null)
-            {
-                p.VolunteerCount += 1;
-                _context.Attach(p).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task DecrementChampionCount(string postCode)
-        {
-            PostCode p = _context.PostCode.Where(x => x.PostalCode == postCode).First();
-
-            if (p != null)
-            {
-                p.ChampionCount -= 1;
-                _context.Attach(p).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task DecrementVolunteerCount(string postCode)
-        {
-            PostCode p = _context.PostCode.Where(x => x.PostalCode == postCode).First();
-
-            if (p != null)
-            {
-                p.VolunteerCount -= 1;
-                _context.Attach(p).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
+             await _context.PostCode.AddRangeAsync(missingPostCodesEntities);
+             await _context.SaveChangesAsync();
         }
     }
 }

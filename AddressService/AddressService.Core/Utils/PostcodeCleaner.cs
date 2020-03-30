@@ -4,7 +4,7 @@
     {
         public static string CleanPostcode(string postcode)
         {
-            postcode = postcode.Replace(" ", "").ToUpper();
+            postcode = postcode.Replace(" ", "").Trim().ToUpper();
             return postcode;
         }
     }

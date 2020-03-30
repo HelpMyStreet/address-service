@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AddressService.Core.Dto
 {
-    public class QasResult
+    public class QasSearchResponse
     {
         [JsonProperty("suggestion")]
         public string Suggestion { get; set; }

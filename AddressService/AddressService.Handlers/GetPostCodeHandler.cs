@@ -29,11 +29,12 @@ namespace AddressService.Handlers
 
         public async Task<PostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
         {
-            string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
+            var postcodeResponse = new PostcodeResponse();
+            //string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
 
-            QasRootResponse qasRootResponse = await _qasService.GetGlobalIntuitiveSearchResponse(postcode);
+            //QasSearchRootResponse qasSearchRootResponse = await _qasService.GetGlobalIntuitiveSearchResponse(postcode);
 
-            PostcodeResponse postcodeResponse = _qasMapper.MapResponse(qasRootResponse);
+            //PostcodeResponse postcodeResponse = _qasMapper.MapToPostcodeDto(qasSearchRootResponse);
 
             return postcodeResponse;
         }

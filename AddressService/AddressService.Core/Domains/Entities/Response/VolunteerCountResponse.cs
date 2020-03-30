@@ -1,9 +1,4 @@
-﻿using AddressService.Core.Dto;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AddressService.Core.Domains.Entities.Response
+﻿namespace AddressService.Core.Domains.Entities.Response
 {
     public class VolunteerCountResponse
     {

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AddressService.Core.Dto
 {
-    public class PostcodeDTO
+    public class PostcodeDto
     {
         public int Id { get; set; }
-        public string PostalCode { get; set; }
-        public int ChampionCount { get; set; }
-        public int VolunteerCount { get; set; }
-        public List<AddressDetailsDTO> AddressDetails { get; set; }
+        public string Postcode { get; set; }
+        public List<AddressDetailsDto> AddressDetails { get; set; } = new List<AddressDetailsDto>();
     }
 }

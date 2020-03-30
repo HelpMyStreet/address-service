@@ -17,7 +17,7 @@ namespace AddressService.Handlers.Qas
             _httpClientWrapper = httpClientWrapper;
         }
 
-        public async Task<QasRootResponse> GetGlobalIntuitiveSearchResponse(string postcode)
+        public async Task<QasSearchRootResponse> GetGlobalIntuitiveSearchResponse(string postcode)
         {
             postcode = postcode.Replace(" ", "");
 
@@ -25,16 +25,34 @@ namespace AddressService.Handlers.Qas
             string query = $"query={postcode}&country=GBR&take=100"; 
             string absolutePath = $"{path}?{query}";
 
-            QasRootResponse qasRootResponse;
+            QasSearchRootResponse qasSearchRootResponse;
             using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.Qas, absolutePath).ConfigureAwait(false))
             {
                 response.EnsureSuccessStatusCode();
                 Stream stream = await response.Content.ReadAsStreamAsync();
-                qasRootResponse = stream.ReadAndDeserializeFromJson<QasRootResponse>();
+                qasSearchRootResponse = stream.ReadAndDeserializeFromJson<QasSearchRootResponse>();
             }
-            qasRootResponse.Postcode = postcode;
+            qasSearchRootResponse.Postcode = postcode;
 
-            return qasRootResponse;
+            return qasSearchRootResponse;
+        }
+
+        public async Task<QasFormatRootResponse> GetGlobalIntuitiveFormatResponse(string id)
+        {
+
+            string path = $"capture/address/v2/format";
+            string query = $"country=GBR&id={id}";
+            string absolutePath = $"{path}?{query}";
+
+            QasFormatRootResponse qasSearchRootResponse;
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.Qas, absolutePath).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                Stream stream = await response.Content.ReadAsStreamAsync();
+                qasSearchRootResponse = stream.ReadAndDeserializeFromJson<QasFormatRootResponse>();
+            }
+
+            return qasSearchRootResponse;
         }
     }
 }

@@ -1,9 +1,7 @@
-﻿using AutoMapper;
+﻿using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Dto;
-using AddressService.Repo.EntityFramework.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
+using AutoMapper;
 
 namespace AddressService.Mappers
 {
@@ -11,9 +9,11 @@ namespace AddressService.Mappers
     {
         public PostCodeProfile()
         {
-            CreateMap<PostCode, PostcodeDTO>()
+            CreateMap<PostcodeEntity, PostcodeDTO>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
-            CreateMap<PostcodeDTO, PostCode>()
+            CreateMap<PostcodeDTO, PostcodeEntity>()
+                .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
+            CreateMap<PostcodeDTO, PostcodeResponse>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
         }
     }

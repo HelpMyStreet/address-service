@@ -42,11 +42,10 @@ steps:
     command: 'build'
     projects: '**/**/*.csproj'
 
-- task: PublishBuildArtifacts@1
+- task: DotNetCoreCLI@2
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    command: 'publish'
+    publishWebProjects: true
 
 - task: AzureFunctionApp@1
   inputs:

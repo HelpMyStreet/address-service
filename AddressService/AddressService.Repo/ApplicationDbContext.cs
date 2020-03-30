@@ -13,6 +13,7 @@ namespace AddressService.Repo
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            //Database.EnsureCreated();
         }
 
         public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }
@@ -37,6 +38,8 @@ namespace AddressService.Repo
 
                 entity.HasKey(x => x.Id);
 
+                entity.Property(e => e.PostCodeId).HasColumnName("PostCodeId");
+
                 entity.Property(e => e.AddressLine1)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -53,12 +56,10 @@ namespace AddressService.Repo
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.PostCodeId).HasColumnName("PostCodeId");
                 
                 entity.HasOne(d => d.PostCode)
                     .WithMany(p => p.AddressDetails)
                     .HasForeignKey(d => d.PostCodeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AddressDetails_Address_PostCode");
             });
 

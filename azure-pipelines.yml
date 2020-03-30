@@ -40,19 +40,19 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    projects: '**/**/*.csproj'
+    projects: '**/**/*.AzureFunction.csproj'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     publishWebProjects: false
     zipAfterPublish: true
-    projects: '**/**/*.csproj'
+    projects: '**/**/*.AzureFunction.csproj'
 
 - task: AzureFunctionApp@1
   inputs:
     azureSubscription: 'Azure subscription 1(2)(cf4b5ad9-1aa8-4960-af9c-01030b3a2662)'
     appType: 'functionApp'
     appName: 'helpmystreet-address-service-dev'
-    package: '$(System.DefaultWorkingDirectory)/**/*AzureFunction.zip'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
     deploymentMethod: 'auto'

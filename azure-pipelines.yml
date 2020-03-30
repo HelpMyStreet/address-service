@@ -42,15 +42,16 @@ steps:
     command: 'build'
     projects: '**/**/*.csproj'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
-
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
-
+- task: AzureFunctionApp@1
+  inputs:
+    azureSubscription: 'Azure subscription 1(2)(cf4b5ad9-1aa8-4960-af9c-01030b3a2662)'
+    appType: 'functionApp'
+    appName: 'helpmystreet-address-service-dev'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    deploymentMethod: 'auto'

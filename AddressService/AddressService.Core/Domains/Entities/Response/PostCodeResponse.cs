@@ -9,8 +9,5 @@ namespace AddressService.Core.Domains.Entities.Response
     {
         public string PostCode { get; set; }
         public List<AddressDetailsDTO> Addresses { get; set; }
-        public int ChampionCount { get; set; }
-        public int VolunteerCount { get; set; }
-
     }
 }

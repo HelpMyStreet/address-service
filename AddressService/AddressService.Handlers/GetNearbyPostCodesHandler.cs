@@ -14,8 +14,6 @@ namespace AddressService.Handlers
             var response = new PostCodeResponse()
             {
                 PostCode = request.PostCode,
-                VolunteerCount = 1,
-                ChampionCount = 2,
                 Addresses = new List<Core.Dto.AddressDetailsDTO>()
                 {
                     new Core.Dto.AddressDetailsDTO()

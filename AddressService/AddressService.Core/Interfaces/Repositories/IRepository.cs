@@ -9,10 +9,5 @@ namespace AddressService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
-        Task<VolunteerCountResponse> GetVolunteerCount();
-        Task IncrementChampionCount(string postCode);
-        Task IncrementVolunteerCount(string postCode);
-        Task DecrementChampionCount(string postCode);
-        Task DecrementVolunteerCount(string postCode);
     }
 }

@@ -43,7 +43,7 @@ namespace AddressService.Handlers
             ImmutableHashSet<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance).Select(x => x.Postcode).ToImmutableHashSet();
 
             // get postcodes from database
-            IEnumerable<PostcodeDTO> postcodes = await _repository.GetPostcodes(nearestPostcodes);
+            IEnumerable<PostcodeDto> postcodes = await _repository.GetPostcodes(nearestPostcodes);
             ImmutableHashSet<string> postcodesFromDbHashSet = postcodes.Select(x => x.Postcode).ToImmutableHashSet();
 
             // find missing postcodes
@@ -69,7 +69,7 @@ namespace AddressService.Handlers
 
             // call QAS for address details (grouped by postcode to avoid sending 1000s of request at once and to map a single PostcodeDto at a time)
             ILookup<string, string> missingQasFormatIdsGroupedByPostCode = _qasMapper.GetFormatIds(qasSearchResponses);
-            List<PostcodeDTO> postcodeDtos = new List<PostcodeDTO>();
+            List<PostcodeDto> postcodeDtos = new List<PostcodeDto>();
 
             foreach (IGrouping<string, string> missingQasFormatIds in missingQasFormatIdsGroupedByPostCode)
             {
@@ -90,18 +90,18 @@ namespace AddressService.Handlers
                     qasFormatResponses.Add(qasFormatResponse);
                 }
 
-                PostcodeDTO missingPostcodeDtos = _qasMapper.MapToPostcodeDto(missingQasFormatIds.Key, qasFormatResponses);
+                PostcodeDto missingPostcodeDtos = _qasMapper.MapToPostcodeDto(missingQasFormatIds.Key, qasFormatResponses);
                 postcodeDtos.Add(missingPostcodeDtos);
             }
 
             await _repository.SavePostcodes(postcodeDtos);
 
             // add missing postcodes to those from DB
-            IEnumerable<PostcodeDTO> allPostcodeDtos = postcodes.Concat(postcodes);
+            IEnumerable<PostcodeDto> allPostcodeDtos = postcodes.Concat(postcodes);
 
             // create response
             GetNearbyPostcodesResponse getNearbyPostcodesResponse = new GetNearbyPostcodesResponse();
-            getNearbyPostcodesResponse.Postcodes = _mapper.Map<IEnumerable<PostcodeDTO>, IEnumerable<PostcodeResponse>>(allPostcodeDtos);
+            getNearbyPostcodesResponse.Postcodes = _mapper.Map<IEnumerable<PostcodeDto>, IEnumerable<PostcodeResponse>>(allPostcodeDtos);
 
             return getNearbyPostcodesResponse;
         }

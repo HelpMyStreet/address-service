@@ -9,11 +9,11 @@ namespace AddressService.Mappers
     {
         public PostCodeProfile()
         {
-            CreateMap<PostcodeEntity, PostcodeDTO>()
+            CreateMap<PostcodeEntity, PostcodeDto>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
-            CreateMap<PostcodeDTO, PostcodeEntity>()
+            CreateMap<PostcodeDto, PostcodeEntity>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
-            CreateMap<PostcodeDTO, PostcodeResponse>()
+            CreateMap<PostcodeDto, PostcodeResponse>()
                 .ForMember(dest => dest.AddressDetails, opt => opt.Ignore());
         }
     }

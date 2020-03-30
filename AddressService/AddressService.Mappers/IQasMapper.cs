@@ -6,7 +6,7 @@ namespace AddressService.Mappers
 {
     public interface IQasMapper
     {
-        PostcodeDTO MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses);
+        PostcodeDto MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses);
 
         ILookup<string, string> GetFormatIds(IEnumerable<QasSearchRootResponse> qasSearchRootResponses);
     }

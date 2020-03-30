@@ -11,10 +11,10 @@ namespace AddressService.Mappers
 {
     public class QasMapper : IQasMapper
     {
-        public PostcodeDTO MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses)
+        public PostcodeDto MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses)
         {
             postcode = PostcodeCleaner.CleanPostcode(postcode);
-            PostcodeDTO postcodeDto = new PostcodeDTO();
+            PostcodeDto postcodeDto = new PostcodeDto();
             postcodeDto.Postcode = postcode;
 
             foreach (var qasFormatRootResponse in qasFormatRootResponses)

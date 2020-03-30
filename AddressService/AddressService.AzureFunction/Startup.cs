@@ -17,6 +17,7 @@ using AddressService.Handlers.PostcodeIo;
 using AddressService.Handlers.Qas;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
@@ -38,7 +39,8 @@ namespace AddressService.AzureFunction
 
             string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (aspNetCoreEnv?.ToLower().Trim() == "localdev")
+            bool isLocalDev = aspNetCoreEnv?.ToLower().Trim() == "localdev";
+            if (isLocalDev)
             {
                 configBuilder.AddUserSecrets(Assembly.GetExecutingAssembly(), false);
                 Console.Write("User secrets added");
@@ -79,7 +81,7 @@ namespace AddressService.AzureFunction
             }
 
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
-            
+
             builder.Services.AddTransient<IQasMapper, QasMapper>();
             builder.Services.AddTransient<IQasService, QasService>();
 
@@ -88,9 +90,24 @@ namespace AddressService.AzureFunction
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                   options.UseInMemoryDatabase(databaseName: "AddressService.AzureFunction"));
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //       options.UseInMemoryDatabase(databaseName: "AddressService.AzureFunction"));
             builder.Services.AddTransient<IRepository, Repository>();
+
+
+            var connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
+            var connectionStringSettings = config.GetSection(connectionStringSection);
+            builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
+            
+            var connectionStrings = new ConnectionStrings();
+            config.GetSection(connectionStringSection).Bind(connectionStrings);
+            
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                    options
+                        .UseSqlServer(connectionStrings.AddressService)
+                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+                ServiceLifetime.Transient
+            );
         }
     }
 }

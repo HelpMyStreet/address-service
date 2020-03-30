@@ -54,5 +54,5 @@ steps:
     azureSubscription: 'Azure subscription 1(2)(cf4b5ad9-1aa8-4960-af9c-01030b3a2662)'
     appType: 'functionApp'
     appName: 'helpmystreet-address-service-dev'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    package: '$(System.DefaultWorkingDirectory)/**/*.AzureFunction.zip'
     deploymentMethod: 'auto'

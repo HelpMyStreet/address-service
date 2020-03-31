@@ -12,16 +12,17 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.28" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Handlers\AddressService.Handlers.csproj">
-			<Name >AddressService.Handlers</Name>
+			<Name>AddressService.Handlers</Name>
 		</ProjectReference>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Mappers\AddressService.Mappers.csproj">
-			<Name >AddressService.Mappers</Name>
+			<Name>AddressService.Mappers</Name>
 		</ProjectReference>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Repo\AddressService.Repo.csproj">
-			<Name >AddressService.Repo</Name>
+			<Name>AddressService.Repo</Name>
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
@@ -29,8 +30,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="local.settings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

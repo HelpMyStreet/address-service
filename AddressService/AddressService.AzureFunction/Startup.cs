@@ -8,6 +8,9 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using System;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
 namespace AddressService.AzureFunction
@@ -19,8 +22,16 @@ namespace AddressService.AzureFunction
             builder.Services.AddMediatR(typeof(GetPostCodeHandler).Assembly);
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
 
+            var tmpConfig = new ConfigurationBuilder()
+            .SetBasePath(Environment.CurrentDirectory)
+            .AddJsonFile("local.settings.json")
+            .Build();
+
+            var sqlConnectionString = tmpConfig.GetConnectionString("SqlConnectionString");
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                   options.UseInMemoryDatabase(databaseName: "AddressService.AzureFunction"));
+                options.UseSqlServer(sqlConnectionString));
+
             builder.Services.AddTransient<IRepository, Repository>();
         }
     }

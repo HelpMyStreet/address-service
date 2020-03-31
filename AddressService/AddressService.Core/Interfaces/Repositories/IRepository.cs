@@ -9,5 +9,6 @@ namespace AddressService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        PostCodeResponse GetPostCode(string postCode);
     }
 }

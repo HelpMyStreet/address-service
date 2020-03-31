@@ -21,17 +21,7 @@ namespace AddressService.Handlers
 
         public Task<PostCodeResponse> Handle(GetPostCodeRequest request, CancellationToken cancellationToken)
         {
-            var response = new PostCodeResponse()
-            {
-                PostCode = request.PostCode,
-                Addresses = new List<Core.Dto.AddressDetailsDTO>()
-                {
-                    new Core.Dto.AddressDetailsDTO()
-                    {
-                        HouseName = "Holly Cottage"
-                    }
-                }
-            };
+            var response = _repository.GetPostCode(request.PostCode);
             return Task.FromResult(response);
         }
     }

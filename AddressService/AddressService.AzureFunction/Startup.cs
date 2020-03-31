@@ -24,7 +24,7 @@ namespace AddressService.AzureFunction
 
             var tmpConfig = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("local.settings.json")
+            .AddJsonFile("local.settings.json",true)
             .Build();
 
             var sqlConnectionString = tmpConfig.GetConnectionString("SqlConnectionString");

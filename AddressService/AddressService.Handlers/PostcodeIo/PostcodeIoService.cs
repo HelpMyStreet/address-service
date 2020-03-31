@@ -37,5 +37,23 @@ namespace AddressService.Handlers.PostcodeIo
 
             return postCodeIoNearestRootResponse;
         }
+
+
+        public async Task<bool> IsPostcodeValidAsync(string postcode, CancellationToken cancellationToken)
+        {
+            string path = $"postcodes/{postcode}/validate";
+            string absolutePath = $"{path}";
+
+            PostCodeIoValidPostcodeRootResponse postCodeIoValidPostcodeRootResponse;
+
+            using (HttpResponseMessage response = await _httpClientWrapper.GetAsync(HttpClientConfigName.PostcodeIo, absolutePath, cancellationToken).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                Stream stream = await response.Content.ReadAsStreamAsync();
+                postCodeIoValidPostcodeRootResponse = stream.ReadAndDeserializeFromJson<PostCodeIoValidPostcodeRootResponse>();
+            }
+
+            return postCodeIoValidPostcodeRootResponse.Result;
+        }
     }
 }

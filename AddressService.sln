@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddressService.Mappers", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddressService.Repo", "AddressService\AddressService.Repo\AddressService.Repo.csproj", "{5A842E46-A872-4843-BAE3-9BF0F867E633}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddressService.UnitTests", "AddressService.UnitTests\AddressService.UnitTests.csproj", "{2C18306E-748D-42F0-A8E4-1121436C8DE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddressService.UnitTests", "AddressService\AddressService.UnitTests\AddressService.UnitTests.csproj", "{2C18306E-748D-42F0-A8E4-1121436C8DE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

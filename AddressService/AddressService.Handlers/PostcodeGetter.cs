@@ -1,7 +1,6 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Utils;
-using AddressService.Handlers.PostcodeIo;
 using AddressService.Handlers.Qas;
 using AddressService.Mappers;
 using AutoMapper;
@@ -43,6 +42,11 @@ namespace AddressService.Handlers
 
             // find missing postcodes
             List<string> missingPostcodes = postcodes.Where(x => !postcodesFromDbHashSet.Contains(x)).ToList();
+
+            if (!missingPostcodes.Any())
+            {
+                return postcodesFromDb;
+            }
 
             // call QAS for missing postcodes and addresses
             List<Task<QasSearchRootResponse>> qasSearchResponseTasks = new List<Task<QasSearchRootResponse>>();
@@ -93,6 +97,7 @@ namespace AddressService.Handlers
             {
                 await _repository.SavePostcodesAsync(missingPostcodeDtos);
             }
+
 
             // add missing postcodes to those originally taken from the DB
             IEnumerable<PostcodeDto> allPostcodeDtos = postcodesFromDb.Concat(missingPostcodeDtos);

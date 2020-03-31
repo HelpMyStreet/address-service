@@ -92,6 +92,8 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IPostcodeIoService, PostcodeIoService>();
 
+            builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
+
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
 

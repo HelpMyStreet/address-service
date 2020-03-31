@@ -1,42 +1,34 @@
 ﻿using AddressService.Core.Domains.Entities.Request;
 using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Dto;
-using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Utils;
-using AddressService.Mappers;
+using AutoMapper;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Handlers.PostcodeIo;
-using AddressService.Handlers.Qas;
 
 namespace AddressService.Handlers
 {
     public class GetPostcodeHandler : IRequestHandler<GetPostcodeRequest, PostcodeResponse>
     {
-        private readonly IRepository _repository;
-        private readonly IPostcodeIoService _postcodeIoService;
-        private readonly IQasService _qasService;
-        private readonly IQasMapper _qasMapper;
+        private readonly IMapper _mapper;
+        private readonly IPostcodeGetter _postcodeGetter;
 
-        public GetPostcodeHandler(IRepository repository, IPostcodeIoService postcodeIoService, IQasService qasService, IQasMapper qasMapper)
+        public GetPostcodeHandler(IMapper mapper, IPostcodeGetter postcodeGetter)
         {
-            _repository = repository;
-            _postcodeIoService = postcodeIoService;
-            _qasService = qasService;
-            _qasMapper = qasMapper;
+            _mapper = mapper;
+            _postcodeGetter = postcodeGetter;
         }
 
         public async Task<PostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
         {
-            var postcodeResponse = new PostcodeResponse();
-            //string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
+            request.Postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
 
-            //QasSearchRootResponse qasSearchRootResponse = await _qasService.GetGlobalIntuitiveSearchResponse(postcode);
+            PostcodeDto postcodeDto = await _postcodeGetter.GetPostcodeAsync(request.Postcode, cancellationToken);
 
-            //PostcodeResponse postcodeResponse = _qasMapper.MapToPostcodeDto(qasSearchRootResponse);
+            PostcodeResponse getNearbyPostcodesResponse = _mapper.Map<PostcodeDto, PostcodeResponse>(postcodeDto);
 
-            return postcodeResponse;
+            return getNearbyPostcodesResponse;
         }
     }
 }

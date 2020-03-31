@@ -22,7 +22,7 @@ namespace AddressService.Repo
         }
 
         // todo test GetMissingPostcodes is fast enough without using TVPs
-        public async Task<IEnumerable<PostcodeDto>> GetPostcodes(IEnumerable<string> postCodes)
+        public async Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postCodes)
         {
             List<PostcodeEntity> postcodeEntities = await _context.PostCode.Where(x => postCodes.Contains(x.Postcode)).Include(x => x.AddressDetails).ToListAsync();
 
@@ -32,7 +32,7 @@ namespace AddressService.Repo
         }
 
         // todo test SavePostcodes is fast enough without using TVPs (the answer will be no...)
-        public async Task SavePostcodes(IEnumerable<PostcodeDto> postCodes)
+        public async Task SavePostcodesAsync(IEnumerable<PostcodeDto> postCodes)
         {
             IEnumerable<PostcodeEntity> missingPostCodesEntities = _mapper.Map<IEnumerable<PostcodeDto>, IEnumerable<PostcodeEntity>>(postCodes);
 

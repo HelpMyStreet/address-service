@@ -11,7 +11,8 @@ namespace AddressService.Mappers
         {
             CreateMap<AddressDetailsEntity, AddressDetailsDto>();
             CreateMap<AddressDetailsDto, AddressDetailsEntity>();
-            CreateMap<AddressDetailsDto, AddressDetailsResponse>();
+            CreateMap<AddressDetailsDto, AddressDetailsResponse>()
+                .ForMember(s => s.Postcode, c => c.MapFrom(m => m.PostCode.Postcode));
         }
     }
 }

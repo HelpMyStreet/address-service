@@ -37,7 +37,16 @@ namespace AddressService.Repo
                 result.Addresses = new List<AddressDetailsDTO>();
                 foreach(var ad in data.AddressDetails)
                 {
-                    result.Addresses.Add(_mapper.Map<AddressDetailsDTO>(ad));
+                    result.Addresses.Add(new AddressDetailsDTO()
+                    {
+                        Id = ad.Id,
+                        HouseName = ad.HouseName,
+                        HouseNumber = ad.HouseNumber,
+                        City = ad.City,
+                        County = ad.County,
+                        Street = ad.Street
+                    });
+                    //result.Addresses.Add(_mapper.Map<AddressDetailsDTO>(ad));
                 }
             }
 

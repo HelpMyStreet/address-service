@@ -101,17 +101,27 @@ namespace AddressService.AzureFunction
             //       options.UseInMemoryDatabase(databaseName: "AddressService.AzureFunction"));
             builder.Services.AddTransient<IRepository, Repository>();
 
+            var tmpConfig = new ConfigurationBuilder()
+           .SetBasePath(Environment.CurrentDirectory)
+           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+           .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
+           .AddJsonFile("local.settings.json", true)
+           .AddEnvironmentVariables()
+           .Build();
 
-            var connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
-            var connectionStringSettings = config.GetSection(connectionStringSection);
-            builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
+            var sqlConnectionString = tmpConfig.GetConnectionString("SqlConnectionString");
+
+
+            //var connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
+            //var connectionStringSettings = config.GetSection(connectionStringSection);
+            //builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
             
-            var connectionStrings = new ConnectionStrings();
-            config.GetSection(connectionStringSection).Bind(connectionStrings);
+            //var connectionStrings = new ConnectionStrings();
+            //config.GetSection(connectionStringSection).Bind(connectionStrings);
             
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options
-                        .UseSqlServer(connectionStrings.AddressService)
+                        .UseSqlServer(sqlConnectionString)
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
                 ServiceLifetime.Transient
             );

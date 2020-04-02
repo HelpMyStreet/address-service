@@ -1,28 +1,34 @@
 ﻿using AddressService.Core.Domains.Entities.Request;
 using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Interfaces.Repositories;
+using AddressService.Core.Dto;
+using AddressService.Core.Utils;
+using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
-    public class GetPostCodeHandler : IRequestHandler<GetPostCodeRequest, PostCodeResponse>
+    public class GetPostcodeHandler : IRequestHandler<GetPostcodeRequest, PostcodeResponse>
     {
-        private readonly IRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly IPostcodeGetter _postcodeGetter;
 
-        public GetPostCodeHandler(IRepository repository)
+        public GetPostcodeHandler(IMapper mapper, IPostcodeGetter postcodeGetter)
         {
-            _repository = repository;
+            _mapper = mapper;
+            _postcodeGetter = postcodeGetter;
         }
 
-        public Task<PostCodeResponse> Handle(GetPostCodeRequest request, CancellationToken cancellationToken)
+        public async Task<PostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
         {
-            var response = _repository.GetPostCode(request.PostCode);
-            return Task.FromResult(response);
+            request.Postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
+
+            PostcodeDto postcodeDto = await _postcodeGetter.GetPostcodeAsync(request.Postcode, cancellationToken);
+
+            PostcodeResponse getNearbyPostcodesResponse = _mapper.Map<PostcodeDto, PostcodeResponse>(postcodeDto);
+
+            return getNearbyPostcodesResponse;
         }
     }
 }

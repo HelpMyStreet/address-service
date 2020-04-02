@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AddressService.Core.Dto
+﻿namespace AddressService.Core.Dto
 {
-    public class AddressDetailsDTO
+    public class AddressDetailsDto
     {
         public int Id { get; set; }
-        public string HouseName { get; set; }
-        public string HouseNumber { get; set; }
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string County { get; set; }
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+        public string AddressLine3 { get; set; }
+        public string Locality { get; set; }
+        public string PostalCode { get; set; }
         public int PostCodeId { get; set; }
-        public PostCodeDTO PostCode { get; set; }
+        public virtual PostcodeDto PostCode { get; set; }
     }
 }

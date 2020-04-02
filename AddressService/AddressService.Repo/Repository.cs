@@ -1,13 +1,12 @@
-﻿using AutoMapper;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
-using AddressService.Repo.EntityFramework.Entities;
+using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AddressService.Core.Domains.Entities.Response;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace AddressService.Repo
 {
@@ -22,37 +21,23 @@ namespace AddressService.Repo
             _mapper = mapper;
         }
 
-        public PostCodeResponse GetPostCode(string postCode)
+        // todo test GetMissingPostcodes is fast enough without using TVPs
+        public async Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postCodes)
         {
-            PostCode data = _context.PostCode
-                .Include(i => i.AddressDetails)
-                .Where(x => x.PostalCode == postCode)
-                .FirstOrDefault();
+            List<PostcodeEntity> postcodeEntities = await _context.PostCode.Where(x => postCodes.Contains(x.Postcode)).Include(x => x.AddressDetails).ToListAsync();
 
-            PostCodeResponse result = new PostCodeResponse();
+            IEnumerable<PostcodeDto> missingPostCodes = _mapper.Map<IEnumerable<PostcodeEntity>, IEnumerable<PostcodeDto>>(postcodeEntities);
 
-            if (data != null)
-            {
-                result.PostCode = postCode;
-                result.Addresses = new List<AddressDetailsDTO>();
-                foreach(var ad in data.AddressDetails)
-                {
-                    result.Addresses.Add(new AddressDetailsDTO()
-                    {
-                        Id = ad.Id,
-                        HouseName = ad.HouseName,
-                        HouseNumber = ad.HouseNumber,
-                        City = ad.City,
-                        County = ad.County,
-                        Street = ad.Street
-                    });
-                    //result.Addresses.Add(_mapper.Map<AddressDetailsDTO>(ad));
-                }
-            }
+            return missingPostCodes;
+        }
 
-            // List<AddressDetailsDTO> addresses = _mapper.Map<List<AddressDetailsDTO>>(data);
+        // todo test SavePostcodes is fast enough without using TVPs (the answer will be no...)
+        public async Task SavePostcodesAsync(IEnumerable<PostcodeDto> postCodes)
+        {
+            IEnumerable<PostcodeEntity> missingPostCodesEntities = _mapper.Map<IEnumerable<PostcodeDto>, IEnumerable<PostcodeEntity>>(postCodes);
 
-            return result;
+            await _context.PostCode.AddRangeAsync(missingPostCodesEntities);
+            await _context.SaveChangesAsync();
         }
     }
 }

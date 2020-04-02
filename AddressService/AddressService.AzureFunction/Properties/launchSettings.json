@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AddressService.AzureFunction": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "localdev"
+      }
+    }
+  }
+}

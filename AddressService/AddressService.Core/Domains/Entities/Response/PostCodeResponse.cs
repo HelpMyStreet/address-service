@@ -1,13 +1,16 @@
-﻿using AddressService.Core.Dto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace AddressService.Core.Domains.Entities.Response
 {
-    public class PostCodeResponse
+    [DataContract(Name = "postcode")]
+    public class PostcodeResponse
     {
+        [DataMember(Name = "postcode")]
         public string PostCode { get; set; }
-        public List<AddressDetailsDTO> Addresses { get; set; }
+
+        [DataMember(Name = "addressDetails")]
+        public List<AddressDetailsResponse> AddressDetails { get; set; }
+
     }
 }

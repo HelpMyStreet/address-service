@@ -97,8 +97,7 @@ namespace AddressService.Handlers
             {
                 await _repository.SavePostcodesAsync(missingPostcodeDtos);
             }
-
-
+            
             // add missing postcodes to those originally taken from the DB
             IEnumerable<PostcodeDto> allPostcodeDtos = postcodesFromDb.Concat(missingPostcodeDtos);
 

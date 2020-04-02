@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using AddressService.Core.Dto;
+using AddressService.Core.Utils;
 using AddressService.Mappers;
 using NUnit.Framework;
 
@@ -26,8 +28,114 @@ namespace AddressService.UnitTests
                 }
             };
 
-            string result = qasMapper.GetFormatIds(new List<QasSearchRootResponse>(){ qasSearchRootResponse }).SelectMany(x=>x).FirstOrDefault();
+            string result = qasMapper.GetFormatIds(new List<QasSearchRootResponse>() { qasSearchRootResponse }).SelectMany(x => x).FirstOrDefault();
             Assert.AreEqual(expectedFormatId, result);
         }
+
+        [Test]
+        public void MapToPostcodeDto()
+        {
+            QasMapper qasMapper = new QasMapper();
+
+            var postCode = "ng1 5fs";
+            var expectedPostcode = PostcodeCleaner.CleanPostcode(postCode);
+
+            IEnumerable<QasFormatRootResponse> qasFormatRootResponses = new List<QasFormatRootResponse>()
+            {
+                new QasFormatRootResponse()
+                {
+                    Address = new List<QasFormatAddressReponse>()
+                    {
+                        new QasFormatAddressReponse()
+                        {
+                            PostalCode = postCode
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine1 = "line1"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine2 = "line2"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine3 = "line3"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            Locality = "loc"
+                        },
+                    }
+                },
+                new QasFormatRootResponse()
+                {
+                    Address = new List<QasFormatAddressReponse>()
+                    {
+                        new QasFormatAddressReponse()
+                        {
+                            PostalCode = "FilterMeOut"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine1 = "line1"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine2 = "line2"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine3 = "line3"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            Locality = "loc"
+                        }
+                    }
+                },
+                new QasFormatRootResponse()
+                {
+                    Address = new List<QasFormatAddressReponse>()
+                    {
+                        new QasFormatAddressReponse()
+                        {
+                            PostalCode = null
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine1 = "line1"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine2 = "line2"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            AddressLine3 = "line3"
+                        },
+                        new QasFormatAddressReponse()
+                        {
+                            Locality = "loc"
+                        }
+                    }
+                }
+            };
+
+            PostcodeDto result = qasMapper.MapToPostcodeDto(postCode, qasFormatRootResponses);
+
+            Assert.AreEqual(1, result.AddressDetails.Count);
+            Assert.AreEqual(expectedPostcode, result.Postcode);
+            Assert.AreNotEqual(DateTime.MinValue, result.LastUpdated);
+
+            AddressDetailsDto addressResult = result.AddressDetails.FirstOrDefault();
+
+            Assert.AreEqual(expectedPostcode, addressResult.Postcode);
+            Assert.AreEqual("line1", addressResult.AddressLine1);
+            Assert.AreEqual("line2", addressResult.AddressLine2);
+            Assert.AreEqual("line3", addressResult.AddressLine3);
+            Assert.AreEqual("loc", addressResult.Locality);
+        }
+
     }
 }

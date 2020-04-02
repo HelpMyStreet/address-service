@@ -44,17 +44,10 @@ namespace AddressService.Mappers
                         addressDetailsDto.Postcode = PostcodeCleaner.CleanPostcode(address.PostalCode);
                     }
                 }
-
-                if (String.IsNullOrWhiteSpace(addressDetailsDto.Postcode))
+                // filter out postcodes that weren't returned or don't have the expected postcode
+                if (!String.IsNullOrWhiteSpace(addressDetailsDto.Postcode) && addressDetailsDto.Postcode == postcode) 
                 {
-                    continue;
-                }
-
-                postcodeDto.AddressDetails.Add(addressDetailsDto);
-
-                if (addressDetailsDto.Postcode != postcode)
-                {
-                    throw new Exception("This method should map addresses for a single postcode");
+                    postcodeDto.AddressDetails.Add(addressDetailsDto);
                 }
             }
 

@@ -37,7 +37,7 @@ namespace AddressService.Repo
 
                 entity.HasKey(x => x.Id);
 
-                entity.Property(e => e.PostCodeId).HasColumnName("PostcodeId");
+                entity.Property(e => e.PostcodeId).HasColumnName("PostcodeId");
 
                 entity.Property(e => e.AddressLine1)
                     .HasMaxLength(100)
@@ -58,7 +58,7 @@ namespace AddressService.Repo
                 
                 entity.HasOne(d => d.PostCode)
                     .WithMany(p => p.AddressDetails)
-                    .HasForeignKey(d => d.PostCodeId)
+                    .HasForeignKey(d => d.PostcodeId)
                     .HasConstraintName("FK_AddressDetails_Address_Postcode");
             });
 

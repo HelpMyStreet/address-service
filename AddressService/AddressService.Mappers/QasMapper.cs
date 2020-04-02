@@ -41,18 +41,18 @@ namespace AddressService.Mappers
                     }
                     else if (!String.IsNullOrWhiteSpace(address.PostalCode))
                     {
-                        addressDetailsDto.PostalCode = PostcodeCleaner.CleanPostcode(address.PostalCode);
+                        addressDetailsDto.Postcode = PostcodeCleaner.CleanPostcode(address.PostalCode);
                     }
                 }
 
-                if (String.IsNullOrWhiteSpace(addressDetailsDto.PostalCode))
+                if (String.IsNullOrWhiteSpace(addressDetailsDto.Postcode))
                 {
                     continue;
                 }
 
                 postcodeDto.AddressDetails.Add(addressDetailsDto);
 
-                if (addressDetailsDto.PostalCode != postcode)
+                if (addressDetailsDto.Postcode != postcode)
                 {
                     throw new Exception("This method should map addresses for a single postcode");
                 }

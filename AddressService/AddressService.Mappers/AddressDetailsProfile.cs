@@ -9,10 +9,12 @@ namespace AddressService.Mappers
     {
         public AddressDetailsProfile()
         {
-            CreateMap<AddressDetailsEntity, AddressDetailsDto>();
-            CreateMap<AddressDetailsDto, AddressDetailsEntity>();
+            CreateMap<AddressDetailsEntity, AddressDetailsDto>()
+                .ForMember(x=>x.Postcode,x=> x.MapFrom(m => m.PostCode.Postcode));
+            CreateMap<AddressDetailsDto, AddressDetailsEntity>()
+                .ForMember(x=>x.PostCode,y=>y.Ignore());
             CreateMap<AddressDetailsDto, AddressDetailsResponse>()
-                .ForMember(s => s.Postcode, c => c.MapFrom(m => m.PostalCode));
+                .ForMember(s => s.Postcode, c => c.MapFrom(m => m.Postcode));
         }
     }
 }

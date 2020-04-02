@@ -7,7 +7,6 @@ namespace AddressService.Core.Domains.Entities.Request
     public class GetPostcodeRequest : IRequest<PostcodeResponse>
     {
         [Required]
-        [RegularExpression(Validation.Validation.PostcodeRegex, ErrorMessage = "Invalid Postcode")]
         public string Postcode { get; set; }
     }
 }

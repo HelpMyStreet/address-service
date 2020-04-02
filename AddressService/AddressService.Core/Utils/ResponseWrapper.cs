@@ -29,6 +29,17 @@ namespace AddressService.Core.Utils
             return responseWrapper;
         }
 
+        public static ResponseWrapper CreateUnsuccessfulResponse(string errorMessage)
+        {
+            var responseWrapper = new ResponseWrapper()
+            {
+                IsSuccessful = false,
+                Errors = new List<string>() { errorMessage }
+            };
+
+            return responseWrapper;
+        }
+
         public static ResponseWrapper CreateUnsuccessfulResponse(IEnumerable<ValidationResult> validationResults)
         {
             var responseWrapper = new ResponseWrapper()

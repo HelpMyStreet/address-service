@@ -7,7 +7,6 @@ namespace AddressService.Core.Domains.Entities.Request
     public class GetNearbyPostcodesRequest : IRequest<GetNearbyPostcodesResponse>
     {
         [Required]
-        [RegularExpression(Validation.Validation.PostcodeRegex, ErrorMessage = "Invalid Postcode")]
         public string Postcode { get; set; }
     }
 }

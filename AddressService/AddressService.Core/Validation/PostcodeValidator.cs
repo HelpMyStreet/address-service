@@ -8,12 +8,12 @@ using AddressService.Core.Utils;
 
 namespace AddressService.Core.Validation
 {
-    public class PostcodeValidator
+    public class PostcodeValidator : IPostcodeValidator
     {
         private readonly IPostcodeIoService _postcodeIoService;
         private readonly IRepository _repository;
 
-        private static readonly Regex _postCodeRegex = new Regex(Validation.PostcodeRegex, RegexOptions.Compiled);
+        private static readonly Regex _postCodeRegex = new Regex("^([A-Z]|[a-z]){1,2}[0-9][0-9A-Z]?\\s?[0-9]([A-Z]|[a-z])([A-Z]|[a-z])", RegexOptions.Compiled);
 
         public PostcodeValidator(IPostcodeIoService postcodeIoService, IRepository repository)
         {

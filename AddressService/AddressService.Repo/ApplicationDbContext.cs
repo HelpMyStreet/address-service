@@ -29,7 +29,7 @@ namespace AddressService.Repo
         {
             modelBuilder.Entity<AddressDetailsEntity>(entity =>
             {
-                entity.ToTable("AddressDetails", "Address");
+                entity.ToTable("AddressDetail", "Address");
 
                 entity.Property(e => e.Id).HasColumnName("Id");
 
@@ -37,7 +37,7 @@ namespace AddressService.Repo
 
                 entity.HasKey(x => x.Id);
 
-                entity.Property(e => e.PostCodeId).HasColumnName("PostCodeId");
+                entity.Property(e => e.PostCodeId).HasColumnName("PostcodeId");
 
                 entity.Property(e => e.AddressLine1)
                     .HasMaxLength(100)
@@ -59,12 +59,12 @@ namespace AddressService.Repo
                 entity.HasOne(d => d.PostCode)
                     .WithMany(p => p.AddressDetails)
                     .HasForeignKey(d => d.PostCodeId)
-                    .HasConstraintName("FK_AddressDetails_Address_PostCode");
+                    .HasConstraintName("FK_AddressDetails_Address_Postcode");
             });
 
             modelBuilder.Entity<PostcodeEntity>(entity =>
             {
-                entity.ToTable("PostCode", "Address");
+                entity.ToTable("Postcode", "Address");
 
                 entity.Property(e => e.Id).HasColumnName("Id");
 

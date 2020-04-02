@@ -26,11 +26,13 @@ Entity Framework currently isn't generating the scripts to create a database (th
         {
             //Database.EnsureCreated();
         }
-		
+
+
 4) SQL Source Control - IMPORTANT
 
 Any custom SQL such as table types and stored procs should be put in the Up migration methods and a rollback in the Down method.  This provides SQL source control and allows anybody to recreate the database.
-	
+
+Further, adding migration through the Package Manager Console produces an error so this needs to be done through the command line (e.g. dotnet ef migrations add MigrationName)
 
 5) Example Requests
 

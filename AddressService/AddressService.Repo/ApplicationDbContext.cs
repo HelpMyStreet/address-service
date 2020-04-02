@@ -40,19 +40,19 @@ namespace AddressService.Repo
                 entity.Property(e => e.PostCodeId).HasColumnName("PostCodeId");
 
                 entity.Property(e => e.AddressLine1)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.AddressLine2)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.AddressLine3)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Locality)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 

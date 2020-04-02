@@ -91,31 +91,6 @@ namespace AddressService.Mappers
             return formatIdsLookup;
         }
 
-        //public IEnumerable<string> GetFormatIds(IEnumerable<QasSearchRootResponse> qasSearchRootResponses)
-        //{
-        //    List<string> formatIds = new List<string>();
-
-        //    foreach (var qasSearchRootResponse in qasSearchRootResponses)
-        //    {
-        //        formatIds.AddRange(GetFormatIds(qasSearchRootResponse));
-        //    }
-
-        //    return formatIds;
-        //}
-
-        //public IEnumerable<string> GetFormatIds(QasSearchRootResponse qasSearchRootResponse)
-        //{
-        //    var formatIds = qasSearchRootResponse.Results.Select(x => GetFormatIdFromUri(x.Format));
-
-        //    // throw exception if any format ids are null until better error handling has been decided (e.g. ignore any null addresses with the consequence that some addresses won't be stored)
-        //    if (formatIds.Any(x => x == null))
-        //    {
-        //        throw new Exception("Qas Format Id is null");
-        //    }
-
-        //    return formatIds;
-        //}
-
         private string GetFormatIdFromUri(string uri)
         {
             NameValueCollection queryParameters = HttpUtility.ParseQueryString(uri);

@@ -1,0 +1,39 @@
+
+1) Connection Strings
+
+  "ConnectionStrings": {
+    "AddressService": "Server=DESKTOP-CRLTBC4\\SQLEXPRESS;Database=address_service;Trusted_Connection=True;"
+  },
+  "ConnectionStringsLocalDev": {
+    "AddressService": "Data Source=127.0.0.1;Initial Catalog=AddressService;Integrated Security=True;MultipleActiveResultSets=True"
+  }
+  
+When running the code locally the connection string in ConnectionStringsLocalDev will be used if the ASPNETCORE_ENVIRONMENT environment variable is set to "localdev".  This can be set by going to the AddressService.AzureFunction project properties and going to Debug.
+
+The idea behind it is to not have to change the appsettings to run it locally and then accidentally check it in.
+
+
+2) QAS Token
+
+The program needs a token to call QAS.  This is stored in a User Secrets file so the token doesn't get committed to the repository.  There is an example secrets.json file in the UserGuide folder.  This needs to be copied to: %APPDATA%\Microsoft\UserSecrets\2ab26b8f-fafb-4345-a188-210580b87104\secrets.json.  You'll need to create the folder with the '2ab26b8f-fafb-4345-a188-210580b87104' GUID (this is determined in the csproj file) and update the token in secrets.json.
+
+3) Entity Frameowrk
+
+Entity Framework currently isn't generating the scripts to create a database (this is a bug that needs to be looked into).  You can uncomment the "Database.EnsureCreated()" line in the ApplicationDbContext class to create the database though.
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+            //Database.EnsureCreated();
+        }
+		
+4) SQL Source Control - IMPORTANT
+
+Any custom SQL such as table types and stored procs should be put in the Up migration methods and a rollback in the Down method.  This provides SQL source control and allows anybody to recreate the database.
+	
+
+5) Example Requests
+
+http://localhost:7071/api/GetPostcode?postcode=NG15FS
+
+http://localhost:7071/api/GetNearbyPostcodes?postcode=NG15FS

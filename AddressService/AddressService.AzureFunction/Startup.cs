@@ -17,6 +17,7 @@ using AddressService.Core.Config;
 using AddressService.Core.Services.PostcodeIo;
 using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
+using AddressService.Core.Validation;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -29,14 +30,10 @@ namespace AddressService.AzureFunction
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            ExecutionContextOptions executioncontextoptions = builder.Services.BuildServiceProvider()
-               .GetService<IOptions<ExecutionContextOptions>>().Value;
-            string currentDirectory = executioncontextoptions.AppDirectory;
-
             IConfigurationBuilder configBuilder = new ConfigurationBuilder()
-                .SetBasePath(currentDirectory)
+                .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
+                .AddJsonFile("local.settings.json", true)
                 .AddEnvironmentVariables();
 
             string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -80,7 +77,7 @@ namespace AddressService.AzureFunction
                 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                 {
                     MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15,
-                    AutomaticDecompression =  DecompressionMethods.GZip | DecompressionMethods.Deflate
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 });
 
             }
@@ -94,34 +91,28 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
 
+            builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
+
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
+            builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
+            builder.Services.AddAutoMapper(typeof(PostCodeProfile).Assembly);
 
             //builder.Services.AddDbContext<ApplicationDbContext>(options =>
             //       options.UseInMemoryDatabase(databaseName: "AddressService.AzureFunction"));
             builder.Services.AddTransient<IRepository, Repository>();
 
-            var tmpConfig = new ConfigurationBuilder()
-           .SetBasePath(Environment.CurrentDirectory)
-           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-           .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
-           .AddJsonFile("local.settings.json", true)
-           .AddEnvironmentVariables()
-           .Build();
 
-            var sqlConnectionString = tmpConfig.GetConnectionString("SqlConnectionString");
+            var connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
+            var connectionStringSettings = config.GetSection(connectionStringSection);
+            builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
 
+            var connectionStrings = new ConnectionStrings();
+            connectionStringSettings.Bind(connectionStrings);
 
-            //var connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
-            //var connectionStringSettings = config.GetSection(connectionStringSection);
-            //builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
-            
-            //var connectionStrings = new ConnectionStrings();
-            //config.GetSection(connectionStringSection).Bind(connectionStrings);
-            
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options
-                        .UseSqlServer(sqlConnectionString)
+                        .UseSqlServer(connectionStrings.AddressService)
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
                 ServiceLifetime.Transient
             );

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -96,8 +97,12 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
-            builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
-            builder.Services.AddAutoMapper(typeof(PostCodeProfile).Assembly);
+
+            IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();
+            foreach (var profile in autoMapperProfiles)
+            {
+                builder.Services.AddAutoMapper(profile.Assembly);
+            }
 
             builder.Services.AddTransient<IRepository, Repository>();
 

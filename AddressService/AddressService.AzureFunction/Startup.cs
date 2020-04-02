@@ -99,7 +99,9 @@ namespace AddressService.AzureFunction
 
             var tmpConfig = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("local.settings.json",true)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
+            .AddJsonFile("local.settings.json", true)
             .AddEnvironmentVariables()
             .Build();
 

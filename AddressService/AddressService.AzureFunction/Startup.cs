@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using AutoMapper;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
@@ -33,7 +34,7 @@ namespace AddressService.AzureFunction
             IConfigurationBuilder configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("local.settings.json", true)
+                .AddJsonFile("local.settings.json", true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -67,7 +68,7 @@ namespace AddressService.AzureFunction
 
                     c.Timeout = httpClientConfig.Value.Timeout ?? new TimeSpan(0, 0, 0, 15);
 
-                    foreach (var header in httpClientConfig.Value.Headers)
+                    foreach (KeyValuePair<string, string> header in httpClientConfig.Value.Headers)
                     {
                         c.DefaultRequestHeaders.Add(header.Key, header.Value);
                     }
@@ -98,16 +99,17 @@ namespace AddressService.AzureFunction
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
             builder.Services.AddAutoMapper(typeof(PostCodeProfile).Assembly);
 
-            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //       options.UseInMemoryDatabase(databaseName: "AddressService.AzureFunction"));
             builder.Services.AddTransient<IRepository, Repository>();
 
 
-            var connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
-            var connectionStringSettings = config.GetSection(connectionStringSection);
+            IConfigurationSection applicationConfigSettings = config.GetSection("ApplicationConfig");
+            builder.Services.Configure<ApplicationConfig>(applicationConfigSettings);
+
+            string connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
+            IConfigurationSection connectionStringSettings = config.GetSection(connectionStringSection);
             builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
 
-            var connectionStrings = new ConnectionStrings();
+            ConnectionStrings connectionStrings = new ConnectionStrings();
             connectionStringSettings.Bind(connectionStrings);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -22,8 +22,7 @@ namespace AddressService.Core.Services.PostcodeIo
         {
             string path = $"postcodes/{postcode}/nearest";
             // 804km = 0.5 miles
-            // todo limiting QAS results to 5 until addresses are stored in DB
-            string query = "limit=5&radius=804.672"; 
+            string query = "limit=100&radius=804.672"; 
             string absolutePath = $"{path}?{query}";
 
             PostCodeIoNearestRootResponse postCodeIoNearestRootResponse;

@@ -96,6 +96,7 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
+            builder.Services.AddTransient<IRepository, Repository>();
 
             var tmpConfig = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)

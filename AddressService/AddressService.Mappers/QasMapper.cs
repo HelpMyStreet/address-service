@@ -67,15 +67,12 @@ namespace AddressService.Mappers
             {
                 foreach (var result in qasSearchRootResponse.Results)
                 {
-                    var postCodeWithFormatId = new Tuple<string, string>(qasSearchRootResponse.Postcode, GetFormatIdFromUri(result.Format));
-
-                    // todo throw exception if any format ids are null until better error handling has been decided (e.g. ignore any null addresses with the consequence that some addresses won't be stored)
-                    if (postCodeWithFormatId.Item2 == null)
+                    // filter out any addresses missing a Format ID
+                    if (!String.IsNullOrWhiteSpace(result.Format))
                     {
-                        throw new Exception("Qas Format Id is null");
+                        Tuple<string, string> postCodeWithFormatId = new Tuple<string, string>(qasSearchRootResponse.Postcode, GetFormatIdFromUri(result.Format));
+                        formatIds.Add(postCodeWithFormatId);
                     }
-
-                    formatIds.Add(postCodeWithFormatId);
                 }
             }
 

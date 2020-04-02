@@ -12,24 +12,49 @@ namespace AddressService.UnitTests
 {
     public class QasMapperTests
     {
-        [TestCase("https://api.edq.com/capture/address/v2/format?country=GBR&id=aWQ9NTUwMTgxNTZ-Zm9ybWF0aWQ9NTA3Y2Y5YmItNzA0MC00NGVhLWJiZmItNzE0ZDhmNWIxOWJhfnFsPTZ-Z2VvPTA", "aWQ9NTUwMTgxNTZ-Zm9ybWF0aWQ9NTA3Y2Y5YmItNzA0MC00NGVhLWJiZmItNzE0ZDhmNWIxOWJhfnFsPTZ-Z2VvPTA")]
-        public void GetFormatIdFromUri(string uri, string expectedFormatId)
+        [Test]
+        public void GetFormatIdFromUri()
         {
             QasMapper qasMapper = new QasMapper();
 
-            QasSearchRootResponse qasSearchRootResponse = new QasSearchRootResponse()
+            IEnumerable<QasSearchRootResponse> qasSearchRootResponses = new List<QasSearchRootResponse>()
             {
-                Results = new List<QasSearchResponse>()
+                new QasSearchRootResponse()
                 {
-                    new QasSearchResponse()
+                    Results = new List<QasSearchResponse>()
                     {
-                        Format = uri
+                        new QasSearchResponse()
+                        {
+                            Format = "https://api.edq.com/capture/address/v2/format?country=GBR&id=aWQ9NTUwMTgxNTZ-Zm9ybWF0aWQ9NTA3Y2Y5YmItNzA0MC00NGVhLWJiZmItNzE0ZDhmNWIxOWJhfnFsPTZ-Z2VvPTA"
+                        }
                     }
-                }
+                    },
+                new QasSearchRootResponse()
+                {
+                    Results = new List<QasSearchResponse>()
+                    {
+                        new QasSearchResponse()
+                        {
+                            Format = ""
+                        }
+                    }
+                },
+                new QasSearchRootResponse()
+                {
+                    Results = new List<QasSearchResponse>()
+                    {
+                        new QasSearchResponse()
+                        {
+                            Format =null
+                        }
+                    }
+                },
             };
 
-            string result = qasMapper.GetFormatIds(new List<QasSearchRootResponse>() { qasSearchRootResponse }).SelectMany(x => x).FirstOrDefault();
-            Assert.AreEqual(expectedFormatId, result);
+
+            var result = qasMapper.GetFormatIds(qasSearchRootResponses);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("aWQ9NTUwMTgxNTZ-Zm9ybWF0aWQ9NTA3Y2Y5YmItNzA0MC00NGVhLWJiZmItNzE0ZDhmNWIxOWJhfnFsPTZ-Z2VvPTA", result.FirstOrDefault().FirstOrDefault());
         }
 
         [Test]

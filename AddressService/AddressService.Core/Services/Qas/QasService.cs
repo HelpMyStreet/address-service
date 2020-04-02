@@ -7,7 +7,7 @@ using AddressService.Core.Dto;
 using AddressService.Core.Utils;
 using Marvin.StreamExtensions;
 
-namespace AddressService.Handlers.Qas
+namespace AddressService.Core.Services.Qas
 {
     public class QasService : IQasService
     {

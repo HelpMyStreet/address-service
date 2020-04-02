@@ -14,4 +14,8 @@
 		</ProjectReference>
 		<ProjectReference Include="..\AddressService.Mappers\AddressService.Mappers.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="PostcodeIo\" />
+	  <Folder Include="Qas\" />
+	</ItemGroup>
 </Project>

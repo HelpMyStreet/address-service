@@ -8,9 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
+using AddressService.Core.Services.PostcodeIo;
 using AddressService.Core.Utils;
-using AddressService.Handlers.PostcodeIo;
-using AddressService.Handlers.Qas;
 using AddressService.Mappers;
 using AutoMapper;
 

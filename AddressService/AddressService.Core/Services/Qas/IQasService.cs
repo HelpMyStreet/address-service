@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AddressService.Core.Dto;
 
-namespace AddressService.Handlers.Qas
+namespace AddressService.Core.Services.Qas
 {
     public interface IQasService
     {

@@ -1,8 +1,8 @@
 ﻿using System.Threading;
-using AddressService.Core.Dto;
 using System.Threading.Tasks;
+using AddressService.Core.Dto;
 
-namespace AddressService.Handlers.PostcodeIo
+namespace AddressService.Core.Services.PostcodeIo
 {
     public interface IPostcodeIoService
     {

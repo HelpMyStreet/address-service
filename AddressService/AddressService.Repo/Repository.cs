@@ -1,12 +1,12 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
-using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
 
 namespace AddressService.Repo
 {
@@ -38,6 +38,12 @@ namespace AddressService.Repo
 
             await _context.PostCode.AddRangeAsync(missingPostCodesEntities);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsPostcodeInDb(string postcode)
+        {
+            var result = await _context.PostCode.AnyAsync(x => x.Postcode == postcode);
+            return result;
         }
     }
 }

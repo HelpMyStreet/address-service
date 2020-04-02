@@ -7,7 +7,7 @@ using AddressService.Core.Dto;
 using AddressService.Core.Utils;
 using Marvin.StreamExtensions;
 
-namespace AddressService.Handlers.PostcodeIo
+namespace AddressService.Core.Services.PostcodeIo
 {
     public class PostcodeIoService : IPostcodeIoService
     {

@@ -8,5 +8,7 @@ namespace AddressService.Core.Interfaces.Repositories
     {
         Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postCodes);
         Task SavePostcodesAsync(IEnumerable<PostcodeDto> postCodes);
+
+        Task<bool> IsPostcodeInDb(string postcode);
     }
 }

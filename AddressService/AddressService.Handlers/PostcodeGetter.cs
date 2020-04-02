@@ -1,7 +1,6 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Utils;
-using AddressService.Handlers.Qas;
 using AddressService.Mappers;
 using AutoMapper;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Services.Qas;
 
 namespace AddressService.Handlers
 {

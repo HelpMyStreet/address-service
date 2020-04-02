@@ -1,4 +1,4 @@
-﻿namespace AddressService.Core
+﻿namespace AddressService.Core.Validation
 {
     public static class Validation
     {

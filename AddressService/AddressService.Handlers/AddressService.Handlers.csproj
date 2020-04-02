@@ -5,6 +5,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="PostcodeIo\**" />
+	  <Compile Remove="Qas\**" />
+	  <EmbeddedResource Remove="PostcodeIo\**" />
+	  <EmbeddedResource Remove="Qas\**" />
+	  <None Remove="PostcodeIo\**" />
+	  <None Remove="Qas\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="MediatR" Version="8.0.1" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>
@@ -13,9 +22,5 @@
 			<Name>AddressService.Core</Name>
 		</ProjectReference>
 		<ProjectReference Include="..\AddressService.Mappers\AddressService.Mappers.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="PostcodeIo\" />
-	  <Folder Include="Qas\" />
 	</ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Dto;
-using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
+using AddressService.Repo.EntityFramework.Entities;
 using AutoMapper;
 
 namespace AddressService.Mappers

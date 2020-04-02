@@ -1,5 +1,4 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
-using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AddressService.Repo

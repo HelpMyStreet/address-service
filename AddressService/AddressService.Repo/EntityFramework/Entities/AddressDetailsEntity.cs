@@ -1,6 +1,4 @@
-﻿using AddressService.Repo.EntityFramework.Entities.AddressService.Repo.EntityFramework.Entities;
-
-namespace AddressService.Repo.EntityFramework.Entities
+﻿namespace AddressService.Repo.EntityFramework.Entities
 {
     public class AddressDetailsEntity
     {

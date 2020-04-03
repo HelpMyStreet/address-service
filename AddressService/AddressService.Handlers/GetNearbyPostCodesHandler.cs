@@ -1,20 +1,16 @@
-﻿using AddressService.Core.Domains.Entities.Request;
+﻿using AddressService.Core.Config;
+using AddressService.Core.Domains.Entities.Request;
 using AddressService.Core.Domains.Entities.Response;
-using MediatR;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Threading.Tasks;
-using AddressService.Core.Config;
 using AddressService.Core.Dto;
-using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Services.PostcodeIo;
 using AddressService.Core.Utils;
-using AddressService.Mappers;
 using AutoMapper;
+using MediatR;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
@@ -35,14 +31,14 @@ namespace AddressService.Handlers
 
         public async Task<GetNearbyPostcodesResponse> Handle(GetNearbyPostcodesRequest request, CancellationToken cancellationToken)
         {
-            // call Postcode IO for nearest postcodes
             string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
 
+            // call Postcode IO for nearest postcodes
             PostCodeIoNearestRootResponse postCodeIoResponse = await _postcodeIoService.GetNearbyPostCodesAsync(postcode, cancellationToken);
 
-            ImmutableHashSet<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance)
+            IEnumerable<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance)
                 .Take(_applicationConfig.Value.NearestPostcodesLimit)
-                .Select(x => PostcodeCleaner.CleanPostcode(x.Postcode)).ToImmutableHashSet();
+                .Select(x => PostcodeCleaner.CleanPostcode(x.Postcode)).ToList();
 
             // get postcodes
             IEnumerable<PostcodeDto> postcodeDtos = await _postcodeGetter.GetPostcodesAsync(nearestPostcodes, cancellationToken);

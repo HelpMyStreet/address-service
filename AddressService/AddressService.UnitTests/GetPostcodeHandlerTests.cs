@@ -38,13 +38,13 @@ namespace AddressService.UnitTests
 
             GetPostcodeRequest request = new GetPostcodeRequest()
             {
-                Postcode = "NG1 5FS"
+                Postcode = "ng15fs"
             };
 
             PostcodeResponse result = await getPostcodeHandler.Handle(request, CancellationToken.None);
 
             Assert.AreEqual("NG1 5FS", result.PostCode);
-            _postcodeGetter.Verify(x => x.GetPostcodeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()));
+            _postcodeGetter.Verify(x => x.GetPostcodeAsync(It.Is<string>(y => y == "NG1 5FS"), It.IsAny<CancellationToken>()));
             _mapper.Verify(x => x.Map<PostcodeDto, PostcodeResponse>(It.IsAny<PostcodeDto>()));
         }
     }

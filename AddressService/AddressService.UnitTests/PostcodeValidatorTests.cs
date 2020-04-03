@@ -38,17 +38,16 @@ namespace AddressService.UnitTests
         [TestCase("NG15FS",true, true, true)]
         [TestCase("N15FS", true, true, true)]
         [TestCase("N11FS", true, true, true)]
-        [TestCase("N1FS", true, true, true)]
 
 
         // Passes regex, but not in DB or determined as valid by PostcodeIO
-        [TestCase("NGG15FS", false, false, false)]
+        [TestCase("NG15ZZ", false, false, false)]
 
         // Passes regex and in DB
-        [TestCase("NGG15FS", true, false, true)]
+        [TestCase("NG15ZZ", true, false, true)]
 
         // Passes regex and not in DB, but is determined as valid by PostcodeIO
-        [TestCase("NGG15FS", false, true, true)]
+        [TestCase("NG15ZZ", false, true, true)]
         public async Task Test(string postcode, bool isPostcodeInDb,bool doesPostcodeIoSayPostcodeIsValid, bool expectedResult)
         {
             _repository.Setup(x => x.IsPostcodeInDb(It.IsAny<string>())).ReturnsAsync(isPostcodeInDb);

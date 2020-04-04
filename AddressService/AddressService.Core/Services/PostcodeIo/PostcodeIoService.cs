@@ -21,8 +21,8 @@ namespace AddressService.Core.Services.PostcodeIo
         public async Task<PostCodeIoNearestRootResponse> GetNearbyPostCodesAsync(string postcode, CancellationToken cancellationToken)
         {
             string path = $"postcodes/{postcode}/nearest";
-            // 804km = 0.5 miles
-            string query = "limit=100&radius=804.672"; 
+            // 804.672km = 0.5 miles
+            string query = "limit=100&radius=805"; 
             string absolutePath = $"{path}?{query}";
 
             PostCodeIoNearestRootResponse postCodeIoNearestRootResponse;

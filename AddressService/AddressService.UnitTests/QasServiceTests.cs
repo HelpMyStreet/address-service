@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using AddressService.Core.Config;
+﻿using AddressService.Core.Config;
 using AddressService.Core.Dto;
 using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
 using Moq;
 using NUnit.Framework;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AddressService.UnitTests
 {
@@ -30,8 +27,7 @@ namespace AddressService.UnitTests
                 Content = new StringContent(_searchResponse),
                 StatusCode = HttpStatusCode.OK
             };
-
-
+            
             _httpClientWrapper.Setup(x => x.GetAsync(It.Is<HttpClientConfigName>(y => y == HttpClientConfigName.Qas), It.Is<string>(y => y.Contains("capture/address/v2/search")), It.IsAny<CancellationToken>())).ReturnsAsync(searchResponse);
 
 
@@ -41,11 +37,7 @@ namespace AddressService.UnitTests
                 StatusCode = HttpStatusCode.OK
             };
 
-
             _httpClientWrapper.Setup(x => x.GetAsync(It.Is<HttpClientConfigName>(y => y == HttpClientConfigName.Qas), It.Is<string>(y => y.Contains("capture/address/v2/format")), It.IsAny<CancellationToken>())).ReturnsAsync(formatResponse);
-
-
-
         }
 
         [Test]
@@ -55,7 +47,7 @@ namespace AddressService.UnitTests
 
             QasFormatRootResponse result = await qasService.GetGlobalIntuitiveFormatResponseAsync("aWQ9NTUwMTgxNTZ-Zm9ybWF0aWQ9NTA3Y2Y5YmItNzA0MC00NGVhLWJiZmItNzE0ZDhmNWIxOWJhfnFsPTZ-Z2VvPTA", CancellationToken.None);
 
-           Assert.AreEqual("Experian Data Quality", result.Address[0].AddressLine1);
+            Assert.AreEqual("Experian Data Quality", result.Address[0].AddressLine1);
 
             _httpClientWrapper.Verify(x => x.GetAsync(It.Is<HttpClientConfigName>(y => y == HttpClientConfigName.Qas), It.Is<string>(y => y == "capture/address/v2/format?country=GBR&id=aWQ9NTUwMTgxNTZ-Zm9ybWF0aWQ9NTA3Y2Y5YmItNzA0MC00NGVhLWJiZmItNzE0ZDhmNWIxOWJhfnFsPTZ-Z2VvPTA"), It.IsAny<CancellationToken>()));
         }

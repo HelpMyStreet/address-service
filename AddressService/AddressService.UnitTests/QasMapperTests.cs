@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Core.Utils;
 using AddressService.Mappers;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AddressService.UnitTests
 {

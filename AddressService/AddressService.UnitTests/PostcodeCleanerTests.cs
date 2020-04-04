@@ -31,12 +31,22 @@ namespace AddressService.UnitTests
 
         [TestCase("  ", "  ")]
         [TestCase("", "")]
-        [TestCase(null, null)]
 
-        public void CleanPostcode(string postcode, string expected)
+        public void CleanPostcode(string postcodeToTest, string expected)
         {
-            string result = PostcodeCleaner.CleanPostcode(postcode);
+            string postcodeInput = String.Copy(postcodeToTest);
+            string result = PostcodeFormatter.FormatPostcode(postcodeInput);
             Assert.AreEqual(expected, result);
+
+            // check input was not modified
+            Assert.AreEqual(postcodeToTest, postcodeInput);
+            Assert.IsFalse(Object.ReferenceEquals(result, postcodeToTest));
+        }
+
+        [Test]
+        public void ThrowExceptionOnNullInput()
+        {
+            Assert.Throws<ArgumentNullException>(() => PostcodeFormatter.FormatPostcode(null));
         }
 
     }

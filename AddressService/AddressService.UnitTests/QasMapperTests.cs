@@ -63,7 +63,7 @@ namespace AddressService.UnitTests
             QasMapper qasMapper = new QasMapper();
 
             var postCode = "ng1 5fs";
-            var expectedPostcode = PostcodeCleaner.CleanPostcode(postCode);
+            var expectedPostcode = PostcodeFormatter.FormatPostcode(postCode);
 
             IEnumerable<QasFormatRootResponse> qasFormatRootResponses = new List<QasFormatRootResponse>()
             {

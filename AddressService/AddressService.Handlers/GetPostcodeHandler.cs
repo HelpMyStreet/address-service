@@ -22,7 +22,7 @@ namespace AddressService.Handlers
 
         public async Task<GetPostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
         {
-            request.Postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
+            request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
             PostcodeDto postcodeDto = await _postcodeGetter.GetPostcodeAsync(request.Postcode, cancellationToken);
 

@@ -32,12 +32,12 @@ namespace AddressService.Handlers
 
         public async Task<GetNearbyPostcodesResponse> Handle(GetNearbyPostcodesRequest request, CancellationToken cancellationToken)
         {
-            string postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
+            string postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
             // call Postcode IO for nearest postcodes
             PostCodeIoNearestRootResponse postCodeIoResponse = await _postcodeIoService.GetNearbyPostCodesAsync(postcode, cancellationToken);
 
-            postCodeIoResponse.Result.ForEach(x => x.Postcode = PostcodeCleaner.CleanPostcode(x.Postcode));
+            postCodeIoResponse.Result.ForEach(x => x.Postcode = PostcodeFormatter.FormatPostcode(x.Postcode));
 
             IEnumerable<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance)
                 .Take(_applicationConfig.Value.NearestPostcodesLimit)

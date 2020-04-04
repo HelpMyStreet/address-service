@@ -28,7 +28,7 @@ namespace AddressService.Core.Validation
                 return false;
             }
 
-            postcode = PostcodeCleaner.CleanPostcode(postcode);
+            postcode = PostcodeFormatter.FormatPostcode(postcode);
 
             if (!_postCodeRegex.IsMatch(postcode))
             {

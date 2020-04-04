@@ -32,7 +32,7 @@ namespace AddressService.UnitTests
         [TestCase("  ", "  ")]
         [TestCase("", "")]
 
-        public void CleanPostcode(string postcodeToTest, string expected)
+        public void FormatPostcode(string postcodeToTest, string expected)
         {
             string postcodeInput = String.Copy(postcodeToTest);
             string result = PostcodeFormatter.FormatPostcode(postcodeInput);

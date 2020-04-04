@@ -1,8 +1,8 @@
-﻿using AddressService.Core.Domains.Entities.Request;
-using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Handlers;
 using AutoMapper;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using Moq;
 using NUnit.Framework;
 using System.Threading;

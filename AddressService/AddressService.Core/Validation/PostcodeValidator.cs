@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AddressService.Core.Interfaces.Repositories;
+using AddressService.Core.Services.PostcodeIo;
+using HelpMyStreet.Utils.Utils;
+using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Interfaces.Repositories;
-using AddressService.Core.Services.PostcodeIo;
-using AddressService.Core.Utils;
 
 namespace AddressService.Core.Validation
 {

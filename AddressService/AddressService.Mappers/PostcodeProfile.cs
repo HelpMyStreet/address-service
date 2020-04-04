@@ -1,7 +1,7 @@
-﻿using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Repo.EntityFramework.Entities;
 using AutoMapper;
+using HelpMyStreet.Contracts.AddressService.Response;
 
 namespace AddressService.Mappers
 {

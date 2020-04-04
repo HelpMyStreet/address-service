@@ -1,11 +1,11 @@
-﻿using AddressService.Core.Domains.Entities.Request;
-using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Dto;
-using AddressService.Core.Utils;
+﻿using AddressService.Core.Dto;
 using AutoMapper;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Utils.Utils;
 
 namespace AddressService.Handlers
 {

@@ -1,6 +1,4 @@
 ﻿using AddressService.Core.Config;
-using AddressService.Core.Domains.Entities.Request;
-using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Dto;
 using AddressService.Core.Services.PostcodeIo;
 using AddressService.Handlers;
@@ -12,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 
 namespace AddressService.UnitTests
 {

@@ -1,17 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using AddressService.Core.Utils;
+using AddressService.Core.Validation;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using MediatR;
 using System;
-using System.Diagnostics;
 using System.Threading;
-using AddressService.Core.Domains.Entities.Request;
-using AddressService.Core.Domains.Entities.Response;
-using AddressService.Core.Utils;
-using AddressService.Core.Validation;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 
 namespace AddressService.AzureFunction
 {

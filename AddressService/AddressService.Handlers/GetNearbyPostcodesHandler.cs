@@ -1,10 +1,10 @@
 ﻿using AddressService.Core.Config;
-using AddressService.Core.Domains.Entities.Request;
-using AddressService.Core.Domains.Entities.Response;
 using AddressService.Core.Dto;
 using AddressService.Core.Services.PostcodeIo;
-using AddressService.Core.Utils;
 using AutoMapper;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Utils.Utils;
 using MediatR;
 using Microsoft.Extensions.Options;
 using System;

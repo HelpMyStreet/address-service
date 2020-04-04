@@ -51,17 +51,6 @@ namespace AddressService.Core.Utils
             return responseWrapper;
         }
 
-        //  shouldn't be exposing exceptions in the response...
-        public static ResponseWrapper CreateUnsuccessfulResponse(Exception exception)
-        {
-            var responseWrapper = new ResponseWrapper()
-            {
-                IsSuccessful = false,
-                Errors = new List<string>() { exception.ToString() }
-            };
-
-            return responseWrapper;
-        }
 
         [DataMember(Name = "isSuccessful")]
         public bool IsSuccessful { get; protected set; }
@@ -86,6 +75,29 @@ namespace AddressService.Core.Utils
 
             return responseWrapper;
         }
+
+        public new static ResponseWrapper CreateUnsuccessfulResponse(string errorMessage)
+        {
+            var responseWrapper = new ResponseWrapper<T>()
+            {
+                IsSuccessful = false,
+                Errors = new List<string>() { errorMessage }
+            };
+
+            return responseWrapper;
+        }
+
+        public new static ResponseWrapper CreateUnsuccessfulResponse(IEnumerable<ValidationResult> validationResults)
+        {
+            var responseWrapper = new ResponseWrapper<T>()
+            {
+                IsSuccessful = false,
+                Errors = validationResults.Select(x => x.ErrorMessage)
+            };
+
+            return responseWrapper;
+        }
+
 
         [DataMember(Name = "content")]
         public T Content { get; private set; }

@@ -45,8 +45,8 @@ namespace AddressService.AzureFunction
 
                 if (req.IsValid(out var validationResults))
                 {
-                    PostcodeResponse response = await _mediator.Send(req, cancellationToken);
-                    return new OkObjectResult(ResponseWrapper<PostcodeResponse>.CreateSuccessfulResponse(response));
+                    GetPostcodeResponse response = await _mediator.Send(req, cancellationToken);
+                    return new OkObjectResult(ResponseWrapper<GetPostcodeResponse>.CreateSuccessfulResponse(response));
                 }
                 else
                 {

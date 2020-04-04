@@ -15,8 +15,12 @@ namespace AddressService.Mappers
             CreateMap<PostcodeDto, PostcodeEntity>()
                 .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails));
 
-            CreateMap<PostcodeDto, PostcodeResponse>()
+            CreateMap<PostcodeDto, GetPostcodeResponse>()
                 .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails));
+
+            CreateMap<PostcodeDto, GetNearbyPostCodeResponse>()
+              .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails))
+            .ForMember(s => s.DistanceInMetres, c => c.Ignore());
         }
     }
 }

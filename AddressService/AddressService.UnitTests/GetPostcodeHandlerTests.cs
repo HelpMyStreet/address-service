@@ -19,13 +19,13 @@ namespace AddressService.UnitTests
         [SetUp]
         public void SetUp()
         {
-            PostcodeResponse getNearbyPostcodesResponse = new PostcodeResponse()
+            GetPostcodeResponse getNearbyGetPostcodesResponse = new GetPostcodeResponse()
             {
-                PostCode = "NG1 5FS"
+                Postcode = "NG1 5FS"
             };
 
             _mapper = new Mock<IMapper>();
-            _mapper.Setup(x => x.Map<PostcodeDto, PostcodeResponse>(It.IsAny<PostcodeDto>())).Returns(getNearbyPostcodesResponse);
+            _mapper.Setup(x => x.Map<PostcodeDto, GetPostcodeResponse>(It.IsAny<PostcodeDto>())).Returns(getNearbyGetPostcodesResponse);
 
             _postcodeGetter = new Mock<IPostcodeGetter>();
             _postcodeGetter.SetupAllProperties();
@@ -41,11 +41,11 @@ namespace AddressService.UnitTests
                 Postcode = "ng15fs"
             };
 
-            PostcodeResponse result = await getPostcodeHandler.Handle(request, CancellationToken.None);
+            GetPostcodeResponse result = await getPostcodeHandler.Handle(request, CancellationToken.None);
 
-            Assert.AreEqual("NG1 5FS", result.PostCode);
+            Assert.AreEqual("NG1 5FS", result.Postcode);
             _postcodeGetter.Verify(x => x.GetPostcodeAsync(It.Is<string>(y => y == "NG1 5FS"), It.IsAny<CancellationToken>()));
-            _mapper.Verify(x => x.Map<PostcodeDto, PostcodeResponse>(It.IsAny<PostcodeDto>()));
+            _mapper.Verify(x => x.Map<PostcodeDto, GetPostcodeResponse>(It.IsAny<PostcodeDto>()));
         }
     }
 }

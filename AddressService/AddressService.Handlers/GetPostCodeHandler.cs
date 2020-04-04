@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AddressService.Handlers
 {
-    public class GetPostcodeHandler : IRequestHandler<GetPostcodeRequest, PostcodeResponse>
+    public class GetPostcodeHandler : IRequestHandler<GetPostcodeRequest, GetPostcodeResponse>
     {
         private readonly IMapper _mapper;
         private readonly IPostcodeGetter _postcodeGetter;
@@ -20,15 +20,15 @@ namespace AddressService.Handlers
             _postcodeGetter = postcodeGetter;
         }
 
-        public async Task<PostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
+        public async Task<GetPostcodeResponse> Handle(GetPostcodeRequest request, CancellationToken cancellationToken)
         {
             request.Postcode = PostcodeCleaner.CleanPostcode(request.Postcode);
 
             PostcodeDto postcodeDto = await _postcodeGetter.GetPostcodeAsync(request.Postcode, cancellationToken);
 
-            PostcodeResponse getNearbyPostcodesResponse = _mapper.Map<PostcodeDto, PostcodeResponse>(postcodeDto);
+            GetPostcodeResponse getNearbyGetPostcodesResponse = _mapper.Map<PostcodeDto, GetPostcodeResponse>(postcodeDto);
 
-            return getNearbyPostcodesResponse;
+            return getNearbyGetPostcodesResponse;
         }
     }
 }

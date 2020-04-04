@@ -7,9 +7,8 @@ using System.Linq;
 
 namespace AddressService.UnitTests
 {
-    public  class AutoMapperTests
+    public  class AutoMapperConfigurationTests
     {
-
         [Test]
         public void AssertConfigurationIsValid()
         {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AddressService.Core.Domains.Entities.Request
 {
-    public class GetPostcodeRequest : IRequest<PostcodeResponse>
+    public class GetPostcodeRequest : IRequest<GetPostcodeResponse>
     {
         [Required]
         public string Postcode { get; set; }

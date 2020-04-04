@@ -7,6 +7,6 @@ namespace AddressService.Core.Domains.Entities.Response
     public class GetNearbyPostcodesResponse
     {
         [DataMember(Name = "postcodes")]
-        public IEnumerable<PostcodeResponse> Postcodes { get; set; } = new List<PostcodeResponse>();
+        public IReadOnlyList<GetNearbyPostCodeResponse> Postcodes { get; set; } = new List<GetNearbyPostCodeResponse>();
     }
 }

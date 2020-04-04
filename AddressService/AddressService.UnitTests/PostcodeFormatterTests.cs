@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace AddressService.UnitTests
 {
-    public class PostcodeCleanerTests
+    public class PostcodeFormatterTests
     {
 
         [TestCase("NG1 5FS", "NG1 5FS")]

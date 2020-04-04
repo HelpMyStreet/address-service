@@ -33,7 +33,7 @@ namespace AddressService.Core.Services.Qas
                 Stream stream = await response.Content.ReadAsStreamAsync();
                 qasSearchRootResponse = stream.ReadAndDeserializeFromJson<QasSearchRootResponse>();
             }
-            qasSearchRootResponse.Postcode = postcode;
+            qasSearchRootResponse.Postcode = PostcodeFormatter.FormatPostcode(postcode);
 
             return qasSearchRootResponse;
         }
@@ -55,5 +55,7 @@ namespace AddressService.Core.Services.Qas
 
             return qasSearchRootResponse;
         }
+
+     
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace AddressService.Core.Contracts
 {
     [DataContract(Name = "error")]
-    public class Error<TErrorCode>
+    public class Error<TErrorCode> where TErrorCode : struct, IConvertible
     {
         public Error(TErrorCode errorCode, string errorMessage)
         {

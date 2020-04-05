@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core;
+using AddressService.Core.Contracts;
 
 namespace AddressService.UnitTests
 {
@@ -67,7 +69,7 @@ namespace AddressService.UnitTests
             Assert.IsNotNull(objectResult);
             Assert.AreEqual(200, objectResult.StatusCode);
 
-            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse>;
+            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
             
             Assert.IsTrue(deserialisedResponse.HasContent);
@@ -96,12 +98,13 @@ namespace AddressService.UnitTests
             Assert.IsNotNull(objectResult);
             Assert.AreEqual(200, objectResult.StatusCode);
             
-            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse>;
+            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
 
             Assert.IsFalse(deserialisedResponse.HasContent);
             Assert.IsFalse(deserialisedResponse.IsSuccessful);
-            Assert.AreEqual(1, deserialisedResponse.Errors.Count());;
+            Assert.AreEqual(1, deserialisedResponse.Errors.Count());
+            Assert.AreEqual(AddressServiceErrorCode.InvalidPostcode, deserialisedResponse.Errors[0].ErrorCode);
 
             _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()),Times.Never);
         }
@@ -122,15 +125,16 @@ namespace AddressService.UnitTests
             var objectResult = result as ObjectResult;
             Assert.IsNotNull(objectResult);
 
-            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse>;
+            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
             Assert.AreEqual(500, objectResult.StatusCode); ;
 
 
             Assert.IsFalse(deserialisedResponse.HasContent);
             Assert.IsFalse(deserialisedResponse.IsSuccessful);
-            Assert.AreEqual(1, deserialisedResponse.Errors.Count()); ;
-            
+            Assert.AreEqual(1, deserialisedResponse.Errors.Count());
+            Assert.AreEqual(AddressServiceErrorCode.UnhandledError, deserialisedResponse.Errors[0].ErrorCode);
+
             _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()));
         }
     }

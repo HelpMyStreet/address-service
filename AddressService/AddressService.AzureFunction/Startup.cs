@@ -22,6 +22,7 @@ using AddressService.Core.Utils;
 using AddressService.Core.Validation;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -83,6 +84,7 @@ namespace AddressService.AzureFunction
                 });
 
             }
+            builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
 
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
 
@@ -118,11 +120,26 @@ namespace AddressService.AzureFunction
             connectionStringSettings.Bind(connectionStrings);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                    options
-                        .UseSqlServer(connectionStrings.AddressService)
-                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+                    ConfigureDbContextOptionsBuilder(options, connectionStrings.AddressService),
                 ServiceLifetime.Transient
             );
+
+            // automatically apply EF migrations
+            // DbContext is being created manually instead of through DI as it throws an exception and I've not managed to find a way to solve it yet: 
+            // 'Unable to resolve service for type 'Microsoft.Azure.WebJobs.Script.IFileLoggingStatusManager' while attempting to activate 'Microsoft.Azure.WebJobs.Script.Diagnostics.HostFileLoggerProvider'.'
+            DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            ConfigureDbContextOptionsBuilder(dbContextOptionsBuilder, connectionStrings.AddressService);
+            ApplicationDbContext dbContext = new ApplicationDbContext(dbContextOptionsBuilder.Options);
+
+            dbContext.Database.Migrate();
+
+        }
+
+        private void ConfigureDbContextOptionsBuilder(DbContextOptionsBuilder options, string connectionString)
+        {
+            options
+                .UseSqlServer(connectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
     }
 }

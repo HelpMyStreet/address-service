@@ -12,7 +12,6 @@ namespace AddressService.Repo
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            //Database.EnsureCreated();
         }
 
         public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }

@@ -1,5 +1,7 @@
 ﻿using AddressService.Core.Utils;
 using AddressService.Core.Validation;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core;
-using AddressService.Core.Contracts;
-using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Contracts.Shared;
 
 namespace AddressService.AzureFunction
 {

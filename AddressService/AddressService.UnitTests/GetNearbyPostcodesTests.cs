@@ -1,5 +1,4 @@
 ﻿using AddressService.AzureFunction;
-using AddressService.Core.Utils;
 using AddressService.Core.Validation;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
@@ -13,8 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core;
-using AddressService.Core.Contracts;
+using HelpMyStreet.Contracts.Shared;
 
 namespace AddressService.UnitTests
 {

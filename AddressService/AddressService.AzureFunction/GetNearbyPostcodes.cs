@@ -11,8 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core;
-using AddressService.Core.Contracts;
+using HelpMyStreet.Contracts.Shared;
 
 
 namespace AddressService.AzureFunction

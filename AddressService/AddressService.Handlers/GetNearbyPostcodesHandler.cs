@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Utils;
 
 namespace AddressService.Handlers
 {
@@ -20,13 +21,15 @@ namespace AddressService.Handlers
         private readonly IPostcodeIoService _postcodeIoService;
         private readonly IMapper _mapper;
         private readonly IPostcodeGetter _postcodeGetter;
+        private readonly IAddressDetailsSorter _addressDetailsSorter;
         private readonly IOptionsSnapshot<ApplicationConfig> _applicationConfig;
 
-        public GetNearbyPostcodesHandler(IPostcodeIoService postcodeIoService, IMapper mapper, IPostcodeGetter postcodeGetter, IOptionsSnapshot<ApplicationConfig> applicationConfig)
+        public GetNearbyPostcodesHandler(IPostcodeIoService postcodeIoService, IMapper mapper, IPostcodeGetter postcodeGetter, IAddressDetailsSorter addressDetailsSorter, IOptionsSnapshot<ApplicationConfig> applicationConfig)
         {
             _postcodeIoService = postcodeIoService;
             _mapper = mapper;
             _postcodeGetter = postcodeGetter;
+            _addressDetailsSorter = addressDetailsSorter;
             _applicationConfig = applicationConfig;
         }
 
@@ -58,7 +61,7 @@ namespace AddressService.Handlers
                  select new GetNearbyPostCodeResponse
                  {
                      Postcode = getNearbyPostCodeResponse.Postcode,
-                     AddressDetails = getNearbyPostCodeResponse.AddressDetails,
+                     AddressDetails = _addressDetailsSorter.OrderAddressDetailsResponse(getNearbyPostCodeResponse.AddressDetails),
                      DistanceInMetres = (int)Math.Round(postCodeIoResult.Distance, 0)
                  })
                 .OrderBy(x => x.DistanceInMetres)

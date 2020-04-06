@@ -10,8 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Utils;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Utils.Models;
 
 namespace AddressService.UnitTests
 {
@@ -21,6 +23,7 @@ namespace AddressService.UnitTests
         private Mock<IPostcodeIoService> _postcodeIoService;
         private Mock<IMapper> _mapper;
         private Mock<IPostcodeGetter> _postcodeGetter;
+        private Mock<IAddressDetailsSorter> _addressDetailsSorter;
         private Mock<IOptionsSnapshot<ApplicationConfig>> _applicationConfigOptions;
 
         private ApplicationConfig _applicationConfig;
@@ -58,7 +61,30 @@ namespace AddressService.UnitTests
             {
                 new GetNearbyPostCodeResponse()
                 {
-                    AddressDetails = new List<AddressDetailsResponse>(),
+                    AddressDetails = new List<AddressDetailsResponse>()
+                    {
+                        new AddressDetailsResponse()
+                        {
+                            AddressLine1 = "bbb",
+                            AddressLine2 = "bbb",
+                        },
+                        new AddressDetailsResponse()
+                        {
+                            AddressLine1 = "bbb",
+                            AddressLine2 = "aaa"
+                        },
+                        new AddressDetailsResponse()
+                        {
+                            AddressLine1 = "aaa",
+                            AddressLine2 = "bbb"
+                        },
+                        new AddressDetailsResponse()
+                        {
+                            AddressLine1 = "bbb",
+                            AddressLine2 = "bbb",
+                            AddressLine3 = "ccc",
+                        },
+                    },
                     Postcode = "M1 1AA"
                 },
                 new GetNearbyPostCodeResponse()
@@ -91,6 +117,8 @@ namespace AddressService.UnitTests
 
             _postcodeGetter.Setup(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())).ReturnsAsync(postcodeDtos);
 
+            _addressDetailsSorter = new Mock<IAddressDetailsSorter>();
+            _addressDetailsSorter.SetupAllProperties();
 
             _applicationConfig = new ApplicationConfig()
             {
@@ -107,7 +135,7 @@ namespace AddressService.UnitTests
         [Test]
         public async Task GetPostcodes_SortedByDistanceAndLimited()
         {
-            GetNearbyPostcodesHandler getNearbyPostcodesHandler = new GetNearbyPostcodesHandler(_postcodeIoService.Object, _mapper.Object, _postcodeGetter.Object, _applicationConfigOptions.Object);
+            GetNearbyPostcodesHandler getNearbyPostcodesHandler = new GetNearbyPostcodesHandler(_postcodeIoService.Object, _mapper.Object, _postcodeGetter.Object, _addressDetailsSorter.Object, _applicationConfigOptions.Object);
 
             GetNearbyPostcodesRequest request = new GetNearbyPostcodesRequest()
             {
@@ -135,6 +163,8 @@ namespace AddressService.UnitTests
             ), It.IsAny<CancellationToken>()));
 
             _mapper.Verify(x => x.Map<IEnumerable<PostcodeDto>, IEnumerable<GetNearbyPostCodeResponse>>(It.IsAny<IEnumerable<PostcodeDto>>()));
+
+            _addressDetailsSorter.Verify(x=>x.OrderAddressDetailsResponse(It.IsAny<IEnumerable<AddressDetailsResponse>>()));
         }
 
 

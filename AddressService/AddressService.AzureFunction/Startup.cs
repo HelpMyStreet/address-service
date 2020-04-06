@@ -97,6 +97,8 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
 
+            builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();
+
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
 

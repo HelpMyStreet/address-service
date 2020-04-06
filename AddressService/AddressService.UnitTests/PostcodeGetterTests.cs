@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
+using AddressService.Core.Services.Qas;
 using AddressService.Handlers;
-using AddressService.Handlers.Qas;
 using AddressService.Mappers;
 using Moq;
 using NUnit.Framework;
@@ -35,7 +35,7 @@ namespace AddressService.UnitTests
                 new PostcodeDto()
                 {
                     Id = 1,
-                    Postcode = "NG15FS",
+                    Postcode = "NG1 5FS",
                     AddressDetails = new List<AddressDetailsDto>()
                     {
                         new AddressDetailsDto()
@@ -48,8 +48,8 @@ namespace AddressService.UnitTests
                     }
                 }
             };
-            _repository.Setup(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y => !y.Contains("NG15FS")))).ReturnsAsync(new List<PostcodeDto>());
-            _repository.Setup(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y => y.Contains("NG15FS")))).ReturnsAsync(_postcodeDtosInDbs);
+            _repository.Setup(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y => !y.Contains("NG1 5FS")))).ReturnsAsync(new List<PostcodeDto>());
+            _repository.Setup(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y => y.Contains("NG1 5FS")))).ReturnsAsync(_postcodeDtosInDbs);
 
             _repository.SetupAllProperties();
 
@@ -69,7 +69,7 @@ namespace AddressService.UnitTests
 
             _missingPostcodeDtosFromQas = new PostcodeDto()
             {
-                Postcode = "NG16DQ",
+                Postcode = "NG1 6DQ",
                 AddressDetails = new List<AddressDetailsDto>()
                 {
                     new AddressDetailsDto()
@@ -93,8 +93,8 @@ namespace AddressService.UnitTests
 
             List<string> postcodes = new List<string>()
             {
-                "NG1 6DQ",
-                "NG1 5FS"
+                "NG16DQ",
+                "NG15FS"
             };
 
             IEnumerable<PostcodeDto> result = await postcodeGetter.GetPostcodesAsync(postcodes, cancellationToken);
@@ -112,8 +112,8 @@ namespace AddressService.UnitTests
 
             Assert.AreEqual(2, result.Count());
 
-            List<AddressDetailsDto> returnedMissingPostCodeAddress = result.FirstOrDefault(x => x.Postcode == "NG16DQ").AddressDetails;
-            List<AddressDetailsDto> returnedPostCodeInDbAddress = result.FirstOrDefault(x => x.Postcode == "NG15FS").AddressDetails;
+            List<AddressDetailsDto> returnedMissingPostCodeAddress = result.FirstOrDefault(x => x.Postcode == "NG1 6DQ").AddressDetails;
+            List<AddressDetailsDto> returnedPostCodeInDbAddress = result.FirstOrDefault(x => x.Postcode == "NG1 5FS").AddressDetails;
 
             Assert.AreEqual(1, returnedMissingPostCodeAddress.Count());
             Assert.AreEqual(1, returnedPostCodeInDbAddress.Count());
@@ -137,7 +137,7 @@ namespace AddressService.UnitTests
             _qasService.Verify(x => x.GetGlobalIntuitiveSearchResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
             _qasService.Verify(x => x.GetGlobalIntuitiveFormatResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
 
-            Assert.AreEqual("NG16DQ", result.Postcode);
+            Assert.AreEqual("NG1 6DQ", result.Postcode);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace AddressService.UnitTests
             CancellationToken cancellationToken = new CancellationToken();
             PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object);
 
-            PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng1 5fs", cancellationToken);
+            PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng15fs", cancellationToken);
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
             _repository.Verify(x => x.SavePostcodesAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Never);
@@ -157,7 +157,7 @@ namespace AddressService.UnitTests
             _qasService.Verify(x => x.GetGlobalIntuitiveSearchResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
             _qasService.Verify(x => x.GetGlobalIntuitiveFormatResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 
-            Assert.AreEqual("NG15FS", result.Postcode);
+            Assert.AreEqual("NG1 5FS", result.Postcode);
         }
     }
 }

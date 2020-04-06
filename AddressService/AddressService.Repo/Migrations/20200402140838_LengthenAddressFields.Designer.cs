@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200402140838_LengthenAddressFields")]
+    partial class LengthenAddressFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,14 +44,14 @@ namespace AddressService.Repo.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false);
 
-                    b.Property<int>("PostcodeId")
-                        .HasColumnName("PostcodeId");
+                    b.Property<int>("PostCodeId")
+                        .HasColumnName("PostCodeId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostcodeId");
+                    b.HasIndex("PostCodeId");
 
-                    b.ToTable("AddressDetail","Address");
+                    b.ToTable("AddressDetails","Address");
                 });
 
             modelBuilder.Entity("AddressService.Repo.EntityFramework.Entities.PostcodeEntity", b =>
@@ -72,15 +74,15 @@ namespace AddressService.Repo.Migrations
                     b.HasIndex("Postcode")
                         .IsUnique();
 
-                    b.ToTable("Postcode","Address");
+                    b.ToTable("PostCode","Address");
                 });
 
             modelBuilder.Entity("AddressService.Repo.EntityFramework.Entities.AddressDetailsEntity", b =>
                 {
                     b.HasOne("AddressService.Repo.EntityFramework.Entities.PostcodeEntity", "PostCode")
                         .WithMany("AddressDetails")
-                        .HasForeignKey("PostcodeId")
-                        .HasConstraintName("FK_AddressDetails_Address_Postcode")
+                        .HasForeignKey("PostCodeId")
+                        .HasConstraintName("FK_AddressDetails_Address_PostCode")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

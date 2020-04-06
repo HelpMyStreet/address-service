@@ -5,6 +5,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="PostcodeIo\**" />
+	  <Compile Remove="Qas\**" />
+	  <EmbeddedResource Remove="PostcodeIo\**" />
+	  <EmbeddedResource Remove="Qas\**" />
+	  <None Remove="PostcodeIo\**" />
+	  <None Remove="Qas\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="HelpMyStreet.Contracts" Version="1.1.24" />
+		<PackageReference Include="HelpMyStreet.Utils" Version="1.1.24" />
 		<PackageReference Include="MediatR" Version="8.0.1" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>

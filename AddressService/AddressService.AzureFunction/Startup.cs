@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using AutoMapper;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
@@ -14,11 +16,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using AddressService.Core.Config;
+using AddressService.Core.Services.PostcodeIo;
+using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
-using AddressService.Handlers.PostcodeIo;
-using AddressService.Handlers.Qas;
+using AddressService.Core.Validation;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -29,14 +33,10 @@ namespace AddressService.AzureFunction
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            ExecutionContextOptions executioncontextoptions = builder.Services.BuildServiceProvider()
-               .GetService<IOptions<ExecutionContextOptions>>().Value;
-            string currentDirectory = executioncontextoptions.AppDirectory;
-
             IConfigurationBuilder configBuilder = new ConfigurationBuilder()
-                .SetBasePath(currentDirectory)
+                .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
+                .AddJsonFile("local.settings.json", true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -70,7 +70,7 @@ namespace AddressService.AzureFunction
 
                     c.Timeout = httpClientConfig.Value.Timeout ?? new TimeSpan(0, 0, 0, 15);
 
-                    foreach (var header in httpClientConfig.Value.Headers)
+                    foreach (KeyValuePair<string, string> header in httpClientConfig.Value.Headers)
                     {
                         c.DefaultRequestHeaders.Add(header.Key, header.Value);
                     }
@@ -80,10 +80,11 @@ namespace AddressService.AzureFunction
                 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                 {
                     MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15,
-                    AutomaticDecompression =  DecompressionMethods.GZip | DecompressionMethods.Deflate
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 });
 
             }
+            builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
 
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
 
@@ -94,26 +95,53 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
 
+            builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
+
+            builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();
+
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
-            builder.Services.AddAutoMapper(typeof(AddressDetailsProfile).Assembly);
+            builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
+
+            IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();
+            foreach (var profile in autoMapperProfiles)
+            {
+                builder.Services.AddAutoMapper(profile.Assembly);
+            }
+
             builder.Services.AddTransient<IRepository, Repository>();
 
-            var tmpConfig = new ConfigurationBuilder()
-            .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
-            .AddJsonFile("local.settings.json", true)
-            .AddEnvironmentVariables()
-            .Build();
 
-            var sqlConnectionString = tmpConfig.GetConnectionString("SqlConnectionString");
+            IConfigurationSection applicationConfigSettings = config.GetSection("ApplicationConfig");
+            builder.Services.Configure<ApplicationConfig>(applicationConfigSettings);
+
+            string connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
+            IConfigurationSection connectionStringSettings = config.GetSection(connectionStringSection);
+            builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
+
+            ConnectionStrings connectionStrings = new ConnectionStrings();
+            connectionStringSettings.Bind(connectionStrings);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                    options
-                        .UseSqlServer(sqlConnectionString)
-                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+                    ConfigureDbContextOptionsBuilder(options, connectionStrings.AddressService),
                 ServiceLifetime.Transient
             );
+
+            // automatically apply EF migrations
+            // DbContext is being created manually instead of through DI as it throws an exception and I've not managed to find a way to solve it yet: 
+            // 'Unable to resolve service for type 'Microsoft.Azure.WebJobs.Script.IFileLoggingStatusManager' while attempting to activate 'Microsoft.Azure.WebJobs.Script.Diagnostics.HostFileLoggerProvider'.'
+            DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            ConfigureDbContextOptionsBuilder(dbContextOptionsBuilder, connectionStrings.AddressService);
+            ApplicationDbContext dbContext = new ApplicationDbContext(dbContextOptionsBuilder.Options);
+
+            dbContext.Database.Migrate();
+
+        }
+
+        private void ConfigureDbContextOptionsBuilder(DbContextOptionsBuilder options, string connectionString)
+        {
+            options
+                .UseSqlServer(connectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
     }
 }

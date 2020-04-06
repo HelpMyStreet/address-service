@@ -1,0 +1,33 @@
+1) SQL Source Control - IMPORTANT
+
+SQL changes should be managed through Entity Framework migrations.  Do not make changes to the database directly!  This allows SQL to be sourced controlled, people to easily recreate the database when running the application locally and new deployments to make any necessary SQL changes without a manual script.
+
+Any custom SQL such as table types and stored procs should be put in the Up migration methods and a rollback in the Down methods. 
+
+Adding migrations or generating scripts through the Package Manager Console currently produces an error so needs to be done through the command line (e.g. dotnet ef migrations add MigrationName)
+
+
+2) Connection Strings
+
+  "ConnectionStrings": {
+    "AddressService": "Server=DESKTOP-CRLTBC4\\SQLEXPRESS;Database=address_service;Trusted_Connection=True;"
+  },
+  "ConnectionStringsLocalDev": {
+    "AddressService": "Data Source=127.0.0.1;Initial Catalog=AddressService;Integrated Security=True;MultipleActiveResultSets=True"
+  }
+  
+When running the code locally the connection string in ConnectionStringsLocalDev will be used if the ASPNETCORE_ENVIRONMENT environment variable is set to "localdev".  This can be set by going to the AddressService.AzureFunction project properties and going to Debug.
+
+The idea behind it is to not have to change the appsettings to run it locally and then accidentally check it in.
+
+
+3) QAS Token
+
+The program needs a token to call QAS.  This is stored in a User Secrets file so the token doesn't get committed to the repository.  There is an example secrets.json file in the UserGuide folder.  This needs to be copied to: %APPDATA%\Microsoft\UserSecrets\2ab26b8f-fafb-4345-a188-210580b87104\secrets.json.  You'll need to create the folder with the '2ab26b8f-fafb-4345-a188-210580b87104' GUID (this is determined in the csproj file) and update the token in secrets.json.
+
+
+4) Example Requests
+
+http://localhost:7071/api/GetPostcode?postcode=NG15FS
+
+http://localhost:7071/api/GetNearbyPostcodes?postcode=NG15FS

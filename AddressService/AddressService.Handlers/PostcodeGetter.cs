@@ -1,7 +1,6 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Utils;
-using AddressService.Handlers.Qas;
 using AddressService.Mappers;
 using AutoMapper;
 using System.Collections.Generic;
@@ -9,6 +8,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Services.Qas;
+using HelpMyStreet.Utils.Utils;
 
 namespace AddressService.Handlers
 {
@@ -34,7 +35,7 @@ namespace AddressService.Handlers
 
         public async Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postcodes, CancellationToken cancellationToken)
         {
-            postcodes = postcodes.Select(x => PostcodeCleaner.CleanPostcode(x)).ToList();
+            postcodes = postcodes.Select(x => PostcodeFormatter.FormatPostcode(x)).ToList();
 
             // get postcodes from database
             IEnumerable<PostcodeDto> postcodesFromDb = await _repository.GetPostcodesAsync(postcodes);
@@ -54,7 +55,7 @@ namespace AddressService.Handlers
 
             foreach (string missingPostcode in missingPostcodes)
             {
-                Task<QasSearchRootResponse> qasResponseTask = _qasService.GetGlobalIntuitiveSearchResponseAsync(PostcodeCleaner.CleanPostcode(missingPostcode), cancellationToken);
+                Task<QasSearchRootResponse> qasResponseTask = _qasService.GetGlobalIntuitiveSearchResponseAsync(PostcodeFormatter.FormatPostcode(missingPostcode), cancellationToken);
                 qasSearchResponseTasks.Add(qasResponseTask);
             }
 
@@ -97,8 +98,7 @@ namespace AddressService.Handlers
             {
                 await _repository.SavePostcodesAsync(missingPostcodeDtos);
             }
-
-
+            
             // add missing postcodes to those originally taken from the DB
             IEnumerable<PostcodeDto> allPostcodeDtos = postcodesFromDb.Concat(missingPostcodeDtos);
 

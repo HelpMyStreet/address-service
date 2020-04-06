@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
+using HelpMyStreet.Utils.Utils;
 
 namespace AddressService.Mappers
 {
@@ -12,7 +13,7 @@ namespace AddressService.Mappers
     {
         public PostcodeDto MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses)
         {
-            postcode = PostcodeCleaner.CleanPostcode(postcode);
+            postcode = PostcodeFormatter.FormatPostcode(postcode);
             PostcodeDto postcodeDto = new PostcodeDto();
             postcodeDto.Postcode = postcode;
             postcodeDto.LastUpdated = DateTime.UtcNow;
@@ -41,20 +42,13 @@ namespace AddressService.Mappers
                     }
                     else if (!String.IsNullOrWhiteSpace(address.PostalCode))
                     {
-                        addressDetailsDto.PostalCode = PostcodeCleaner.CleanPostcode(address.PostalCode);
+                        addressDetailsDto.Postcode = PostcodeFormatter.FormatPostcode(address.PostalCode);
                     }
                 }
-
-                if (String.IsNullOrWhiteSpace(addressDetailsDto.PostalCode))
+                // filter out postcodes that weren't returned or don't have the expected postcode
+                if (!String.IsNullOrWhiteSpace(addressDetailsDto.Postcode) && addressDetailsDto.Postcode == postcode) 
                 {
-                    continue;
-                }
-
-                postcodeDto.AddressDetails.Add(addressDetailsDto);
-
-                if (addressDetailsDto.PostalCode != postcode)
-                {
-                    throw new Exception("This method should map addresses for a single postcode");
+                    postcodeDto.AddressDetails.Add(addressDetailsDto);
                 }
             }
 
@@ -74,15 +68,12 @@ namespace AddressService.Mappers
             {
                 foreach (var result in qasSearchRootResponse.Results)
                 {
-                    var postCodeWithFormatId = new Tuple<string, string>(qasSearchRootResponse.Postcode, GetFormatIdFromUri(result.Format));
-
-                    // todo throw exception if any format ids are null until better error handling has been decided (e.g. ignore any null addresses with the consequence that some addresses won't be stored)
-                    if (postCodeWithFormatId.Item2 == null)
+                    // filter out any addresses missing a Format ID
+                    if (!String.IsNullOrWhiteSpace(result.Format))
                     {
-                        throw new Exception("Qas Format Id is null");
+                        Tuple<string, string> postCodeWithFormatId = new Tuple<string, string>(qasSearchRootResponse.Postcode, GetFormatIdFromUri(result.Format));
+                        formatIds.Add(postCodeWithFormatId);
                     }
-
-                    formatIds.Add(postCodeWithFormatId);
                 }
             }
 
@@ -90,31 +81,6 @@ namespace AddressService.Mappers
 
             return formatIdsLookup;
         }
-
-        //public IEnumerable<string> GetFormatIds(IEnumerable<QasSearchRootResponse> qasSearchRootResponses)
-        //{
-        //    List<string> formatIds = new List<string>();
-
-        //    foreach (var qasSearchRootResponse in qasSearchRootResponses)
-        //    {
-        //        formatIds.AddRange(GetFormatIds(qasSearchRootResponse));
-        //    }
-
-        //    return formatIds;
-        //}
-
-        //public IEnumerable<string> GetFormatIds(QasSearchRootResponse qasSearchRootResponse)
-        //{
-        //    var formatIds = qasSearchRootResponse.Results.Select(x => GetFormatIdFromUri(x.Format));
-
-        //    // throw exception if any format ids are null until better error handling has been decided (e.g. ignore any null addresses with the consequence that some addresses won't be stored)
-        //    if (formatIds.Any(x => x == null))
-        //    {
-        //        throw new Exception("Qas Format Id is null");
-        //    }
-
-        //    return formatIds;
-        //}
 
         private string GetFormatIdFromUri(string uri)
         {

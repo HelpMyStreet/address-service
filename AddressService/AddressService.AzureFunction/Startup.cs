@@ -33,10 +33,13 @@ namespace AddressService.AzureFunction
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            ExecutionContextOptions executioncontextoptions = builder.Services.BuildServiceProvider()
+                .GetService<IOptions<ExecutionContextOptions>>().Value;
+            string currentDirectory = executioncontextoptions.AppDirectory;
+
             IConfigurationBuilder configBuilder = new ConfigurationBuilder()
-                .SetBasePath(Environment.CurrentDirectory)
+                .SetBasePath(currentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("local.settings.json", true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

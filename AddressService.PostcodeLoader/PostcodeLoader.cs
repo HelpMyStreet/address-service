@@ -26,20 +26,15 @@ namespace AddressService.PostcodeLoader
             _totalRows = 0;
         }
 
-
-        public void LoadPostcodes()
+        public void LoadPostcodes(string postCodeFileLocation, string connectionString, int batchSize, decimal maxInvalidRowsPercentage)
         {
             Initialise();
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            int batchsize = 10000;
 
-            decimal maxInvalidRowsPercentage = 0.000001m;
 
-            string fileName = @"";
-
-            using (SqlConnection sqlConnection = new SqlConnection(""))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
                 sqlConnection.Open();
                 TruncateStagingTable(sqlConnection);
@@ -48,7 +43,7 @@ namespace AddressService.PostcodeLoader
                 try
                 {
                     DataTable dataTable = CreateDataTable();
-                    using (TextReader reader = new StreamReader(fileName))
+                    using (TextReader reader = new StreamReader(postCodeFileLocation))
                     {
 
                         IEnumerable<string> lines = reader.Lines().Skip(1);
@@ -61,16 +56,16 @@ namespace AddressService.PostcodeLoader
 
 
                             numberOfRowsProcessedInThisBatch++;
-                            if (numberOfRowsProcessedInThisBatch >= batchsize)
+                            if (numberOfRowsProcessedInThisBatch >= batchSize)
                             {
                                 BulkInsert(sqlConnection, sqlTransaction, dataTable);
-                                Console.WriteLine($"Processed {batchsize} rows");
+                                Console.WriteLine($"Processed {batchSize} rows");
                                 numberOfRowsProcessedInThisBatch = 0;
                                 dataTable.Rows.Clear();
                             }
                         }
 
-                        if (GetInvalidRowsPercentage() < maxInvalidRowsPercentage)
+                        if (GetInvalidRowsPercentage() <= maxInvalidRowsPercentage)
                         {
 
                             sqlTransaction.Commit();

@@ -9,7 +9,7 @@ namespace AddressService.Core.Utils
         public IReadOnlyList<AddressDetailsResponse> OrderAddressDetailsResponse(IEnumerable<AddressDetailsResponse> addressDetails)
         {
             //Locality should never have numbers anyway...
-            var Comparer = new AddressComparer();
+            var Comparer = new NaturalOrderComparer();
             return addressDetails.OrderBy(x => x.Locality)
                 .ThenBy(x => x.AddressLine3, Comparer)
                 .ThenBy(x => x.AddressLine2, Comparer)

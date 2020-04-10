@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace AddressService.Core.Utils
 {
-    public class AddressComparer : IComparer<string>
+    public class NaturalOrderComparer : IComparer<string>
     {
-        public AddressComparer()
+        public NaturalOrderComparer()
         { }
 
         public int Compare(string a, string b)

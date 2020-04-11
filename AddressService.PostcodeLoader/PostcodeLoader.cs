@@ -50,7 +50,7 @@ namespace AddressService.PostcodeLoader
             _numberOfRows = 0;
         }
 
-        public void LoadPostcodes(string postCodeFileLocation, string connectionString, int batchSize, decimal maxInvalidRowsPercentage)
+        public void LoadPostcodesIntoStagingTable(string postCodeFileLocation, string connectionString, int batchSize, decimal maxInvalidRowsPercentage)
         {
             Initialise();
 
@@ -248,6 +248,39 @@ namespace AddressService.PostcodeLoader
             return dataTable;
         }
 
+
+        public void LoadFromStagingTableAndSwitch(string connectionString)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = new SqlCommand("EXEC [Staging].[LoadFromStagingTableAndSwitch]", sqlConnection))
+                {
+                    sqlCmd.CommandType = CommandType.Text;
+                    sqlCmd.CommandTimeout = 0; // the merge will take a while (takes around 15 minutes on my laptop)
+                    sqlCmd.ExecuteNonQuery();
+                }
+            }
+            stopwatch.Stop();
+            Console.WriteLine($"Loading, updating and switching took {stopwatch.Elapsed}");
+        }
+
+        public void TruncateSwitchTable(string connectionString)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = new SqlCommand("TRUNCATE TABLE [Staging].[Postcode_Switch]", sqlConnection))
+                {
+                    sqlCmd.CommandType = CommandType.Text;
+                    sqlCmd.CommandTimeout = 30;
+                    sqlCmd.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine($"Switch table ([Staging].[Postcode_Switch]) truncation complete");
+        }
     }
 
 }

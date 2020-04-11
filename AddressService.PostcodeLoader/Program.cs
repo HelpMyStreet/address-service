@@ -1,6 +1,6 @@
-﻿using System;
-using AddressService.Core.Validation;
+﻿using AddressService.Core.Validation;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace AddressService.PostcodeLoader
 {
@@ -8,7 +8,7 @@ namespace AddressService.PostcodeLoader
     {
         static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder()
+            IConfigurationRoot config = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("appsettings.json", true)
                 .Build();
@@ -42,9 +42,38 @@ namespace AddressService.PostcodeLoader
                 throw new Exception("Can't parse maxInvalidRowsPercentage setting");
             }
 
-            var postcodeLoader = new PostcodeLoader(new RegexPostcodeValidator());
-            postcodeLoader.LoadPostcodes(postCodeFileLocation, connectionString, batchSize, maxInvalidRowsPercentage);
 
+            Console.WriteLine("Please enter option (command will run when key is pressed):");
+            Console.WriteLine();
+            Console.WriteLine("1 - Bulk copy postcodes into staging table ([Staging].[Postcode_Staging]) from ONS Postcode Directory csv file (download from http://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-february-2020).");
+            Console.WriteLine();
+            Console.WriteLine("2 - Copy [Address].[Postcodes] to [Staging].[Postcodes_Switch], update/insert postcodes using staging table and switch [Staging].[Postcodes_Switch] to [Address].[Postcodes].");
+            Console.WriteLine();
+            Console.WriteLine("3 - Truncate switch table ([Staging].[Postcode_Switch]).  Run when you are happy the updated postcode data has been switched correctly.");
+
+
+            PostcodeLoader postcodeLoader = new PostcodeLoader(new RegexPostcodeValidator());
+
+            ConsoleKeyInfo command = Console.ReadKey();
+            Console.WriteLine();
+            if (command.KeyChar == '1')
+            {
+                postcodeLoader.LoadPostcodesIntoStagingTable(postCodeFileLocation, connectionString, batchSize, maxInvalidRowsPercentage);
+            }
+            else if (command.KeyChar == '2')
+            {
+                postcodeLoader.LoadFromStagingTableAndSwitch(connectionString);
+            }
+            else if (command.KeyChar == '3')
+            {
+                postcodeLoader.TruncateSwitchTable(connectionString);
+            }
+            else
+            {
+                Console.WriteLine("Commmand not recognised");
+            }
+
+            Console.WriteLine();
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();
         }

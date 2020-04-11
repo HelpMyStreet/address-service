@@ -13,10 +13,11 @@ namespace AddressService.Mappers
     {
         public PostcodeDto MapToPostcodeDto(string postcode, IEnumerable<QasFormatRootResponse> qasFormatRootResponses)
         {
+            DateTime timeNow = DateTime.UtcNow;
             postcode = PostcodeFormatter.FormatPostcode(postcode);
             PostcodeDto postcodeDto = new PostcodeDto();
             postcodeDto.Postcode = postcode;
-            postcodeDto.LastUpdated = DateTime.UtcNow;
+            postcodeDto.LastUpdated = timeNow;
             
             foreach (var qasFormatRootResponse in qasFormatRootResponses)
             {
@@ -46,8 +47,9 @@ namespace AddressService.Mappers
                     }
                 }
                 // filter out postcodes that weren't returned or don't have the expected postcode
-                if (!String.IsNullOrWhiteSpace(addressDetailsDto.Postcode) && addressDetailsDto.Postcode == postcode) 
+                if (!String.IsNullOrWhiteSpace(addressDetailsDto.Postcode) && addressDetailsDto.Postcode == postcode)
                 {
+                    addressDetailsDto.LastUpdated = timeNow;
                     postcodeDto.AddressDetails.Add(addressDetailsDto);
                 }
             }

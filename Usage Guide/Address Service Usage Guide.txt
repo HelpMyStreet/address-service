@@ -4,10 +4,34 @@ SQL changes should be managed through Entity Framework migrations.  Do not make 
 
 Any custom SQL such as table types and stored procs should be put in the Up migration methods and a rollback in the Down methods. 
 
-Adding migrations or generating scripts through the Package Manager Console currently produces an error so needs to be done through the command line (e.g. dotnet ef migrations add MigrationName)
+Adding migrations or generating scripts through the Package Manager Console currently produces an error so needs to be done through the command line (e.g. dotnet ef migrations add MigrationName). You need to run the dotnet CLI commands from the AddressService.Repo's directory.
+
+When you run the application for the first time it will create the database and/or apply any migrations.
 
 
-2) Connection Strings
+2) Postcode Data
+
+The application uses the ONS Postcode Directory csv file to load all postcodes with their latitude and longitude coordinates.  This is used to return postcodes within a certain radius of another postcode.
+
+You can load this data using the AddressService.PostcodeLoader program.  You'll need to fill in the following app settings in the appsettings.json file:
+
+{
+  "ConnectionStrings": {
+    "AddressService": "Data Source=127.0.0.1;Initial Catalog=AddressService;Integrated Security=True;MultipleActiveResultSets=True;MultiSubnetFailover=True"
+  },
+  "Settings": {
+    "postCodeFileLocation": "D:\\Users\\ABC\\Downloads\\ONSPD_FEB_2020_UK\\Data\\ONSPD_FEB_2020_UK.csv",
+    "batchSize": 200000,
+    "maxInvalidRowsPercentage": 0.01
+  }
+}
+
+The program will first copy the postcode data to the Staging.Postcode_Staging table.  It will then take a copy of the Address.Postcode table, update it using the ONS Postcode directory and switch the old Address.Postcode table with the new one.  The only locking will be when the Address.AddressDetails foreign key to Address.Postcode is checked.  This takes 2 seconds on my laptop though so should't be a problem in a Live environment.
+
+You can download Feburary 2020's data here: http://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-february-2020.  It is updated every 3 months.
+
+
+3) Connection Strings
 
   "ConnectionStrings": {
     "AddressService": "Server=DESKTOP-CRLTBC4\\SQLEXPRESS;Database=address_service;Trusted_Connection=True;"
@@ -21,12 +45,12 @@ When running the code locally the connection string in ConnectionStringsLocalDev
 The idea behind it is to not have to change the appsettings to run it locally and then accidentally check it in.
 
 
-3) QAS Token
+4) QAS Token
 
 The program needs a token to call QAS.  This is stored in a User Secrets file so the token doesn't get committed to the repository.  There is an example secrets.json file in the UserGuide folder.  This needs to be copied to: %APPDATA%\Microsoft\UserSecrets\2ab26b8f-fafb-4345-a188-210580b87104\secrets.json.  You'll need to create the folder with the '2ab26b8f-fafb-4345-a188-210580b87104' GUID (this is determined in the csproj file) and update the token in secrets.json.
 
 
-4) Example Requests
+5) Example Requests
 
 http://localhost:7071/api/GetPostcode?postcode=NG15FS
 

@@ -32,7 +32,7 @@ namespace AddressService.Repo
             {
                 DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
 
-                var postcodeDictionary = new Dictionary<int, PostcodeDto>();
+                Dictionary<int, PostcodeDto> postcodeDictionary = new Dictionary<int, PostcodeDto>();
 
                 IEnumerable<PostcodeDto> result = await connection.QueryAsync<PostcodeDto, AddressDetailsDto, PostcodeDto>("[Address].[GetPostcodesAndAddresses]",
                     commandType: CommandType.StoredProcedure,
@@ -70,24 +70,21 @@ namespace AddressService.Repo
             return dataTable;
         }
 
-        public async Task SavePostcodesAsync(IEnumerable<PostcodeDto> postcodes)
+        public async Task SaveAddressesAsync(IEnumerable<PostcodeDto> postcodes)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
-                var postcodeAndAddressDataTables = CreatePostcodeAndAddressDataTables(postcodes);
+                DataTable addressDataTable = CreateAddressDataTable(postcodes);
 
-                await connection.ExecuteAsync("[Address].[SavePostcodesAndAddresses]",
+                await connection.ExecuteAsync("[Address].[SaveAddresses]",
                    commandType: CommandType.StoredProcedure,
-                   param: new { Postcodes = postcodeAndAddressDataTables.Item1, AddressDetails = postcodeAndAddressDataTables.Item2 },
+                   param: new {  AddressDetails = addressDataTable },
                    commandTimeout: 30);
             }
         }
 
-        private Tuple<DataTable, DataTable> CreatePostcodeAndAddressDataTables(IEnumerable<PostcodeDto> postcodes)
+        private DataTable CreateAddressDataTable(IEnumerable<PostcodeDto> postcodes)
         {
-            DataTable postcodeDataTable = new DataTable();
-            postcodeDataTable.Columns.Add("Postcode", typeof(string));
-            postcodeDataTable.Columns.Add("LastUpdated", typeof(DateTime));
 
             DataTable addresssDataTable = new DataTable();
             addresssDataTable.Columns.Add("AddressLine1", typeof(string));
@@ -95,15 +92,10 @@ namespace AddressService.Repo
             addresssDataTable.Columns.Add("AddressLine3", typeof(string));
             addresssDataTable.Columns.Add("Locality", typeof(string));
             addresssDataTable.Columns.Add("Postcode", typeof(string));
+            addresssDataTable.Columns.Add("LastUpdated", typeof(DateTime));
 
             foreach (PostcodeDto postcode in postcodes)
             {
-                DataRow postcodeRow = postcodeDataTable.NewRow();
-                postcodeRow["Postcode"] = postcode.Postcode;
-                postcodeRow["LastUpdated"] = postcode.LastUpdated;
-
-                postcodeDataTable.Rows.Add(postcodeRow);
-
                 foreach (AddressDetailsDto addressDetail in postcode.AddressDetails)
                 {
                     DataRow addressRow = addresssDataTable.NewRow();
@@ -112,12 +104,13 @@ namespace AddressService.Repo
                     addressRow["AddressLine3"] = addressDetail.AddressLine3;
                     addressRow["Locality"] = addressDetail.Locality;
                     addressRow["Postcode"] = postcode.Postcode;
+                    addressRow["LastUpdated"] = postcode.LastUpdated;
 
                     addresssDataTable.Rows.Add(addressRow);
                 }
             }
 
-            return new Tuple<DataTable, DataTable>(postcodeDataTable, addresssDataTable);
+            return addresssDataTable;
         }
 
 

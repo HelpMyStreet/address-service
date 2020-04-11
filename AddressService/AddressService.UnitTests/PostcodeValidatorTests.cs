@@ -1,63 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using AddressService.Core.Interfaces.Repositories;
-using AddressService.Core.Services.PostcodeIo;
+﻿using AddressService.Core.Services.PostcodeIo;
 using AddressService.Core.Validation;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AddressService.UnitTests
 {
-  public  class PostcodeValidatorTests
+    public class PostcodeValidatorTests
     {
-
-        private  Mock<IPostcodeIoService> _postcodeIoService;
-        private  Mock<IRepository> _repository;
+        private Mock<IRegexPostcodeValidator> _regexPostcodeValidator;
+        private Mock<IPostcodeIoService> _postcodeIoService;
+        private Mock<ILogger<PostcodeValidator>> _iLogger;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Mock<IRepository>();
+            _regexPostcodeValidator = new Mock<IRegexPostcodeValidator>();
             _postcodeIoService = new Mock<IPostcodeIoService>();
+            _iLogger = new Mock<ILogger<PostcodeValidator>>();
+            _iLogger.SetupAllProperties();
         }
 
-        // Fails regex
-        [TestCase(null,false,false,false)]
-        [TestCase("",false,false,false)]
-        [TestCase("  ",false,false,false)]
-        [TestCase("NGG15FS",false,false,false)]
-        [TestCase("NG15FSS",false,false,false)]
-        [TestCase("NG15F",false,false,false)]
-
-
-        // Passes regex
-        [TestCase("NG15FS",true, true, true)]
-        [TestCase("N15FS", true, true, true)]
-        [TestCase("N11FS", true, true, true)]
-
-
-        // Passes regex, but not in DB or determined as valid by PostcodeIO
-        [TestCase("NG15ZZ", false, false, false)]
-
-        // Passes regex and in DB
-        [TestCase("NG15ZZ", true, false, true)]
-
-        // Passes regex and not in DB, but is determined as valid by PostcodeIO
-        [TestCase("NG15ZZ", false, true, true)]
-        public async Task Test(string postcode, bool isPostcodeInDb,bool doesPostcodeIoSayPostcodeIsValid, bool expectedResult)
+        [TestCase(false, true, false, Description = "Fails regex")]
+        [TestCase(true, true, true, Description = "Passes regex")]
+        [TestCase(true, false, false, Description = "Passes regex, but not determined as valid by PostcodeIO")]
+        [TestCase(true, true, true, Description = "Passes regex and is determined as valid by PostcodeIO")]
+        public async Task IsPostcodeValid(bool passesRegexValidator, bool doesPostcodeIoSayPostcodeIsValid, bool expectedResult)
         {
-            _repository.Setup(x => x.IsPostcodeInDb(It.IsAny<string>())).ReturnsAsync(isPostcodeInDb);
+            _regexPostcodeValidator.Setup(x => x.IsPostcodeValid(It.IsAny<string>())).Returns(passesRegexValidator);
             _postcodeIoService.Setup(x => x.IsPostcodeValidAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(doesPostcodeIoSayPostcodeIsValid);
 
-            var postcodeValidator = new PostcodeValidator(_postcodeIoService.Object, _repository.Object);
+            PostcodeValidator postcodeValidator = new PostcodeValidator(_regexPostcodeValidator.Object, _postcodeIoService.Object, _iLogger.Object);
 
-            var result = await postcodeValidator.IsPostcodeValidAsync(postcode);
+            bool result = await postcodeValidator.IsPostcodeValidAsync("NG15FS");
 
             Assert.AreEqual(expectedResult, result);
+        }
+
+        [Test]
+        public async Task PassesRegexButPostcodeIOThrowsError()
+        {
+            _regexPostcodeValidator.Setup(x => x.IsPostcodeValid(It.IsAny<string>())).Returns(true);
+            _postcodeIoService.Setup(x => x.IsPostcodeValidAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).Throws<Exception>();
+
+            PostcodeValidator postcodeValidator = new PostcodeValidator(_regexPostcodeValidator.Object, _postcodeIoService.Object, _iLogger.Object);
+
+            bool result = await postcodeValidator.IsPostcodeValidAsync("NG15FS");
+
+            Assert.IsTrue(result);
         }
 
     }

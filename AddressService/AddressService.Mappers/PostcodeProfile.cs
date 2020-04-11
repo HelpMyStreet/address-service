@@ -10,10 +10,13 @@ namespace AddressService.Mappers
         public PostCodeProfile()
         {
             CreateMap<PostcodeEntity, PostcodeDto>()
-                .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails));
+                .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails))
+                .ForMember(s => s.Coordinates, c => c.Ignore());
+            
 
             CreateMap<PostcodeDto, PostcodeEntity>()
-                .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails));
+                .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails))
+                .ForMember(s => s.Coordinates, c => c.Ignore());
 
             CreateMap<PostcodeDto, GetPostcodeResponse>()
                 .ForMember(s => s.AddressDetails, c => c.MapFrom(m => m.AddressDetails));

@@ -159,6 +159,7 @@ namespace AddressService.UnitTests
             Assert.AreEqual("line2", addressResult.AddressLine2);
             Assert.AreEqual("line3", addressResult.AddressLine3);
             Assert.AreEqual("loc", addressResult.Locality);
+            Assert.AreNotEqual(DateTime.MinValue, addressResult.LastUpdated);
         }
 
     }

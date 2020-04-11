@@ -54,7 +54,12 @@ namespace AddressService.Repo
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                
+                entity.Property(e => e.LastUpdated)
+                    .IsRequired()
+                    .HasDefaultValueSql("GetUtcDate()")
+                    .HasColumnType("datetime2(0)");
+
+
                 entity.HasOne(d => d.PostCode)
                     .WithMany(p => p.AddressDetails)
                     .HasForeignKey(d => d.PostcodeId)
@@ -76,10 +81,26 @@ namespace AddressService.Repo
                     .HasMaxLength(10)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Latitude)
+                    .IsRequired()
+                    .HasColumnType("decimal(9,6)");
+
+                entity.Property(e => e.Longitude)
+                    .IsRequired()
+                    .HasColumnType("decimal(9,6)");
+
+                // Spacial types not supported in Net Core 2.1
+                entity.Ignore(e => e.Coordinates);
+                //entity.Property(e => e.Coordinates)
+                //    .HasColumnType("geography")
+                //    .HasComputedColumnSql("[geography]::Point([Latitude],[Longitude],(4326))) PERSISTED");
+
                 entity.HasIndex(u => u.Postcode)
                     .IsUnique();
 
                 entity.Property(e => e.LastUpdated)
+                    .IsRequired()
+                    .HasDefaultValueSql("GetUtcDate()")
                     .HasColumnType("datetime2(0)");
             });
         }

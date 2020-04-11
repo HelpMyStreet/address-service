@@ -1,4 +1,5 @@
 ﻿using System;
+using AddressService.Core.Validation;
 using Microsoft.Extensions.Configuration;
 
 namespace AddressService.PostcodeLoader
@@ -41,7 +42,7 @@ namespace AddressService.PostcodeLoader
                 throw new Exception("Can't parse maxInvalidRowsPercentage setting");
             }
 
-            var postcodeLoader = new PostcodeLoader();
+            var postcodeLoader = new PostcodeLoader(new RegexPostcodeValidator());
             postcodeLoader.LoadPostcodes(postCodeFileLocation, connectionString, batchSize, maxInvalidRowsPercentage);
 
             Console.WriteLine("Press any key to continue");

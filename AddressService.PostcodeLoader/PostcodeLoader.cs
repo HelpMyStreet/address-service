@@ -6,24 +6,48 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using AddressService.Core.Validation;
 
 namespace AddressService.PostcodeLoader
 {
     public class PostcodeLoader
     {
-        private int _invalidPostcodes = 0;
-        private int _invalidLatitudes = 0;
-        private int _invalidLongitudes = 0;
-        private int _invalidRows = 0;
-        private int _totalRows = 0;
+        private readonly RegexPostcodeValidator _regexPostcodeValidator;
+
+        public PostcodeLoader(RegexPostcodeValidator regexPostcodeValidator)
+        {
+            _regexPostcodeValidator = regexPostcodeValidator;
+        }
+
+        private int _numberOfInvalidPostcodes = 0;
+        private int _numberOfInvalidLatitudes = 0;
+        private int _numberOfInvalidLongitudes = 0;
+        private int _numberOfInvalidRows = 0;
+        private int _numberOfRows = 0;
+
+        private readonly List<string> _invalidPostcodes = new List<string>();
+
+        private void AddNonNullInvalidPostcode(string postcode)
+        {
+            if (String.IsNullOrWhiteSpace(postcode))
+            {
+                return;
+            }
+
+            if (!postcode.StartsWith("NPT") && !postcode.StartsWith("GIR"))
+            {
+                _invalidPostcodes.Add(postcode);
+            }
+
+        }
 
         private void Initialise()
         {
-            _invalidPostcodes = 0;
-            _invalidLatitudes = 0;
-            _invalidLongitudes = 0;
-            _invalidRows = 0;
-            _totalRows = 0;
+            _numberOfInvalidPostcodes = 0;
+            _numberOfInvalidLatitudes = 0;
+            _numberOfInvalidLongitudes = 0;
+            _numberOfInvalidRows = 0;
+            _numberOfRows = 0;
         }
 
         public void LoadPostcodes(string postCodeFileLocation, string connectionString, int batchSize, decimal maxInvalidRowsPercentage)
@@ -32,7 +56,6 @@ namespace AddressService.PostcodeLoader
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -45,15 +68,13 @@ namespace AddressService.PostcodeLoader
                     DataTable dataTable = CreateDataTable();
                     using (TextReader reader = new StreamReader(postCodeFileLocation))
                     {
-
                         IEnumerable<string> lines = reader.Lines().Skip(1);
 
                         int numberOfRowsProcessedInThisBatch = 0;
                         foreach (string row in lines)
                         {
-                            _totalRows++;
+                            _numberOfRows++;
                             AddDataRowToDataTable(dataTable, row);
-
 
                             numberOfRowsProcessedInThisBatch++;
                             if (numberOfRowsProcessedInThisBatch >= batchSize)
@@ -65,9 +86,13 @@ namespace AddressService.PostcodeLoader
                             }
                         }
 
+                        // insert any remaining rows
+                        BulkInsert(sqlConnection, sqlTransaction, dataTable);
+                        Console.WriteLine($"Processed {numberOfRowsProcessedInThisBatch} rows");
+
                         if (GetInvalidRowsPercentage() <= maxInvalidRowsPercentage)
                         {
-
+                            Console.WriteLine("Committing transaction");
                             sqlTransaction.Commit();
                         }
                         else
@@ -80,7 +105,6 @@ namespace AddressService.PostcodeLoader
                             sqlTransaction.Rollback();
                         }
 
-
                     }
 
                 }
@@ -89,26 +113,39 @@ namespace AddressService.PostcodeLoader
                     sqlTransaction.Rollback();
                     Console.WriteLine(ex);
                 }
-
             }
 
-            Console.WriteLine($"Loading postcodes into staging table took {stopWatch.Elapsed} for {_totalRows} rows");
+            Console.WriteLine($"Loading postcodes into staging table took {stopWatch.Elapsed} for {_numberOfRows} rows");
 
-            int validRows = _totalRows - _invalidRows;
+            int validRows = _numberOfRows - _numberOfInvalidRows;
 
-            Console.WriteLine($"Total rows processed: {_totalRows}");
+            Console.WriteLine($"Total rows processed: {_numberOfRows}");
             Console.WriteLine($"Total valid rows: {validRows}");
-            Console.WriteLine($"Total invalid rows: {_invalidRows}");
+            Console.WriteLine($"Total invalid rows: {_numberOfInvalidRows}");
             Console.WriteLine($"Invalid rows percentage: {Math.Round(GetInvalidRowsPercentage(), 4)}%");
-            Console.WriteLine($"Total invalid postcodes: {_invalidPostcodes}");
-            Console.WriteLine($"Total invalid latitudes: {_invalidLatitudes}");
-            Console.WriteLine($"Total invalid longitudes: {_invalidLongitudes}");
+            Console.WriteLine($"Total invalid postcodes: {_numberOfInvalidPostcodes}");
+            Console.WriteLine($"Total invalid latitudes: {_numberOfInvalidLatitudes}");
+            Console.WriteLine($"Total invalid longitudes: {_numberOfInvalidLongitudes}");
 
+            Console.WriteLine();
+            if (_invalidPostcodes.Any())
+            {
+                Console.WriteLine($"Invalid postcodes (excluding GIR and NPT)");
+
+                foreach (string invalidPostcode in _invalidPostcodes.OrderBy(x => x))
+                {
+                    Console.WriteLine(invalidPostcode);
+                }
+            }
+            else
+            {
+                Console.WriteLine("There were no invalid postcodes (excluding nulls and postcodes starting with NPT and GIR)");
+            }
         }
 
         private decimal GetInvalidRowsPercentage()
         {
-            decimal invalidRowsPercentage = (decimal)_invalidRows / _totalRows;
+            decimal invalidRowsPercentage = (decimal)_numberOfInvalidRows / _numberOfRows;
             return invalidRowsPercentage;
         }
 
@@ -148,13 +185,14 @@ namespace AddressService.PostcodeLoader
             }
 
             string postcode = split[0];
-            bool postCodeIsNull = String.IsNullOrWhiteSpace(postcode);
 
             if (postcode != null)
             {
                 postcode = postcode.Replace("\"", "");
                 postcode = PostcodeFormatter.FormatPostcode(postcode);
             }
+
+            bool postcodeIsValid = _regexPostcodeValidator.IsPostcodeValid(postcode);
 
             bool latitudeIsValid = decimal.TryParse(split[42], out decimal latitude);
             if (latitudeIsValid)
@@ -168,32 +206,35 @@ namespace AddressService.PostcodeLoader
                 longitudeIsValid = longitude >= -180 && longitude <= 180;
             }
 
-            if (postCodeIsNull)
+            if (!postcodeIsValid)
             {
-                _invalidPostcodes++;
+                AddNonNullInvalidPostcode(postcode);
+                _numberOfInvalidPostcodes++;
             }
 
             if (!latitudeIsValid)
             {
-                _invalidLatitudes++;
+                _numberOfInvalidLatitudes++;
             }
 
             if (!longitudeIsValid)
             {
-                _invalidLongitudes++;
+                _numberOfInvalidLongitudes++;
             }
 
-            if (postCodeIsNull || !latitudeIsValid || !longitudeIsValid)
+            if (!postcodeIsValid || !latitudeIsValid || !longitudeIsValid)
             {
-                _invalidRows++;
+                _numberOfInvalidRows++;
             }
+            else
+            {
+                DataRow dataRow = dataTable.NewRow();
+                dataRow["Postcode"] = postcode;
+                dataRow["Latitude"] = latitude;
+                dataRow["Longitude"] = longitude;
 
-            DataRow dataRow = dataTable.NewRow();
-            dataRow["Postcode"] = postcode;
-            dataRow["Latitude"] = latitude;
-            dataRow["Longitude"] = longitude;
-
-            dataTable.Rows.Add(dataRow);
+                dataTable.Rows.Add(dataRow);
+            }
         }
 
         private DataTable CreateDataTable()

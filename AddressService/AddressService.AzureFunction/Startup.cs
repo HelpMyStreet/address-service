@@ -33,6 +33,7 @@ namespace AddressService.AzureFunction
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            // We need to get the app directory this way.  Using Environment.CurrentDirectory doesn't work in Azure
             ExecutionContextOptions executioncontextoptions = builder.Services.BuildServiceProvider()
                 .GetService<IOptions<ExecutionContextOptions>>().Value;
             string currentDirectory = executioncontextoptions.AppDirectory;
@@ -41,7 +42,7 @@ namespace AddressService.AzureFunction
                 .SetBasePath(currentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
-
+            
             string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             bool isLocalDev = aspNetCoreEnv?.ToLower().Trim() == "localdev";
@@ -98,6 +99,7 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
 
+            builder.Services.AddTransient<IRegexPostcodeValidator, RegexPostcodeValidator>();
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
 
             builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();

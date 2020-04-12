@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AddressService.Core.Utils
+namespace AddressService.Core.Extensions
 {
-    public static class ObjectExtensions
+    public static class IEnumerableExtensions
     {
-        public static bool IsValid(this object o, out ICollection<ValidationResult> validationResults)
-        {
-            validationResults = new List<ValidationResult>();
-            return Validator.TryValidateObject(o, new ValidationContext(o, null, null), validationResults, true);
-        }
+        private static readonly Regex _houseNumbers = new Regex(@"([\d-]+[\S]?[\s])|([\d-]+[\S][\d-]+[\S]?[\s])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex _numbers = new Regex(@"[\d-]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static (string Name, int Count) RemoveNumbersAndSelectMostCommon(this IEnumerable<string> str)
         {
             //regex to pull out a sequence of numbers followed by an optional single letter and then a space
             //OR pull out a sequence of numbers followed by a letter followed by a sequence of numbers followed by a space.
             //that last one is because Scotland *loves* including "1/2 Street Name"
-            var mostFrequent = str.Select(x => Regex.Replace(x, @"([\d-]+[\S]?[\s])|([\d-]+[\S][\d-]+[\S]?[\s])", ""))
+            var mostFrequent = str.Select(x => _houseNumbers.Replace(x, ""))
                 .GroupBy(y => y)
                 .Select(z => new
                 {
@@ -32,12 +27,13 @@ namespace AddressService.Core.Utils
             return (mostFrequent.Name, mostFrequent.Count);
         }
 
+
         public static IEnumerable<int> ExtractNumbers(this IEnumerable<string> str, string matchString)
         {
             //Might need to get a bit more clever and handle sequences like "1/2" but this is probably fine)
             return str.Where(x => x.Contains(matchString)
                     && x.Any(char.IsDigit))
-                .Select(y => Regex.Match(y, @"[\d-]+").Value)
+                .Select(y => _numbers.Match(y).Value)
                 //the below seems to be the safest way of attempting to parse the regex matches as an int
                 .Select(z => int.TryParse(z, out int n) ? n : (int?)null)
                 .Where(n => n.HasValue)

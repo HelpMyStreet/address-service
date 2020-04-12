@@ -122,7 +122,7 @@ namespace AddressService.UnitTests
 
             _applicationConfig = new ApplicationConfig()
             {
-                NearestPostcodesLimit = 2
+                DefaultMaxNumberOfNearbyPostcodes = 2
             };
 
             _applicationConfigOptions = new Mock<IOptionsSnapshot<ApplicationConfig>>();

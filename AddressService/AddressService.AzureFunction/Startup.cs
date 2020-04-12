@@ -97,6 +97,7 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IPostcodeIoService, PostcodeIoService>();
 
+            builder.Services.AddTransient<INearestPostcodeGetter, NearestPostcodeGetter>();
             builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
 
             builder.Services.AddTransient<IRegexPostcodeValidator, RegexPostcodeValidator>();

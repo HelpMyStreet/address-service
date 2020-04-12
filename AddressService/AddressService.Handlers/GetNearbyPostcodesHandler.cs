@@ -43,7 +43,7 @@ namespace AddressService.Handlers
             postCodeIoResponse.Result.ForEach(x => x.Postcode = PostcodeFormatter.FormatPostcode(x.Postcode));
 
             IEnumerable<string> nearestPostcodes = postCodeIoResponse.Result.OrderBy(x => x.Distance)
-                .Take(_applicationConfig.Value.NearestPostcodesLimit)
+                .Take(_applicationConfig.Value.DefaultMaxNumberOfNearbyPostcodes)
                 .Select(x => x.Postcode).ToList();
 
             // get postcodes
@@ -70,5 +70,41 @@ namespace AddressService.Handlers
 
             return getNearbyPostcodesResponse;
         }
+
+        // method that gets postcodes from DB - this will return retired postcodes
+        //public async Task<GetNearbyPostcodesResponse> Handle(GetNearbyPostcodesRequest request, CancellationToken cancellationToken)
+        //{
+        //    string postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
+
+        //    // get nearest postcodes
+        //    IReadOnlyList<NearestPostcodeDto> nearestPostcodeDtos = await _nearestPostcodeGetter.GetNearestPostcodesAsync(postcode);
+
+        //    IEnumerable<string> nearestPostcodes = nearestPostcodeDtos.Select(x => x.Postcode).ToList();
+
+        //    // get postcodes
+        //    IEnumerable<PostcodeDto> postcodeDtos = await _postcodeGetter.GetPostcodesAsync(nearestPostcodes, cancellationToken);
+
+        //    // create response
+        //    GetNearbyPostcodesResponse getNearbyPostcodesResponse = new GetNearbyPostcodesResponse();
+
+        //    IEnumerable<GetNearbyPostCodeResponse> getNearbyPostCodeResponses = _mapper.Map<IEnumerable<PostcodeDto>, IEnumerable<GetNearbyPostCodeResponse>>(postcodeDtos);
+
+        //    getNearbyPostcodesResponse.Postcodes =
+        //        (from getNearbyPostCodeResponse in getNearbyPostCodeResponses
+        //            join nearestPostcodeDto in nearestPostcodeDtos
+        //                on getNearbyPostCodeResponse.Postcode equals nearestPostcodeDto.Postcode
+        //            select new GetNearbyPostCodeResponse
+        //            {
+        //                Postcode = getNearbyPostCodeResponse.Postcode,
+        //                AddressDetails = _addressDetailsSorter.OrderAddressDetailsResponse(getNearbyPostCodeResponse.AddressDetails),
+        //                DistanceInMetres = nearestPostcodeDto.DistanceInMetres,
+        //                // DistanceInMiles = nearestPostcodeDto.DistanceInMetres,
+        //            })
+        //        .OrderBy(x => x.DistanceInMetres)
+        //        .ToList();
+
+
+        //    return getNearbyPostcodesResponse;
+        //}
     }
 }

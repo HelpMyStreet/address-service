@@ -101,7 +101,7 @@ namespace AddressService.UnitTests
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
 
-            _repository.Verify(x => x.SaveAddressesAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Once);
+            _repository.Verify(x => x.SaveAddressesAndFriendlyNameAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Once);
 
             _qasMapper.Verify(x => x.GetFormatIds(It.IsAny<IEnumerable<QasSearchRootResponse>>()), Times.Once);
             _qasMapper.Verify(x => x.MapToPostcodeDto(It.IsAny<string>(), It.IsAny<IEnumerable<QasFormatRootResponse>>()), Times.Once);
@@ -129,7 +129,7 @@ namespace AddressService.UnitTests
             PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng1 6dq", cancellationToken);
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
-            _repository.Verify(x => x.SaveAddressesAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Once);
+            _repository.Verify(x => x.SaveAddressesAndFriendlyNameAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Once);
 
             _qasMapper.Verify(x => x.GetFormatIds(It.IsAny<IEnumerable<QasSearchRootResponse>>()), Times.Once);
             _qasMapper.Verify(x => x.MapToPostcodeDto(It.IsAny<string>(), It.IsAny<IEnumerable<QasFormatRootResponse>>()), Times.Once);
@@ -149,7 +149,7 @@ namespace AddressService.UnitTests
             PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng15fs", cancellationToken);
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
-            _repository.Verify(x => x.SaveAddressesAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Never);
+            _repository.Verify(x => x.SaveAddressesAndFriendlyNameAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Never);
 
             _qasMapper.Verify(x => x.GetFormatIds(It.IsAny<IEnumerable<QasSearchRootResponse>>()), Times.Never);
             _qasMapper.Verify(x => x.MapToPostcodeDto(It.IsAny<string>(), It.IsAny<IEnumerable<QasFormatRootResponse>>()), Times.Never);

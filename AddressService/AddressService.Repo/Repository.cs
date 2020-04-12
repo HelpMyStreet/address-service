@@ -70,17 +70,41 @@ namespace AddressService.Repo
             return dataTable;
         }
 
-        public async Task SaveAddressesAsync(IEnumerable<PostcodeDto> postcodes)
+        public async Task SaveAddressesAndFriendlyNameAsync(IEnumerable<PostcodeDto> postcodes)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 DataTable addressDataTable = CreateAddressDataTable(postcodes);
+                DataTable friendlyNameDataTable = CreateFriendlyNameDataTable(postcodes);
 
                 await connection.ExecuteAsync("[Address].[SaveAddresses]",
                    commandType: CommandType.StoredProcedure,
                    param: new {  AddressDetails = addressDataTable },
                    commandTimeout: 30);
+
+                await connection.ExecuteAsync("[Address].[SaveFriendlyName]",
+                   commandType: CommandType.StoredProcedure,
+                   param: new { PostcodeFriendlyNames = friendlyNameDataTable },
+                   commandTimeout: 30);
             }
+        }
+
+        private DataTable CreateFriendlyNameDataTable(IEnumerable<PostcodeDto> postcodes)
+        {
+            DataTable friendlyNameDataTable = new DataTable();
+            friendlyNameDataTable.Columns.Add("Postcode", typeof(string));
+            friendlyNameDataTable.Columns.Add("FriendlyName", typeof(string));
+
+            foreach (PostcodeDto postcode in postcodes)
+            {
+                DataRow friendlyNameRow = friendlyNameDataTable.NewRow();
+                friendlyNameRow["Postcode"] = postcode.Postcode;
+                friendlyNameRow["FriendlyName"] = postcode.FriendlyName;
+
+                friendlyNameDataTable.Rows.Add(friendlyNameRow);
+            }
+
+            return friendlyNameDataTable;
         }
 
         private DataTable CreateAddressDataTable(IEnumerable<PostcodeDto> postcodes)

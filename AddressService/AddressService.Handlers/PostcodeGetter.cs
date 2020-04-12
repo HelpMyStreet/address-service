@@ -96,7 +96,7 @@ namespace AddressService.Handlers
 
             if (missingPostcodeDtos.Any())
             {
-                await _repository.SaveAddressesAsync(missingPostcodeDtos);
+                await _repository.SaveAddressesAndFriendlyNameAsync(missingPostcodeDtos);
             }
             
             // add missing postcodes to those originally taken from the DB

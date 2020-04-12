@@ -27,7 +27,7 @@ namespace AddressService.Handlers
 
             IEnumerable<NearestPostcodeDto> nearestPostcodeDtos = await _nearestPostcodeGetter.GetNearestPostcodesAsync(request.Postcode, request.RadiusInMetres, request.MaxNumberOfResults);
             
-            IEnumerable<NearestPostcode> nearestPostcodes = _mapper.Map<IEnumerable<NearestPostcodeDto>, IEnumerable<NearestPostcode>>(nearestPostcodeDtos);
+            IEnumerable<NearestPostcodeWithoutAddress> nearestPostcodes = _mapper.Map<IEnumerable<NearestPostcodeDto>, IEnumerable<NearestPostcodeWithoutAddress>>(nearestPostcodeDtos);
 
             GetNearbyPostcodesWithoutAddressesResponse getNearbyPostcodesWithoutAddressesResponse = new GetNearbyPostcodesWithoutAddressesResponse()
             {

@@ -3,7 +3,7 @@
 namespace AddressService.Core.Contracts
 {
     [DataContract(Name = "nearestPostcode")]
-    public class NearestPostcode
+    public class NearestPostcodeWithoutAddress
     {
         [DataMember(Name = "postcode")]
         public string Postcode { get; set; }

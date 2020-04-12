@@ -7,7 +7,7 @@ namespace AddressService.Core.Contracts
     public class GetNearbyPostcodesWithoutAddressesResponse
     {
         [DataMember(Name = "nearestPostcodes")]
-        public IReadOnlyList<NearestPostcode> NearestPostcodes { get; set; }
+        public IReadOnlyList<NearestPostcodeWithoutAddress> NearestPostcodes { get; set; }
 
     }
 }

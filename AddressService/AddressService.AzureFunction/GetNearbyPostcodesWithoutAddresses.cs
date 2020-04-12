@@ -1,18 +1,16 @@
-﻿using AddressService.Core.Utils;
+﻿using AddressService.Core.Contracts;
+using AddressService.Core.Utils;
 using AddressService.Core.Validation;
-using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
+using HelpMyStreet.Contracts.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Contracts;
-using HelpMyStreet.Contracts.Shared;
 
 
 namespace AddressService.AzureFunction
@@ -21,23 +19,24 @@ namespace AddressService.AzureFunction
     {
         private readonly IMediator _mediator;
         private readonly IPostcodeValidator _postcodeValidator;
+        private readonly ILoggerWrapper<GetNearbyPostcodesWithoutAddresses> _logger;
 
-        public GetNearbyPostcodesWithoutAddresses(IMediator mediator, IPostcodeValidator postcodeValidator)
+        public GetNearbyPostcodesWithoutAddresses(IMediator mediator, IPostcodeValidator postcodeValidator, ILoggerWrapper<GetNearbyPostcodesWithoutAddresses> logger)
         {
             _mediator = mediator;
             _postcodeValidator = postcodeValidator;
+            _logger = logger;
         }
 
         [FunctionName("GetNearbyPostcodesWithoutAddresses")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
             GetNearbyPostcodesWithoutAddressesRequest req,
-            CancellationToken cancellationToken,
-            ILogger log)
+            CancellationToken cancellationToken)
         {
             try
             {
-                log.LogInformation("C# HTTP trigger function processed a request.");
+                _logger.LogInformation("C# HTTP trigger function processed a request.");
 
                 // This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere).  I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
                 if (!await _postcodeValidator.IsPostcodeValidAsync(req.Postcode))
@@ -55,9 +54,9 @@ namespace AddressService.AzureFunction
                     return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults));
                 }
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                log.LogError(exc, "Unhandled error in GetNearbyPostcodes");
+                _logger.LogError("Unhandled error in GetNearbyPostcodes", ex);
                 return new ObjectResult(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError,"Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }

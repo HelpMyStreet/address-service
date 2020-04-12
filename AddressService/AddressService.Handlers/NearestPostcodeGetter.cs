@@ -33,6 +33,11 @@ namespace AddressService.Handlers
                 radiusInMetres = _applicationConfig.Value.DefaultNearestPostcodeRadiusInMetres;
             }
 
+            if (radiusInMetres > 16094)
+            {
+                radiusInMetres = 16094; // 10 miles
+            }
+
             if (maxNumberOfResults == null)
             {
                 maxNumberOfResults = _applicationConfig.Value.DefaultMaxNumberOfNearbyPostcodes;

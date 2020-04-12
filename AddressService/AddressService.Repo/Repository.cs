@@ -235,6 +235,7 @@ namespace AddressService.Repo
             //        da.SelectCommand.Parameters.Add(new SqlParameter("@MaxNumberOfResults", maxNumberOfResults));
             //        da.Fill(ds);
             //    }
+
             //    sw2.Stop();
             //    Debug.WriteLine($"GetNearestPostcodesAsync ADO Fill: {sw2.ElapsedMilliseconds}");
 
@@ -250,13 +251,14 @@ namespace AddressService.Repo
             //            nearestPostcodeDtos.Add(nearestPostcodeDto);
             //        }
             //    }
+
             //    sw2.Stop();
             //    Debug.WriteLine($"GetNearestPostcodesAsync ADO Mapping: {sw2.ElapsedMilliseconds}");
 
             //    sw.Stop();
             //    Debug.WriteLine($"GetNearestPostcodesAsync ADO DataSet Total: {sw.ElapsedMilliseconds}");
             //    return nearestPostcodeDtos;
-
+            //}
 
 
             //////////////////////

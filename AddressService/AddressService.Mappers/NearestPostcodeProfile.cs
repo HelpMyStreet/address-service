@@ -8,7 +8,7 @@ namespace AddressService.Mappers
     {
         public NearestPostcodeProfile()
         {
-            CreateMap<NearestPostcodeDto, NearestPostcode>();
+            CreateMap<NearestPostcodeDto, NearestPostcodeWithoutAddress>();
               //  .ForMember(s => s.DistanceInMiles, c => c.Ignore());
         }
     }

@@ -217,10 +217,10 @@ END
 
 
 			migrationBuilder.Sql(@"CREATE PROCEDURE [Address].[SaveFriendlyNames]
-	@FriendlyNames [Address].[FriendlyName] READONLY
+	@PostcodeFriendlyNames [Address].[FriendlyName] READONLY
 AS
 MERGE INTO [Address].[Postcode] P
-	USING @FriendlyNames F
+	USING @PostcodeFriendlyNames F
 	ON P.Postcode = F.Postcode
 WHEN MATCHED THEN
 	UPDATE

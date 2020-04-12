@@ -104,6 +104,8 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();
 
+            builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
+
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
 

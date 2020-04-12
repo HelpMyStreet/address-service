@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Services.Qas;
+using AddressService.Core.Utils;
 using AddressService.Handlers;
 using AddressService.Mappers;
 using Moq;
@@ -21,6 +22,7 @@ namespace AddressService.UnitTests
         private Mock<IRepository> _repository;
         private Mock<IQasService> _qasService;
         private Mock<IQasMapper> _qasMapper;
+        private Mock<IFriendlyNameGenerator> _friendlyNameGenerator;
 
         private PostcodeDto _missingPostcodeDtosFromQas;
         private IEnumerable<PostcodeDto> _postcodeDtosInDbs;
@@ -83,13 +85,16 @@ namespace AddressService.UnitTests
             };
 
             _qasMapper.Setup(x => x.MapToPostcodeDto(It.IsAny<string>(), It.IsAny<IEnumerable<QasFormatRootResponse>>())).Returns(_missingPostcodeDtosFromQas);
+
+            _friendlyNameGenerator = new Mock<IFriendlyNameGenerator>();
+            _friendlyNameGenerator.Setup(x => x.GenerateFriendlyName(It.IsAny<PostcodeDto>()));
         }
 
         [Test]
         public async Task PostCodesAreRetrievedFromQasAndDatabase()
         {
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object);
+            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object);
 
             List<string> postcodes = new List<string>()
             {
@@ -124,7 +129,7 @@ namespace AddressService.UnitTests
         public async Task MissingPostCodeIsRetrievedFromQas()
         {
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object);
+            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object);
             
             PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng1 6dq", cancellationToken);
 
@@ -144,7 +149,7 @@ namespace AddressService.UnitTests
         public async Task PostCodeIsRetrievedFromDatabase()
         {
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object);
+            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object);
 
             PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng15fs", cancellationToken);
 

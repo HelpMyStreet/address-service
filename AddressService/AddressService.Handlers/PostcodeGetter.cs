@@ -18,12 +18,14 @@ namespace AddressService.Handlers
         private readonly IRepository _repository;
         private readonly IQasService _qasService;
         private readonly IQasMapper _qasMapper;
+        private readonly IFriendlyNameGenerator _friendlyNameGenerator;
 
-        public PostcodeGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper)
+        public PostcodeGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper, IFriendlyNameGenerator friendlyNameGenerator)
         {
             _repository = repository;
             _qasService = qasService;
             _qasMapper = qasMapper;
+            _friendlyNameGenerator = friendlyNameGenerator;
         }
 
         public async Task<PostcodeDto> GetPostcodeAsync(string postcode, CancellationToken cancellationToken)
@@ -91,6 +93,8 @@ namespace AddressService.Handlers
                 }
 
                 PostcodeDto missingPostcodeDtosForThisBatch = _qasMapper.MapToPostcodeDto(missingQasFormatIds.Key, qasFormatResponses);
+                //new addresses need a friendly name
+                _friendlyNameGenerator.GenerateFriendlyName(missingPostcodeDtosForThisBatch);
                 missingPostcodeDtos.Add(missingPostcodeDtosForThisBatch);
             }
 

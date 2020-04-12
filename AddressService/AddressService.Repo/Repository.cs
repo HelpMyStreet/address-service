@@ -82,7 +82,7 @@ namespace AddressService.Repo
                    param: new {  AddressDetails = addressDataTable },
                    commandTimeout: 30);
 
-                await connection.ExecuteAsync("[Address].[SaveFriendlyName]",
+                await connection.ExecuteAsync("[Address].[SaveFriendlyNames]",
                    commandType: CommandType.StoredProcedure,
                    param: new { PostcodeFriendlyNames = friendlyNameDataTable },
                    commandTimeout: 30);

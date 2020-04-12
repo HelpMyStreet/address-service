@@ -74,18 +74,32 @@ namespace AddressService.Repo
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
-                DataTable addressDataTable = CreateAddressDataTable(postcodes);
-                DataTable friendlyNameDataTable = CreateFriendlyNameDataTable(postcodes);
+                await connection.OpenAsync();
+                SqlTransaction sqlTransaction = connection.BeginTransaction();
+                try
+                {
+                    DataTable addressDataTable = CreateAddressDataTable(postcodes);
+                    DataTable friendlyNameDataTable = CreateFriendlyNameDataTable(postcodes);
 
-                await connection.ExecuteAsync("[Address].[SaveAddresses]",
-                   commandType: CommandType.StoredProcedure,
-                   param: new {  AddressDetails = addressDataTable },
-                   commandTimeout: 30);
+                    await connection.ExecuteAsync("[Address].[SaveAddresses]",
+                        commandType: CommandType.StoredProcedure,
+                        param: new { AddressDetails = addressDataTable },
+                        commandTimeout: 30,
+                        transaction: sqlTransaction);
 
-                await connection.ExecuteAsync("[Address].[SaveFriendlyNames]",
-                   commandType: CommandType.StoredProcedure,
-                   param: new { PostcodeFriendlyNames = friendlyNameDataTable },
-                   commandTimeout: 30);
+                    await connection.ExecuteAsync("[Address].[SaveFriendlyNames]",
+                        commandType: CommandType.StoredProcedure,
+                        param: new { PostcodeFriendlyNames = friendlyNameDataTable },
+                        commandTimeout: 30,
+                        transaction: sqlTransaction);
+
+                    sqlTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    sqlTransaction.Rollback();
+                    throw;
+                }
             }
         }
 

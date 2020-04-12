@@ -1,8 +1,7 @@
 ﻿using AddressService.Core.Dto;
-using System;
+using AddressService.Core.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AddressService.Core.Utils
 {

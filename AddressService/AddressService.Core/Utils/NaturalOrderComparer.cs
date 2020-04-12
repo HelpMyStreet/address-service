@@ -5,7 +5,7 @@ namespace AddressService.Core.Utils
 {
     public class NaturalOrderComparer : IComparer<string>
     {
-
+        private static readonly Regex _numbers = new Regex("([0-9]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public int Compare(string a, string b)
         {
             if (a == b)
@@ -24,8 +24,8 @@ namespace AddressService.Core.Utils
             string[] aSplit, bSplit;
 
             //splitting into sequences of numbers and characters
-            aSplit = Regex.Split(a, "([0-9]+)");
-            bSplit = Regex.Split(b, "([0-9]+)");
+            aSplit = _numbers.Split(a);
+            bSplit = _numbers.Split(b);
 
             //don't necessarily like the early returns but in this case it's helpful...
             for (int i = 0; i < aSplit.Length && i < bSplit.Length; i++)

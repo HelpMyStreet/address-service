@@ -6,8 +6,8 @@ namespace AddressService.Core.Validation
 {
     public class RegexPostcodeValidator : IRegexPostcodeValidator
     {
-        // Excludes Girobank/Santander's GIR 0AA and Newport's NPT postcodes that were retired in 1984
-        private static readonly Regex _postCodeRegex = new Regex("^((([A-Z]|[a-z]){1,2})|NPT|GIR)[0-9][0-9A-Z]?\\s?[0-9]([A-Z]|[a-z])([A-Z]|[a-z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        // Allows Girobank/Santander's GIR 0AA and Newport's NPT postcodes that were retired in 1984
+        private static readonly Regex _postCodeRegex = new Regex("^((([A-Z]{1,2})[0-9][0-9A-Z]?)|NPT|GIR)\\s?[0-9]([A-Z])([A-Z])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Validates postcode using Regex and aims to produce no false negatives.

@@ -14,10 +14,6 @@ namespace AddressService.UnitTests
         [TestCase("NG15FSS", false)]
         [TestCase("NG15F", false)]
 
-        [TestCase("NPT 6DZ", false)] // NPT was retired in 1984
-        [TestCase("GIR 0AA", false)] // owned by Santander (previously Girobank) and doesn't relate to a geographic area
-        [TestCase("NPT6DZ", false)] 
-        [TestCase("GIR0AA", false)]
 
         // Passes regex
         [TestCase("AA9A 9AA", true)]
@@ -47,6 +43,12 @@ namespace AddressService.UnitTests
         [TestCase("a999aa", true)]
         [TestCase("aa99aa", true)]
         [TestCase("aa999aa", true)]
+
+
+        [TestCase("NPT 6DZ", true)] // NPT was retired in 1984
+        [TestCase("GIR 0AA", true)] // owned by Santander (previously Girobank) and doesn't relate to a geographic area
+        [TestCase("NPT6DZ", true)]
+        [TestCase("GIR0AA", true)]
         public void IsPostcodeValid(string postcode, bool expectedResult)
         {
             RegexPostcodeValidator regexPostcodeValidator = new RegexPostcodeValidator();

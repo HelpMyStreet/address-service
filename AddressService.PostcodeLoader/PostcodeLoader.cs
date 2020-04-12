@@ -22,30 +22,18 @@ namespace AddressService.PostcodeLoader
         private int _numberOfInvalidPostcodes = 0;
         private int _numberOfInvalidLatitudes = 0;
         private int _numberOfInvalidLongitudes = 0;
+        private int _numberOfTerminatedPostcodes = 0;
         private int _numberOfInvalidRows = 0;
         private int _numberOfRows = 0;
 
         private readonly List<string> _invalidPostcodes = new List<string>();
-
-        private void AddNonNullInvalidPostcode(string postcode)
-        {
-            if (String.IsNullOrWhiteSpace(postcode))
-            {
-                return;
-            }
-
-            if (!postcode.StartsWith("NPT") && !postcode.StartsWith("GIR"))
-            {
-                _invalidPostcodes.Add(postcode);
-            }
-
-        }
 
         private void Initialise()
         {
             _numberOfInvalidPostcodes = 0;
             _numberOfInvalidLatitudes = 0;
             _numberOfInvalidLongitudes = 0;
+            _numberOfTerminatedPostcodes = 0;
             _numberOfInvalidRows = 0;
             _numberOfRows = 0;
         }
@@ -115,22 +103,24 @@ namespace AddressService.PostcodeLoader
                 }
             }
 
-            Console.WriteLine($"Loading postcodes into staging table took {stopWatch.Elapsed} for {_numberOfRows} rows");
+            Console.WriteLine($"Loading postcodes into staging table took {stopWatch.Elapsed} for {_numberOfRows:N0} rows");
 
             int validRows = _numberOfRows - _numberOfInvalidRows;
 
-            Console.WriteLine($"Total rows processed: {_numberOfRows}");
-            Console.WriteLine($"Total valid rows: {validRows}");
-            Console.WriteLine($"Total invalid rows: {_numberOfInvalidRows}");
-            Console.WriteLine($"Invalid rows percentage: {Math.Round(GetInvalidRowsPercentage(), 4)}%");
-            Console.WriteLine($"Total invalid postcodes: {_numberOfInvalidPostcodes}");
-            Console.WriteLine($"Total invalid latitudes: {_numberOfInvalidLatitudes}");
-            Console.WriteLine($"Total invalid longitudes: {_numberOfInvalidLongitudes}");
+            Console.WriteLine($"Total rows processed: {_numberOfRows:N0}");
+            Console.WriteLine($"Total valid rows: {validRows:N0}");
+            Console.WriteLine($"Total invalid rows: {_numberOfInvalidRows:N0}");
+            Console.WriteLine($"Invalid rows percentage: {Math.Round(GetInvalidRowsPercentage(), 2)}%");
+            Console.WriteLine($"Total terminated postcodes: {_numberOfTerminatedPostcodes}");
+            Console.WriteLine($"Terminated postcode percentage: {Math.Round((decimal)_numberOfTerminatedPostcodes / _numberOfRows * 100, 2)}%");
+            Console.WriteLine($"Total invalid postcodes: {_numberOfInvalidPostcodes:N0}");
+            Console.WriteLine($"Total invalid latitudes: {_numberOfInvalidLatitudes:N0}");
+            Console.WriteLine($"Total invalid longitudes: {_numberOfInvalidLongitudes:N0}");
 
             Console.WriteLine();
             if (_invalidPostcodes.Any())
             {
-                Console.WriteLine($"Invalid postcodes (excluding GIR and NPT)");
+                Console.WriteLine($"Invalid Postcodes List (excludes nulls and empty postcodes):");
 
                 foreach (string invalidPostcode in _invalidPostcodes.OrderBy(x => x))
                 {
@@ -139,13 +129,13 @@ namespace AddressService.PostcodeLoader
             }
             else
             {
-                Console.WriteLine("There were no invalid postcodes (excluding nulls and postcodes starting with NPT and GIR)");
+                Console.WriteLine("There were no invalid postcodes to display (excludes null and empty postcodes)");
             }
         }
 
         private decimal GetInvalidRowsPercentage()
         {
-            decimal invalidRowsPercentage = (decimal)_numberOfInvalidRows / _numberOfRows;
+            decimal invalidRowsPercentage = (decimal)_numberOfInvalidRows / _numberOfRows * 100;
             return invalidRowsPercentage;
         }
 
@@ -167,6 +157,7 @@ namespace AddressService.PostcodeLoader
                 sqlBulkCopy.ColumnMappings.Add("Postcode", "Postcode");
                 sqlBulkCopy.ColumnMappings.Add("Latitude", "Latitude");
                 sqlBulkCopy.ColumnMappings.Add("Longitude", "Longitude");
+                sqlBulkCopy.ColumnMappings.Add("IsActive", "IsActive");
                 sqlBulkCopy.DestinationTableName = "[Staging].[Postcode_Staging]";
                 sqlBulkCopy.BulkCopyTimeout = 0;
                 sqlBulkCopy.WriteToServer(dataTable);
@@ -206,10 +197,18 @@ namespace AddressService.PostcodeLoader
                 longitudeIsValid = longitude >= -180 && longitude <= 180;
             }
 
+
+            var introductionDateString = split[3];
+            var terminationDateString = split[4];
+
+            var isPostCodeActive = OnsActivePostcodeDeterminer.IsPostcodeActive(introductionDateString, terminationDateString, DateTime.UtcNow);
+
+
             if (!postcodeIsValid)
             {
-                AddNonNullInvalidPostcode(postcode);
+                _invalidPostcodes.Add(postcode);
                 _numberOfInvalidPostcodes++;
+
             }
 
             if (!latitudeIsValid)
@@ -222,6 +221,11 @@ namespace AddressService.PostcodeLoader
                 _numberOfInvalidLongitudes++;
             }
 
+            if (!isPostCodeActive)
+            {
+                _numberOfTerminatedPostcodes++;
+            }
+
             if (!postcodeIsValid || !latitudeIsValid || !longitudeIsValid)
             {
                 _numberOfInvalidRows++;
@@ -232,6 +236,7 @@ namespace AddressService.PostcodeLoader
                 dataRow["Postcode"] = postcode;
                 dataRow["Latitude"] = latitude;
                 dataRow["Longitude"] = longitude;
+                dataRow["IsActive"] = isPostCodeActive;
 
                 dataTable.Rows.Add(dataRow);
             }
@@ -244,6 +249,7 @@ namespace AddressService.PostcodeLoader
             dataTable.Columns.Add("Postcode", typeof(string));
             dataTable.Columns.Add("Latitude", typeof(decimal));
             dataTable.Columns.Add("Longitude", typeof(decimal));
+            dataTable.Columns.Add("IsActive", typeof(bool));
 
             return dataTable;
         }
@@ -280,6 +286,21 @@ namespace AddressService.PostcodeLoader
                 }
             }
             Console.WriteLine($"Switch table ([Staging].[Postcode_Switch]) truncation complete");
+        }
+
+        public void TruncateStagingTable(string connectionString)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = new SqlCommand("TRUNCATE TABLE [Staging].[Postcode_Staging]", sqlConnection))
+                {
+                    sqlCmd.CommandType = CommandType.Text;
+                    sqlCmd.CommandTimeout = 30;
+                    sqlCmd.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine($"Staging table ([Staging].[Postcode_Staging]) truncation complete");
         }
     }
 

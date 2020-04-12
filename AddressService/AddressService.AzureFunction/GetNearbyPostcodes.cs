@@ -20,28 +20,29 @@ namespace AddressService.AzureFunction
     {
         private readonly IMediator _mediator;
         private readonly IPostcodeValidator _postcodeValidator;
+        private readonly ILoggerWrapper<GetNearbyPostcodes> _logger;
 
-        public GetNearbyPostcodes(IMediator mediator, IPostcodeValidator postcodeValidator)
+        public GetNearbyPostcodes(IMediator mediator, IPostcodeValidator postcodeValidator, ILoggerWrapper<GetNearbyPostcodes> logger)
         {
             _mediator = mediator;
             _postcodeValidator = postcodeValidator;
+            _logger = logger;
         }
 
         [FunctionName("GetNearbyPostcodes")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
             GetNearbyPostcodesRequest req,
-            CancellationToken cancellationToken,
-            ILogger log)
+            CancellationToken cancellationToken)
         {
             try
             {
-                log.LogInformation("C# HTTP trigger function processed a request.");
+                _logger.LogInformation("C# HTTP trigger function processed a request.");
 
                 // This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere).  I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
                 if (!await _postcodeValidator.IsPostcodeValidAsync(req.Postcode))
                 {
-                    return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode,"Invalid postcode"));
+                    return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode, "Invalid postcode"));
                 }
 
                 if (req.IsValid(out var validationResults))
@@ -54,10 +55,10 @@ namespace AddressService.AzureFunction
                     return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults));
                 }
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                log.LogError(exc, "Unhandled error in GetNearbyPostcodes");
-                return new ObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError,"Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
+                _logger.LogError("Unhandled error in GetNearbyPostcodes", ex);
+                return new ObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
     }

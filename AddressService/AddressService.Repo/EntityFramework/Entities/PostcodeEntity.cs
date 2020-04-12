@@ -11,6 +11,7 @@ namespace AddressService.Repo.EntityFramework.Entities
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
         public Point Coordinates { get; set; }
+        public string FriendlyName { get; set; }
         public DateTime LastUpdated { get; set; }
 
         public virtual ICollection<AddressDetailsEntity> AddressDetails { get; set; } = new List<AddressDetailsEntity>();

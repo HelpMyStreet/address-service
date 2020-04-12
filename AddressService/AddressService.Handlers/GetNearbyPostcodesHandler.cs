@@ -61,6 +61,7 @@ namespace AddressService.Handlers
                  select new GetNearbyPostCodeResponse
                  {
                      Postcode = getNearbyPostCodeResponse.Postcode,
+                     FriendlyName = getNearbyPostCodeResponse.FriendlyName,
                      AddressDetails = _addressDetailsSorter.OrderAddressDetailsResponse(getNearbyPostCodeResponse.AddressDetails),
                      DistanceInMetres = (int)Math.Round(postCodeIoResult.Distance, 0)
                  })

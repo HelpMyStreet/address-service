@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace AddressService.Repo
@@ -44,13 +43,12 @@ namespace AddressService.Repo
                             postcode = p;
                             postcodeDictionary.Add(postcode.Id, postcode);
                         }
-
                         postcode.AddressDetails.Add(ad);
 
                         return p;
                     },
                     splitOn: "PostcodeId",
-                    param: new {PostCodes = postcodesDataTable},
+                    param: new { PostCodes = postcodesDataTable },
                     commandTimeout: 30);
 
                 return postcodeDictionary.Values;
@@ -67,23 +65,60 @@ namespace AddressService.Repo
                 row["Postcode"] = postcode;
                 dataTable.Rows.Add(row);
             }
-
             dataTable.EndLoadData();
 
             return dataTable;
         }
 
-        public async Task SaveAddressesAsync(IEnumerable<PostcodeDto> postcodes)
+        public async Task SaveAddressesAndFriendlyNameAsync(IEnumerable<PostcodeDto> postcodes)
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
-                DataTable addressDataTable = CreateAddressDataTable(postcodes);
+                await connection.OpenAsync();
+                SqlTransaction sqlTransaction = connection.BeginTransaction();
+                try
+                {
+                    DataTable addressDataTable = CreateAddressDataTable(postcodes);
+                    DataTable friendlyNameDataTable = CreateFriendlyNameDataTable(postcodes);
 
-                await connection.ExecuteAsync("[Address].[SaveAddresses]",
-                    commandType: CommandType.StoredProcedure,
-                    param: new {AddressDetails = addressDataTable},
-                    commandTimeout: 30);
+                    await connection.ExecuteAsync("[Address].[SaveAddresses]",
+                        commandType: CommandType.StoredProcedure,
+                        param: new { AddressDetails = addressDataTable },
+                        commandTimeout: 30,
+                        transaction: sqlTransaction);
+
+                    await connection.ExecuteAsync("[Address].[SaveFriendlyNames]",
+                        commandType: CommandType.StoredProcedure,
+                        param: new { PostcodeFriendlyNames = friendlyNameDataTable },
+                        commandTimeout: 30,
+                        transaction: sqlTransaction);
+
+                    sqlTransaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    sqlTransaction.Rollback();
+                    throw;
+                }
             }
+        }
+
+        private DataTable CreateFriendlyNameDataTable(IEnumerable<PostcodeDto> postcodes)
+        {
+            DataTable friendlyNameDataTable = new DataTable();
+            friendlyNameDataTable.Columns.Add("Postcode", typeof(string));
+            friendlyNameDataTable.Columns.Add("FriendlyName", typeof(string));
+
+            foreach (PostcodeDto postcode in postcodes)
+            {
+                DataRow friendlyNameRow = friendlyNameDataTable.NewRow();
+                friendlyNameRow["Postcode"] = postcode.Postcode;
+                friendlyNameRow["FriendlyName"] = postcode.FriendlyName;
+
+                friendlyNameDataTable.Rows.Add(friendlyNameRow);
+            }
+
+            return friendlyNameDataTable;
         }
 
         private DataTable CreateAddressDataTable(IEnumerable<PostcodeDto> postcodes)
@@ -122,127 +157,5 @@ namespace AddressService.Repo
             bool result = await _context.PostCode.AnyAsync(x => x.Postcode == postcode);
             return result;
         }
-
-
-        //public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, int distanceInMetres, int maxNumberOfResults)
-        //{
-        //    using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
-        //    {
-
-        //        var sw = new Stopwatch();
-        //        sw.Start();
-        //        IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
-        //            commandType: CommandType.StoredProcedure,
-        //            param: new { Postcode = postcode, DistanceInMetres = distanceInMetres, MaxNumberOfResults = maxNumberOfResults },
-        //            commandTimeout: 15);
-        //        sw.Stop();
-        //        Debug.WriteLine($"GetNearestPostcodesAsync Dapper: {sw.ElapsedMilliseconds}");
-
-        //        return result;
-        //    }
-        //}
-
-        public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres, int maxNumberOfResults)
-        {
-            //var sw = new Stopwatch();
-            //sw.Start();
-            //var nearestPostcodeDtos = new List<NearestPostcodeDto>();
-            //using (SqlConnection sqlConnection = new SqlConnection(_connectionStrings.Value.AddressService))
-            //{
-            //    await sqlConnection.OpenAsync();
-
-            //    using (SqlCommand sqlCommand = new SqlCommand("[Address].[GetNearestPostcodes]", sqlConnection))
-            //    {
-            //        sqlCommand.CommandType = CommandType.StoredProcedure;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@Postcode", postcode));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@DistanceInMetres", distanceInMetres));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@MaxNumberOfResults", maxNumberOfResults));
-
-            //        using (SqlDataReader sqlDataReader = await sqlCommand.ExecuteReaderAsync())
-            //        {
-            //            while (await sqlDataReader.ReadAsync())
-            //            {
-            //                var nearestPostcodeDto = new NearestPostcodeDto();
-            //                nearestPostcodeDto.Postcode = sqlDataReader.GetFieldValue<string>(0);
-            //                nearestPostcodeDto.DistanceInMetres = (int) sqlDataReader.GetFieldValue<double>(1);
-
-            //                nearestPostcodeDtos.Add(nearestPostcodeDto);
-            //            }
-
-            //            sw.Stop();
-            //            Debug.WriteLine($"GetNearestPostcodesAsync ADO SQlDataReader: {sw.ElapsedMilliseconds}");
-            //            return nearestPostcodeDtos;
-            //        }
-
-            //    }
-            //}
-
-            //////////////////////
-
-            //var sw = new Stopwatch();
-            //sw.Start();
-
-            //var sw2 = new Stopwatch();
-            //sw2.Start();
-
-            //var nearestPostcodeDtos = new List<NearestPostcodeDto>();
-            //using (SqlConnection sqlConnection = new SqlConnection(_connectionStrings.Value.AddressService))
-            //{
-            //    await sqlConnection.OpenAsync();
-
-            //    var ds = new DataSet();
-
-            //    using (SqlDataAdapter da = new SqlDataAdapter("[Address].[GetNearestPostcodes]", sqlConnection))
-            //    {
-            //        da.SelectCommand.CommandType = CommandType.StoredProcedure;
-            //        da.SelectCommand.Parameters.Add(new SqlParameter("@Postcode", postcode));
-            //        da.SelectCommand.Parameters.Add(new SqlParameter("@DistanceInMetres", distanceInMetres));
-            //        da.SelectCommand.Parameters.Add(new SqlParameter("@MaxNumberOfResults", maxNumberOfResults));
-            //        da.Fill(ds);
-            //    }
-            //    sw2.Stop();
-            //    Debug.WriteLine($"GetNearestPostcodesAsync ADO Fill: {sw2.ElapsedMilliseconds}");
-
-            //    sw2.Reset();
-            //    foreach (DataRow row in ds.Tables[0].Rows)
-            //    {
-            //        foreach (DataColumn column in ds.Tables[0].Columns)
-            //        {
-            //            var nearestPostcodeDto = new NearestPostcodeDto();
-            //            nearestPostcodeDto.Postcode = row["Postcode"].ToString();
-            //            nearestPostcodeDto.DistanceInMetres = (int)(double.Parse(row["DistanceInMetres"].ToString()));
-
-            //            nearestPostcodeDtos.Add(nearestPostcodeDto);
-            //        }
-            //    }
-            //    sw2.Stop();
-            //    Debug.WriteLine($"GetNearestPostcodesAsync ADO Mapping: {sw2.ElapsedMilliseconds}");
-
-            //    sw.Stop();
-            //    Debug.WriteLine($"GetNearestPostcodesAsync ADO DataSet Total: {sw.ElapsedMilliseconds}");
-            //    return nearestPostcodeDtos;
-
-
-
-            //////////////////////
-
-
-
-            var sw = new Stopwatch();
-            sw.Start();
-            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
-            {
-                IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
-                    commandType: CommandType.StoredProcedure,
-                    param: new {Postcode = postcode, DistanceInMetres = distanceInMetres, MaxNumberOfResults = maxNumberOfResults},
-                    commandTimeout: 15);
-                sw.Stop();
-                Debug.WriteLine($"GetNearestPostcodesAsync Dapper: {sw.ElapsedMilliseconds}");
-
-                return result;
-
-            }
-        }
     }
 }
-

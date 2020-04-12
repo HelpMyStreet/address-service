@@ -1,15 +1,17 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
+using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
 using AddressService.Mappers;
 using AutoMapper;
+using HelpMyStreet.Utils.Utils;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Services.Qas;
-using HelpMyStreet.Utils.Utils;
 
 namespace AddressService.Handlers
 {
@@ -18,12 +20,16 @@ namespace AddressService.Handlers
         private readonly IRepository _repository;
         private readonly IQasService _qasService;
         private readonly IQasMapper _qasMapper;
+        private readonly IFriendlyNameGenerator _friendlyNameGenerator;
+        private readonly ILoggerWrapper<PostcodeGetter> _logger;
 
-        public PostcodeGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper)
+        public PostcodeGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper, IFriendlyNameGenerator friendlyNameGenerator, ILoggerWrapper<PostcodeGetter> logger)
         {
             _repository = repository;
             _qasService = qasService;
             _qasMapper = qasMapper;
+            _friendlyNameGenerator = friendlyNameGenerator;
+            _logger = logger;
         }
 
         public async Task<PostcodeDto> GetPostcodeAsync(string postcode, CancellationToken cancellationToken)
@@ -91,12 +97,23 @@ namespace AddressService.Handlers
                 }
 
                 PostcodeDto missingPostcodeDtosForThisBatch = _qasMapper.MapToPostcodeDto(missingQasFormatIds.Key, qasFormatResponses);
+
+                try
+                {
+                    //new addresses need a friendly name
+                    _friendlyNameGenerator.GenerateFriendlyName(missingPostcodeDtosForThisBatch);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning("Error generating friendly name", ex);
+                }
+
                 missingPostcodeDtos.Add(missingPostcodeDtosForThisBatch);
             }
 
             if (missingPostcodeDtos.Any())
             {
-                await _repository.SaveAddressesAsync(missingPostcodeDtos);
+                await _repository.SaveAddressesAndFriendlyNameAsync(missingPostcodeDtos);
             }
             
             // add missing postcodes to those originally taken from the DB

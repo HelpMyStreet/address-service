@@ -94,6 +94,9 @@ namespace AddressService.Repo
                 //entity.Property(e => e.Coordinates)
                 //    .HasColumnType("geography")
                 //    .HasComputedColumnSql("[geography]::Point([Latitude],[Longitude],(4326))) PERSISTED");
+                entity.Property(e => e.FriendlyName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.HasIndex(u => u.Postcode)
                     .IsUnique();
@@ -102,6 +105,10 @@ namespace AddressService.Repo
                     .IsRequired()
                     .HasDefaultValueSql("GetUtcDate()")
                     .HasColumnType("datetime2(0)");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValue(true);
             });
         }
     }

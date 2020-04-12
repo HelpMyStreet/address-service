@@ -89,6 +89,7 @@ namespace AddressService.AzureFunction
 
             }
             builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
+            builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ILoggerWrapper<>), typeof(LoggerWrapper<>)));
 
             builder.Services.AddTransient<IHttpClientWrapper, HttpClientWrapper>();
 
@@ -104,6 +105,8 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
 
             builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();
+
+            builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);

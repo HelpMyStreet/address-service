@@ -85,12 +85,14 @@ namespace AddressService.UnitTests
                             AddressLine3 = "ccc",
                         },
                     },
-                    Postcode = "M1 1AA"
+                    Postcode = "M1 1AA",
+                    FriendlyName = "friendlyName1"
                 },
                 new GetNearbyPostCodeResponse()
                 {
                     AddressDetails = new List<AddressDetailsResponse>(),
-                    Postcode = "CR2 6XH"
+                    Postcode = "CR2 6XH",
+                    FriendlyName = "friendlyName2"
                 },
             };
 
@@ -149,9 +151,11 @@ namespace AddressService.UnitTests
             // check postcodes have been ordered by ascending distance
             Assert.AreEqual(1, result.Postcodes[0].DistanceInMetres);
             Assert.AreEqual("CR2 6XH", result.Postcodes[0].Postcode);
+            Assert.AreEqual("friendlyName2", result.Postcodes[0].FriendlyName);
 
             Assert.AreEqual(2, result.Postcodes[1].DistanceInMetres);
             Assert.AreEqual("M1 1AA", result.Postcodes[1].Postcode);
+            Assert.AreEqual("friendlyName1", result.Postcodes[1].FriendlyName);
 
             _postcodeIoService.Verify(x => x.GetNearbyPostCodesAsync(It.Is<string>(y => y == "M1 1AA"), It.IsAny<CancellationToken>()));
 

@@ -102,6 +102,10 @@ namespace AddressService.Repo
                     .IsRequired()
                     .HasDefaultValueSql("GetUtcDate()")
                     .HasColumnType("datetime2(0)");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValue(true);
             });
         }
     }

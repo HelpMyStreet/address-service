@@ -63,6 +63,7 @@ namespace AddressService.PostcodeLoader
             else if (command.KeyChar == '2')
             {
                 postcodeLoader.LoadFromStagingTableAndSwitch(connectionString);
+                postcodeLoader.TruncateStagingTable(connectionString);
             }
             else if (command.KeyChar == '3')
             {

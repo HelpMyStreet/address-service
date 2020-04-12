@@ -14,6 +14,8 @@ namespace AddressService.Core.Dto
 
         public DateTime LastUpdated { get; set; }
 
+        public bool IsActive { get; set; }
+
         public List<AddressDetailsDto> AddressDetails { get; set; } = new List<AddressDetailsDto>();
 
         public override string ToString()

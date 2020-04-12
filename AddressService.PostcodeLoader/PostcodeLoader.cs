@@ -120,7 +120,7 @@ namespace AddressService.PostcodeLoader
             Console.WriteLine();
             if (_invalidPostcodes.Any())
             {
-                Console.WriteLine($"Invalid Postcodes List (excludes nulls/empty postcodes):");
+                Console.WriteLine($"Invalid Postcodes List (excludes nulls and empty postcodes):");
 
                 foreach (string invalidPostcode in _invalidPostcodes.OrderBy(x => x))
                 {
@@ -129,7 +129,7 @@ namespace AddressService.PostcodeLoader
             }
             else
             {
-                Console.WriteLine("There were no invalid postcodes to display (excludes nulls and empty postcodes)");
+                Console.WriteLine("There were no invalid postcodes to display (excludes null and empty postcodes)");
             }
         }
 
@@ -300,7 +300,7 @@ namespace AddressService.PostcodeLoader
                     sqlCmd.ExecuteNonQuery();
                 }
             }
-            Console.WriteLine($"Switch table ([Staging].[Postcode_Staging]) truncation complete");
+            Console.WriteLine($"Staging table ([Staging].[Postcode_Staging]) truncation complete");
         }
     }
 

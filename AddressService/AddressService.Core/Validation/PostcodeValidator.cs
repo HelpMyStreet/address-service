@@ -4,24 +4,25 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Interfaces.Repositories;
 
 namespace AddressService.Core.Validation
 {
     public class PostcodeValidator : IPostcodeValidator
     {
         private readonly IRegexPostcodeValidator _regexPostcodeValidator;
-        private readonly IPostcodeIoService _postcodeIoService;
+        private readonly IRepository _repository;
         private readonly ILogger<PostcodeValidator> _logger;
 
-        public PostcodeValidator(IRegexPostcodeValidator regexPostcodeValidator, IPostcodeIoService postcodeIoService, ILogger<PostcodeValidator> logger)
+        public PostcodeValidator(IRegexPostcodeValidator regexPostcodeValidator, IRepository repository, ILogger<PostcodeValidator> logger)
         {
             _regexPostcodeValidator = regexPostcodeValidator;
-            _postcodeIoService = postcodeIoService;
+            _repository = repository;
             _logger = logger;
         }
 
         /// <summary>
-        /// Validates postcode by checking using Regex.  If this says it's valid, it checks PostcodeIO's validation endpoint.
+        /// Validates postcode by checking using Regex.  If this says it's valid, it checks the DB to see if the postcode is active.
         /// </summary>
         /// <param name="postcode"></param>
         /// <returns></returns>
@@ -34,18 +35,17 @@ namespace AddressService.Core.Validation
 
             postcode = PostcodeFormatter.FormatPostcode(postcode);
 
-            // not validating whether postcode is valid by checking in DB since it contains retired postcodes
             try
             {
-                bool doesPostcodeIoThinkPostcodeIsValid = await _postcodeIoService.IsPostcodeValidAsync(postcode, CancellationToken.None);
-                return doesPostcodeIoThinkPostcodeIsValid;
+                bool isPostcodeInDbAndActive = await _repository.IsPostcodeInDbAndActive(postcode);
+                return isPostcodeInDbAndActive;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning("Error calling PostcodeIO to validate postcode. Returning that postcode is valid since it passes Regex", ex);
                 return true;
             }
-         
+
         }
     }
 }

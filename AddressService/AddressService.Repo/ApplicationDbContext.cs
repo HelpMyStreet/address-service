@@ -15,7 +15,8 @@ namespace AddressService.Repo
         }
 
         public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }
-        public virtual DbSet<PostcodeEntity> PostCode { get; set; }
+        public virtual DbSet<PostcodeEntity> Postcode { get; set; }
+        public virtual DbSet<PreComputedNearestPostcodesEntity> PreComputedNearestPostcodes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -109,6 +110,28 @@ namespace AddressService.Repo
                 entity.Property(e => e.IsActive)
                     .IsRequired()
                     .HasDefaultValue(true);
+            });
+
+
+            modelBuilder.Entity<PreComputedNearestPostcodesEntity>(entity =>
+            {
+                entity.ToTable("PreComputedNearestPostcodes", "Address");
+
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(x => x.Id).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Postcode)
+                    .IsUnicode(false)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.CompressedNearestPostcodes)
+                    .IsRequired();
+
+                entity.HasIndex(u => u.Postcode)
+                    .IsUnique();
+
             });
         }
     }

@@ -5,8 +5,8 @@
     <UserSecretsId>2ab26b8f-fafb-4345-a188-210580b87104</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
-    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.28" />
-    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.24" />
+    <PackageReference Include="HelpMyStreet.Contracts" Version="1.1.31" />
+    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.31" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />

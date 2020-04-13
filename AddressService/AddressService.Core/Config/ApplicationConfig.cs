@@ -2,6 +2,7 @@
 {
     public class ApplicationConfig
     {
-        public int NearestPostcodesLimit { get; set; }
+        public int DefaultMaxNumberOfNearbyPostcodes { get; set; }
+        public int DefaultNearestPostcodeRadiusInMetres { get; set; }
     }
 }

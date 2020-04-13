@@ -1,90 +1,56 @@
-﻿using AddressService.Core.Config;
-using AddressService.Core.Dto;
-using AddressService.Core.Services.PostcodeIo;
+﻿using AddressService.Core.Dto;
+using AddressService.Core.Utils;
 using AddressService.Handlers;
 using AutoMapper;
-using Microsoft.Extensions.Options;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Utils;
-using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
-using HelpMyStreet.Utils.Models;
 
 namespace AddressService.UnitTests
 {
     public class GetNearbyPostcodesHandlerTests
     {
-
-        private Mock<IPostcodeIoService> _postcodeIoService;
+        private Mock<INearestPostcodeGetter> _nearestPostcodeGetter;
         private Mock<IMapper> _mapper;
         private Mock<IPostcodeGetter> _postcodeGetter;
         private Mock<IAddressDetailsSorter> _addressDetailsSorter;
-        private Mock<IOptionsSnapshot<ApplicationConfig>> _applicationConfigOptions;
 
-        private ApplicationConfig _applicationConfig;
         [SetUp]
         public void Setup()
         {
-
-            PostCodeIoNearestRootResponse postCodeIoResponse = new PostCodeIoNearestRootResponse()
+            IReadOnlyList<NearestPostcodeDto> nearestPostcodeDtos = new List<NearestPostcodeDto>()
             {
-                Result = new List<PostCodeIoNearestResponse>()
+                new NearestPostcodeDto()
                 {
-                    new PostCodeIoNearestResponse()
-                    {
-                        Distance = 2.1, // test response is rounded to nearest metre
-                        Postcode = "M11AA"
-                    },
-                    new PostCodeIoNearestResponse()
-                    {
-                        Distance = 3,
-                        Postcode = "DN551PT"
-                    },
-                    new PostCodeIoNearestResponse()
-                    {
-                        Distance = 0.9, // test response is rounded to nearest metre
-                        Postcode = "CR26XH"
-                    },
-                }
+                DistanceInMetres = 2,
+                Postcode = "M1 1AA"
+            },
+            new NearestPostcodeDto()
+            {
+                DistanceInMetres = 3,
+                Postcode = "DN55 1PT"
+            },
+            new NearestPostcodeDto()
+            {
+                DistanceInMetres = 1,
+                Postcode = "CR2 6XH"
+            },
             };
 
-            _postcodeIoService = new Mock<IPostcodeIoService>();
+            _nearestPostcodeGetter = new Mock<INearestPostcodeGetter>();
 
-            _postcodeIoService.Setup(x => x.GetNearbyPostCodesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(postCodeIoResponse);
+            _nearestPostcodeGetter.Setup(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<int?>())).ReturnsAsync(nearestPostcodeDtos);
 
             IEnumerable<GetNearbyPostCodeResponse> postcodesReturnedFromMapper = new List<GetNearbyPostCodeResponse>()
             {
                 new GetNearbyPostCodeResponse()
                 {
-                    AddressDetails = new List<AddressDetailsResponse>()
-                    {
-                        new AddressDetailsResponse()
-                        {
-                            AddressLine1 = "bbb",
-                            AddressLine2 = "bbb",
-                        },
-                        new AddressDetailsResponse()
-                        {
-                            AddressLine1 = "bbb",
-                            AddressLine2 = "aaa"
-                        },
-                        new AddressDetailsResponse()
-                        {
-                            AddressLine1 = "aaa",
-                            AddressLine2 = "bbb"
-                        },
-                        new AddressDetailsResponse()
-                        {
-                            AddressLine1 = "bbb",
-                            AddressLine2 = "bbb",
-                            AddressLine3 = "ccc",
-                        },
-                    },
+                    AddressDetails = new List<AddressDetailsResponse>(),
                     Postcode = "M1 1AA",
                     FriendlyName = "friendlyName1"
                 },
@@ -121,27 +87,19 @@ namespace AddressService.UnitTests
 
             _addressDetailsSorter = new Mock<IAddressDetailsSorter>();
             _addressDetailsSorter.SetupAllProperties();
-
-            _applicationConfig = new ApplicationConfig()
-            {
-                NearestPostcodesLimit = 2
-            };
-
-            _applicationConfigOptions = new Mock<IOptionsSnapshot<ApplicationConfig>>();
-
-            _applicationConfigOptions.SetupGet(x => x.Value).Returns(_applicationConfig);
-
         }
 
 
         [Test]
         public async Task GetPostcodes_SortedByDistanceAndLimited()
         {
-            GetNearbyPostcodesHandler getNearbyPostcodesHandler = new GetNearbyPostcodesHandler(_postcodeIoService.Object, _mapper.Object, _postcodeGetter.Object, _addressDetailsSorter.Object, _applicationConfigOptions.Object);
+            GetNearbyPostcodesHandler getNearbyPostcodesHandler = new GetNearbyPostcodesHandler(_nearestPostcodeGetter.Object, _mapper.Object, _postcodeGetter.Object, _addressDetailsSorter.Object);
 
             GetNearbyPostcodesRequest request = new GetNearbyPostcodesRequest()
             {
-                Postcode = "m11aa"
+                Postcode = "m11aa",
+                RadiusInMetres = 1604,
+                MaxNumberOfResults = 100
             };
 
             GetNearbyPostcodesResponse result = await getNearbyPostcodesHandler.Handle(request, CancellationToken.None);
@@ -157,18 +115,15 @@ namespace AddressService.UnitTests
             Assert.AreEqual("M1 1AA", result.Postcodes[1].Postcode);
             Assert.AreEqual("friendlyName1", result.Postcodes[1].FriendlyName);
 
-            _postcodeIoService.Verify(x => x.GetNearbyPostCodesAsync(It.Is<string>(y => y == "M1 1AA"), It.IsAny<CancellationToken>()));
+            _nearestPostcodeGetter.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == "M1 1AA"), It.Is<int?>(y => y == 1604), It.Is<int?>(y => y == 100)));
 
-            // check postcodes have been cleaned, sorted and limited to 2 when getting them from Postcode getter class
-            _postcodeGetter.Verify(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y => 
-                y.Count() == 2 
-                && y.ToList()[0] == "CR2 6XH" 
-                && y.ToList()[1] == "M1 1AA"
-            ), It.IsAny<CancellationToken>()));
+            _postcodeGetter.Verify(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y =>
+                         y.Count() == 3
+                     ), It.IsAny<CancellationToken>()));
 
             _mapper.Verify(x => x.Map<IEnumerable<PostcodeDto>, IEnumerable<GetNearbyPostCodeResponse>>(It.IsAny<IEnumerable<PostcodeDto>>()));
 
-            _addressDetailsSorter.Verify(x=>x.OrderAddressDetailsResponse(It.IsAny<IEnumerable<AddressDetailsResponse>>()));
+            _addressDetailsSorter.Verify(x => x.OrderAddressDetailsResponse(It.IsAny<IEnumerable<AddressDetailsResponse>>()));
         }
 
 

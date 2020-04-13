@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200413110558_NearestPostcodesFromDb")]
+    partial class NearestPostcodesFromDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,29 +96,6 @@ namespace AddressService.Repo.Migrations
                         .IsUnique();
 
                     b.ToTable("Postcode","Address");
-                });
-
-            modelBuilder.Entity("AddressService.Repo.EntityFramework.Entities.PreComputedNearestPostcodesEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("Id")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte[]>("CompressedNearestPostcodes")
-                        .IsRequired();
-
-                    b.Property<string>("Postcode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Postcode")
-                        .IsUnique();
-
-                    b.ToTable("PreComputedNearestPostcodes","Address");
                 });
 
             modelBuilder.Entity("AddressService.Repo.EntityFramework.Entities.AddressDetailsEntity", b =>

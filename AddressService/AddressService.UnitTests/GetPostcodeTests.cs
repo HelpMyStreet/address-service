@@ -54,14 +54,14 @@ namespace AddressService.UnitTests
                 Postcode = "NG1 5FS"
             };
 
-            var getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
-            var result = await getPostcode.Run(req, CancellationToken.None);
+            GetPostcode getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+            IActionResult result = await getPostcode.Run(req, CancellationToken.None);
 
-            var objectResult =   result as OkObjectResult;
+            OkObjectResult objectResult =   result as OkObjectResult;
             Assert.IsNotNull(objectResult);
             Assert.AreEqual(200, objectResult.StatusCode);
 
-            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
+            ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
             
             Assert.IsTrue(deserialisedResponse.HasContent);
@@ -82,14 +82,14 @@ namespace AddressService.UnitTests
                 Postcode = "NG1 5FS"
             };
 
-            var getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
-            var result = await getPostcode.Run(req, CancellationToken.None);
+            GetPostcode getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+            IActionResult result = await getPostcode.Run(req, CancellationToken.None);
 
-            var objectResult = result as OkObjectResult;
+            OkObjectResult objectResult = result as OkObjectResult;
             Assert.IsNotNull(objectResult);
             Assert.AreEqual(200, objectResult.StatusCode);
             
-            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
+            ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
 
             Assert.IsFalse(deserialisedResponse.HasContent);
@@ -110,13 +110,13 @@ namespace AddressService.UnitTests
                 Postcode = "NG1 5FS"
             };
 
-            var getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
-            var result = await getPostcode.Run(req, CancellationToken.None);
+            GetPostcode getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+            IActionResult result = await getPostcode.Run(req, CancellationToken.None);
 
-            var objectResult = result as ObjectResult;
+            ObjectResult objectResult = result as ObjectResult;
             Assert.IsNotNull(objectResult);
 
-            var deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
+            ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
             Assert.AreEqual(500, objectResult.StatusCode); ;
 

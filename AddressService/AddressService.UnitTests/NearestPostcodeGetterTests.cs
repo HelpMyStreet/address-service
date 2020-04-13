@@ -18,10 +18,14 @@ namespace AddressService.UnitTests
 
         private IEnumerable<NearestPostcodeDto> _nearestPostcodeDtos;
         private ApplicationConfig _applicationConfigSettings;
+
+        private string _postcode = "NG1 5FS";
         [SetUp]
         public void SetUp()
         {
             _repository = new Mock<IRepository>();
+
+            _repository.SetupAllProperties();
 
             _nearestPostcodeDtos = new List<NearestPostcodeDto>()
             {
@@ -40,14 +44,28 @@ namespace AddressService.UnitTests
                     Postcode = "NG1 AC",
                     DistanceInMetres = 1
                 },
+                new NearestPostcodeDto()
+                {
+                    Postcode = "NG1 AD",
+                    DistanceInMetres = 4
+                },
+                new NearestPostcodeDto()
+                {
+                Postcode = "NG1 AE",
+                DistanceInMetres = 16095
+            },
             };
 
-            _repository.Setup(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>(), It.IsAny<int>())).ReturnsAsync(_nearestPostcodeDtos);
+            _repository.Setup(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == _postcode), It.IsAny<double>())).ReturnsAsync(_nearestPostcodeDtos);
+
+            PreComputedNearestPostcodesDto preComputedNearestPostcodes = NearestPostcodeCompressor.CompressNearestPostcodeDtos(_postcode, _nearestPostcodeDtos);
+
+            _repository.Setup(x => x.GetPreComputedNearestPostcodes(It.Is<string>(y => y == _postcode))).ReturnsAsync(preComputedNearestPostcodes);
 
             _applicationConfigSettings = new ApplicationConfig()
             {
-                DefaultMaxNumberOfNearbyPostcodes = 10,
-                DefaultNearestPostcodeRadiusInMetres = 10
+                DefaultMaxNumberOfNearbyPostcodes = 0,
+                DefaultNearestPostcodeRadiusInMetres = 0
             };
 
             _applicationConfig = new Mock<IOptionsSnapshot<ApplicationConfig>>();
@@ -55,43 +73,237 @@ namespace AddressService.UnitTests
         }
 
         [Test]
-        public async Task GetPostcodes_DefaultSettings_OrdersResults()
+        public async Task GetPostcodesFromCache_ResultsAreOrdered_LimitedByRadius()
         {
-            string postcode = "NG1 5FS";
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 
-            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(postcode, null, null);
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 3, 5);
 
-            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
-            _repository.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == postcode), It.Is<double>(y => y == (double)_applicationConfigSettings.DefaultNearestPostcodeRadiusInMetres), It.Is<int>(y => y == _applicationConfigSettings.DefaultMaxNumberOfNearbyPostcodes)));
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
 
-            CollectionAssert.AreEqual(_nearestPostcodeDtos.OrderBy(x => x.DistanceInMetres).ToList(), result.ToList());
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 3).OrderBy(x => x.DistanceInMetres).Take(5).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
         }
 
         [Test]
-        public async Task GetPostcodes_UsesWhatIsRequested()
+        public async Task GetPostcodesFromCache_ResultsAreOrdered_LimitedByDefaultRadius()
         {
-            string postcode = "NG1 5FS";
+            _applicationConfigSettings = new ApplicationConfig()
+            {
+                DefaultMaxNumberOfNearbyPostcodes = 0,
+                DefaultNearestPostcodeRadiusInMetres = 3
+            };
+
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 
-            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(postcode, 2, 1);
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, null, 5);
 
-            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
-            _repository.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == postcode), It.Is<double>(y => y == (double)2), It.Is<int>(y => y == 1)));
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
 
-            Assert.AreEqual(1, result.Count);
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 3).OrderBy(x => x.DistanceInMetres).Take(5).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
         }
 
         [Test]
-        public async Task GetPostcodes_DoesntAllowRadiusOfMoreThan16094Metres()
+        public async Task GetPostcodesFromCache_ResultsAreOrdered_LimitedByMaxNumberOfResults()
         {
-            string postcode = "NG1 5FS";
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 
-            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(postcode, 16095, 1);
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 5, 3);
 
-            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
-            _repository.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == postcode), It.Is<double>(y => y == (double)16094), It.Is<int>(y => y == 1)));
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 5).OrderBy(x => x.DistanceInMetres).Take(3).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
         }
+
+        [Test]
+        public async Task GetPostcodesFromCache_ResultsAreOrdered_LimitedByDefaultMaxNumberOfResults()
+        {
+            _applicationConfigSettings = new ApplicationConfig()
+            {
+                DefaultMaxNumberOfNearbyPostcodes = 3,
+                DefaultNearestPostcodeRadiusInMetres = 0
+            };
+
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 5, null);
+
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 5).OrderBy(x => x.DistanceInMetres).Take(3).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
+
+        [Test]
+        public async Task GetPostcodesFromDb_ResultsAreOrdered_LimitedByRadius()
+        {
+            _repository.Setup(x => x.GetPreComputedNearestPostcodes(It.IsAny<string>())).ReturnsAsync(default(PreComputedNearestPostcodesDto));
+
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 3, 5);
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 3).OrderBy(x => x.DistanceInMetres).Take(5).ToList();
+
+            _repository.Verify(x => x.SavePreComputedNearestPostcodes(It.IsAny<PreComputedNearestPostcodesDto>()));
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
+        [Test]
+        public async Task GetPostcodesFromDb_ResultsAreOrdered_LimitedByDefaultRadius()
+        {
+            _repository.Setup(x => x.GetPreComputedNearestPostcodes(It.IsAny<string>())).ReturnsAsync(default(PreComputedNearestPostcodesDto));
+
+            _applicationConfigSettings = new ApplicationConfig()
+            {
+                DefaultMaxNumberOfNearbyPostcodes = 0,
+                DefaultNearestPostcodeRadiusInMetres = 3
+            };
+
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, null, 5);
+
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 3).OrderBy(x => x.DistanceInMetres).Take(5).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
+
+        [Test]
+        public async Task GetPostcodesFromDb_ResultsAreOrdered_LimitedByMaxNumberOfResults()
+        {
+            _repository.Setup(x => x.GetPreComputedNearestPostcodes(It.IsAny<string>())).ReturnsAsync(default(PreComputedNearestPostcodesDto));
+
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 5, 3);
+
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 5).OrderBy(x => x.DistanceInMetres).Take(3).ToList();
+
+            _repository.Verify(x => x.SavePreComputedNearestPostcodes(It.IsAny<PreComputedNearestPostcodesDto>()));
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
+
+        [Test]
+        public async Task GetPostcodesFromDB_ResultsAreOrdered_LimitedByDefaultMaxNumberOfResults()
+        {
+            _repository.Setup(x => x.GetPreComputedNearestPostcodes(It.IsAny<string>())).ReturnsAsync(default(PreComputedNearestPostcodesDto));
+
+            _applicationConfigSettings = new ApplicationConfig()
+            {
+                DefaultMaxNumberOfNearbyPostcodes = 3,
+                DefaultNearestPostcodeRadiusInMetres = 0
+            };
+
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 5, null);
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 5).OrderBy(x => x.DistanceInMetres).Take(3).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
+        [Test]
+        public async Task GetPostcodesFromDb_GetPostcodesWithinARadiusOf16094Metres()
+        {
+            _repository.Setup(x => x.GetPreComputedNearestPostcodes(It.IsAny<string>())).ReturnsAsync(default(PreComputedNearestPostcodesDto));
+
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 1, 1);
+
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == _postcode), It.Is<double>(y => y == 16094)));
+        }
+
+        [Test]
+        public async Task GetPostcodesFromCache_CantGetResutsWithARadiusGreaterThan16094Metres()
+        {
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 99999, 5);
+
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 16094).OrderBy(x => x.DistanceInMetres).Take(5).ToList();
+            
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
+        [Test]
+        public async Task GetPostcodesFromCache_RadiusOfLessThan1SetTo16094Metres()
+        {
+            NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
+
+            IReadOnlyList<NearestPostcodeDto> result = await nearestPostcodeGetter.GetNearestPostcodesAsync(_postcode, 0, 5);
+
+            _repository.Verify(x => x.GetNearestPostcodesAsync(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
+
+            List<NearestPostcodeDto> expectedResult = _nearestPostcodeDtos.Where(x => x.DistanceInMetres <= 16094).OrderBy(x => x.DistanceInMetres).Take(5).ToList();
+
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(expectedResult[i].Postcode, result[i].Postcode);
+                Assert.AreEqual(expectedResult[i].DistanceInMetres, result[i].DistanceInMetres);
+            }
+        }
+
     }
 }

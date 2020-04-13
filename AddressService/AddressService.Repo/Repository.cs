@@ -10,7 +10,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using AddressService.Repo.EntityFramework.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AddressService.Repo
 {
@@ -155,43 +158,58 @@ namespace AddressService.Repo
 
         public async Task<bool> IsPostcodeInDbAndActive(string postcode)
         {
-            bool result = await _context.PostCode.AnyAsync(x => x.Postcode == postcode && x.IsActive);
+            bool result = await _context.Postcode.AnyAsync(x => x.Postcode == postcode && x.IsActive);
             return result;
         }
 
-        //public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, int distanceInMetres, int maxNumberOfResults)
-        //{
-        //    using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
-        //    {
-
-        //        var sw = new Stopwatch();
-        //        sw.Start();
-        //        IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
-        //            commandType: CommandType.StoredProcedure,
-        //            param: new { Postcode = postcode, DistanceInMetres = distanceInMetres, MaxNumberOfResults = maxNumberOfResults },
-        //            commandTimeout: 15);
-        //        sw.Stop();
-        //        Debug.WriteLine($"GetNearestPostcodesAsync Dapper: {sw.ElapsedMilliseconds}");
-
-        //        return result;
-        //    }
-        //}
-
-        public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres, int maxNumberOfResults)
+        public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres)
         {
-            var sw = new Stopwatch();
+            Stopwatch sw = new Stopwatch();
             sw.Start();
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
-                    param: new { Postcode = postcode, DistanceInMetres = distanceInMetres, MaxNumberOfResults = maxNumberOfResults },
+                    param: new { Postcode = postcode, DistanceInMetres = distanceInMetres },
                     commandTimeout: 15);
                 sw.Stop();
                 Debug.WriteLine($"GetNearestPostcodesAsync Dapper: {sw.ElapsedMilliseconds}");
 
                 return result;
 
+            }
+        }
+
+
+        public async Task SavePreComputedNearestPostcodes(PreComputedNearestPostcodesDto preComputedNearestPostcodesDto)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                await connection.ExecuteAsync("[Address].[SavePreComputedNearestPostcodes]",
+                   commandType: CommandType.StoredProcedure,
+                   param: new { Postcode = preComputedNearestPostcodesDto.Postcode, CompressedNearestPostcodes = preComputedNearestPostcodesDto.CompressedNearestPostcodes },
+                   commandTimeout: 15);
+                sw.Stop();
+                Debug.WriteLine($"SavePreComputedNearestPostcodes Dapper: {sw.ElapsedMilliseconds}");
+            }
+        }
+
+        public async Task<PreComputedNearestPostcodesDto> GetPreComputedNearestPostcodes(string postcode)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                PreComputedNearestPostcodesDto result = await connection.QuerySingleOrDefaultAsync<PreComputedNearestPostcodesDto>("[Address].[GetPreComputedNearestPostcodes]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { Postcode = postcode },
+                    commandTimeout: 15);
+                sw.Stop();
+                Debug.WriteLine($"GetPreComputedNearestPostcodes Dapper: {sw.ElapsedMilliseconds}");
+
+                return result;
             }
         }
     }

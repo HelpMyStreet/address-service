@@ -9,6 +9,8 @@ namespace AddressService.Core.Interfaces.Repositories
         Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postcodes);
         Task SaveAddressesAndFriendlyNameAsync(IEnumerable<PostcodeDto> postCodes);
         Task<bool> IsPostcodeInDbAndActive(string postcode);
-        Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres, int maxNumberOfResults);
+        Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres);
+        Task SavePreComputedNearestPostcodes(PreComputedNearestPostcodesDto preComputedNearestPostcodesDto);
+        Task<PreComputedNearestPostcodesDto> GetPreComputedNearestPostcodes(string postcode);
     }
 }

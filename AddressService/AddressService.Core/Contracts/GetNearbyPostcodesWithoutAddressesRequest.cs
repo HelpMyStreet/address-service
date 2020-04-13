@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using System.ComponentModel.DataAnnotations;
 
 namespace AddressService.Core.Contracts
@@ -7,7 +8,10 @@ namespace AddressService.Core.Contracts
     {
         [Required]
         public string Postcode { get; set; }
+
+        [Range(0, 16094)] // 10 miles
         public int? RadiusInMetres { get; set; }
+
         public int? MaxNumberOfResults { get; set; }
     }
 }

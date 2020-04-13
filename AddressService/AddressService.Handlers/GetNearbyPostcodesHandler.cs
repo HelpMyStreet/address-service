@@ -32,7 +32,7 @@ namespace AddressService.Handlers
             string postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
             // get nearest postcodes
-            IReadOnlyList<NearestPostcodeDto> nearestPostcodeDtos = await _nearestPostcodeGetter.GetNearestPostcodesAsync(postcode, null, null);
+            IReadOnlyList<NearestPostcodeDto> nearestPostcodeDtos = await _nearestPostcodeGetter.GetNearestPostcodesAsync(postcode, request.RadiusInMetres, request.MaxNumberOfResults);
 
             IEnumerable<string> nearestPostcodes = nearestPostcodeDtos.Select(x => x.Postcode).ToList();
 

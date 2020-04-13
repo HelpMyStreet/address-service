@@ -97,7 +97,9 @@ namespace AddressService.UnitTests
 
             GetNearbyPostcodesRequest request = new GetNearbyPostcodesRequest()
             {
-                Postcode = "m11aa"
+                Postcode = "m11aa",
+                RadiusInMetres = 1604,
+                MaxNumberOfResults = 100
             };
 
             GetNearbyPostcodesResponse result = await getNearbyPostcodesHandler.Handle(request, CancellationToken.None);
@@ -113,7 +115,7 @@ namespace AddressService.UnitTests
             Assert.AreEqual("M1 1AA", result.Postcodes[1].Postcode);
             Assert.AreEqual("friendlyName1", result.Postcodes[1].FriendlyName);
 
-            _nearestPostcodeGetter.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == "M1 1AA"), It.Is<int?>(y => y == null), It.Is<int?>(y => y == null)));
+            _nearestPostcodeGetter.Verify(x => x.GetNearestPostcodesAsync(It.Is<string>(y => y == "M1 1AA"), It.Is<int?>(y => y == 1604), It.Is<int?>(y => y == 100)));
 
             _postcodeGetter.Verify(x => x.GetPostcodesAsync(It.Is<IEnumerable<string>>(y =>
                          y.Count() == 3

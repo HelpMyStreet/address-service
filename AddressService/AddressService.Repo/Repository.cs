@@ -183,31 +183,23 @@ namespace AddressService.Repo
 
         public async Task SavePreComputedNearestPostcodes(PreComputedNearestPostcodesDto preComputedNearestPostcodesDto)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 await connection.ExecuteAsync("[Address].[SavePreComputedNearestPostcodes]",
                    commandType: CommandType.StoredProcedure,
                    param: new { Postcode = preComputedNearestPostcodesDto.Postcode, CompressedNearestPostcodes = preComputedNearestPostcodesDto.CompressedNearestPostcodes },
                    commandTimeout: 15);
-                sw.Stop();
-                Debug.WriteLine($"SavePreComputedNearestPostcodes Dapper: {sw.ElapsedMilliseconds}");
             }
         }
 
         public async Task<PreComputedNearestPostcodesDto> GetPreComputedNearestPostcodes(string postcode)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 PreComputedNearestPostcodesDto result = await connection.QuerySingleOrDefaultAsync<PreComputedNearestPostcodesDto>("[Address].[GetPreComputedNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcode = postcode },
                     commandTimeout: 15);
-                sw.Stop();
-                Debug.WriteLine($"GetPreComputedNearestPostcodes Dapper: {sw.ElapsedMilliseconds}");
 
                 return result;
             }

@@ -1,6 +1,7 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AutoMapper;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Utils.Utils;
 using MediatR;
 using System.Collections.Generic;

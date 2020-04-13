@@ -1,6 +1,6 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AutoMapper;
+using HelpMyStreet.Contracts.AddressService.Response;
 
 namespace AddressService.Mappers
 {
@@ -9,7 +9,6 @@ namespace AddressService.Mappers
         public NearestPostcodeProfile()
         {
             CreateMap<NearestPostcodeDto, NearestPostcodeWithoutAddress>();
-              //  .ForMember(s => s.DistanceInMiles, c => c.Ignore());
         }
     }
 }

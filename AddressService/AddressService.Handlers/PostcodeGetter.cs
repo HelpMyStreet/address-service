@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,6 +83,7 @@ namespace AddressService.Handlers
                 List<Task<QasFormatRootResponse>> qasFormatResponseTasks = new List<Task<QasFormatRootResponse>>();
                 foreach (string missingQasFormatId in missingQasFormatIds)
                 {
+                    Debug.WriteLine($"Calling QAS: {missingQasFormatId}");
                     Task<QasFormatRootResponse> qasFormatResponseTask = _qasService.GetGlobalIntuitiveFormatResponseAsync(missingQasFormatId, cancellationToken);
                     qasFormatResponseTasks.Add(qasFormatResponseTask);
                 }
@@ -94,6 +96,8 @@ namespace AddressService.Handlers
                     qasFormatResponseTasks.Remove(finishedQasFormatResponseTask);
                     QasFormatRootResponse qasFormatResponse = await finishedQasFormatResponseTask;
                     qasFormatResponses.Add(qasFormatResponse);
+
+                    Debug.WriteLine($"Got QAS Response: {qasFormatResponse?.Address?.FirstOrDefault()?.AddressLine1}");
                 }
 
                 PostcodeDto missingPostcodeDtosForThisBatch = _qasMapper.MapToPostcodeDto(missingQasFormatIds.Key, qasFormatResponses);

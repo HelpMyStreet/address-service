@@ -302,6 +302,21 @@ namespace AddressService.PostcodeLoader
             }
             Console.WriteLine($"Staging table ([Staging].[Postcode_Staging]) truncation complete");
         }
+
+        public void TruncatePreComputedNearestPostcodes(string connectionString)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                using (SqlCommand sqlCmd = new SqlCommand("TRUNCATE TABLE [Address].[PreComputedNearestPostcodes]", sqlConnection))
+                {
+                    sqlCmd.CommandType = CommandType.Text;
+                    sqlCmd.CommandTimeout = 30;
+                    sqlCmd.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine($"Precomputed nearby postcodes truncation complete ([Address].[PreComputedNearestPostcodes])");
+        }
     }
 
 }

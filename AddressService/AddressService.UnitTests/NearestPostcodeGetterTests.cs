@@ -99,6 +99,7 @@ namespace AddressService.UnitTests
                 DefaultMaxNumberOfNearbyPostcodes = 0,
                 DefaultNearestPostcodeRadiusInMetres = 3
             };
+            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
 
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 
@@ -143,6 +144,7 @@ namespace AddressService.UnitTests
                 DefaultMaxNumberOfNearbyPostcodes = 3,
                 DefaultNearestPostcodeRadiusInMetres = 0
             };
+            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
 
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 
@@ -192,6 +194,7 @@ namespace AddressService.UnitTests
                 DefaultMaxNumberOfNearbyPostcodes = 0,
                 DefaultNearestPostcodeRadiusInMetres = 3
             };
+            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
 
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 
@@ -241,6 +244,7 @@ namespace AddressService.UnitTests
                 DefaultMaxNumberOfNearbyPostcodes = 3,
                 DefaultNearestPostcodeRadiusInMetres = 0
             };
+            _applicationConfig.SetupGet(x => x.Value).Returns(_applicationConfigSettings);
 
             NearestPostcodeGetter nearestPostcodeGetter = new NearestPostcodeGetter(_repository.Object, _applicationConfig.Object);
 

@@ -56,7 +56,7 @@ namespace AddressService.AzureFunction
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unhandled error in GetNearbyPostcodes", ex);
+                _logger.LogError("Unhandled error in GetNearbyPostcodesWithoutAddresses", ex);
                 return new ObjectResult(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError,"Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }

@@ -12,17 +12,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Contracts;
 using AddressService.Core.Utils;
 using HelpMyStreet.Contracts.Shared;
 
 namespace AddressService.UnitTests
 {
-    public class GetNearbyPostcodesTests
+    public class GetNearbyPostcodesWithoutAddressesTests
     {
-        private Mock<IMediator>_mediator;
+        private Mock<IMediator> _mediator;
         private Mock<IPostcodeValidator> _postcodeValidator;
-        private Mock<ILoggerWrapper<GetNearbyPostcodes>> _logger;
-        private GetNearbyPostcodesResponse _response;
+        private Mock<ILoggerWrapper<GetNearbyPostcodesWithoutAddresses>> _logger;
+        private GetNearbyPostcodesWithoutAddressesResponse _response;
 
         [SetUp]
         public void SetUp()
@@ -31,24 +32,23 @@ namespace AddressService.UnitTests
             _postcodeValidator.Setup(x => x.IsPostcodeValidAsync(It.IsAny<string>())).ReturnsAsync(true);
 
 
-            _response = new GetNearbyPostcodesResponse()
+            _response = new GetNearbyPostcodesWithoutAddressesResponse()
             {
-                Postcodes = new List<GetNearbyPostCodeResponse>()
-                {
-                    new GetNearbyPostCodeResponse()
-                    {
-                        Postcode = "NG1 5FS",
-                        AddressDetails = new List<AddressDetailsResponse>(),
-                        DistanceInMetres = 2
-                    }
-                }
+                NearestPostcodes = new List<NearestPostcodeWithoutAddress>()
+               {
+                   new NearestPostcodeWithoutAddress()
+                   {
+                       Postcode ="NG1 5FS",
+                       DistanceInMetres = 1
+                   }
+               }
             };
 
             _mediator = new Mock<IMediator>();
 
-            _mediator.Setup(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_response);
-            
-            _logger = new Mock<ILoggerWrapper<GetNearbyPostcodes>>();
+            _mediator.Setup(x => x.Send(It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(_response);
+
+            _logger = new Mock<ILoggerWrapper<GetNearbyPostcodesWithoutAddresses>>();
             _logger.SetupAllProperties();
         }
 
@@ -57,26 +57,27 @@ namespace AddressService.UnitTests
         public async Task HappyPath()
         {
 
-            GetNearbyPostcodesRequest req = new GetNearbyPostcodesRequest(){
+            GetNearbyPostcodesWithoutAddressesRequest req = new GetNearbyPostcodesWithoutAddressesRequest()
+            {
                 Postcode = "NG1 5FS"
             };
 
-            GetNearbyPostcodes getNearbyPostcodes = new GetNearbyPostcodes(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+            GetNearbyPostcodesWithoutAddresses getNearbyPostcodes = new GetNearbyPostcodesWithoutAddresses(_mediator.Object, _postcodeValidator.Object, _logger.Object);
             IActionResult result = await getNearbyPostcodes.Run(req, CancellationToken.None);
 
-            OkObjectResult objectResult =   result as OkObjectResult;
+            OkObjectResult objectResult = result as OkObjectResult;
             Assert.IsNotNull(objectResult);
             Assert.AreEqual(200, objectResult.StatusCode);
 
-            ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
+            ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
-            
+
             Assert.IsTrue(deserialisedResponse.HasContent);
             Assert.IsTrue(deserialisedResponse.IsSuccessful);
-            Assert.AreEqual(0,deserialisedResponse.Errors.Count());
-            Assert.AreEqual("NG1 5FS", deserialisedResponse.Content.Postcodes.FirstOrDefault().Postcode);
+            Assert.AreEqual(0, deserialisedResponse.Errors.Count());
+            Assert.AreEqual("NG1 5FS", deserialisedResponse.Content.NearestPostcodes.FirstOrDefault().Postcode);
 
-            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()));
+            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>(), It.IsAny<CancellationToken>()));
 
         }
 
@@ -85,19 +86,19 @@ namespace AddressService.UnitTests
         {
             _postcodeValidator.Setup(x => x.IsPostcodeValidAsync(It.IsAny<string>())).ReturnsAsync(false);
 
-            GetNearbyPostcodesRequest req = new GetNearbyPostcodesRequest()
+            GetNearbyPostcodesWithoutAddressesRequest req = new GetNearbyPostcodesWithoutAddressesRequest()
             {
                 Postcode = "NG1 5FS"
             };
 
-            GetNearbyPostcodes getNearbyPostcodes = new GetNearbyPostcodes(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+            GetNearbyPostcodesWithoutAddresses getNearbyPostcodes = new GetNearbyPostcodesWithoutAddresses(_mediator.Object, _postcodeValidator.Object, _logger.Object);
             IActionResult result = await getNearbyPostcodes.Run(req, CancellationToken.None);
 
             OkObjectResult objectResult = result as OkObjectResult;
             Assert.IsNotNull(objectResult);
             Assert.AreEqual(200, objectResult.StatusCode);
-            
-            ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
+
+            ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
 
             Assert.IsFalse(deserialisedResponse.HasContent);
@@ -105,27 +106,27 @@ namespace AddressService.UnitTests
             Assert.AreEqual(1, deserialisedResponse.Errors.Count());
             Assert.AreEqual(AddressServiceErrorCode.InvalidPostcode, deserialisedResponse.Errors[0].ErrorCode);
 
-            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()),Times.Never);
+            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Test]
         public async Task ErrorThrown()
         {
-            _mediator.Setup(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>())).Throws<Exception>();
+            _mediator.Setup(x => x.Send(It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>(), It.IsAny<CancellationToken>())).Throws<Exception>();
 
-            GetNearbyPostcodesRequest req = new GetNearbyPostcodesRequest()
+            GetNearbyPostcodesWithoutAddressesRequest req = new GetNearbyPostcodesWithoutAddressesRequest()
             {
                 Postcode = "NG1 5FS"
             };
 
-            GetNearbyPostcodes getNearbyPostcodes = new GetNearbyPostcodes(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+            GetNearbyPostcodesWithoutAddresses getNearbyPostcodes = new GetNearbyPostcodesWithoutAddresses(_mediator.Object, _postcodeValidator.Object, _logger.Object);
 
             IActionResult result = await getNearbyPostcodes.Run(req, CancellationToken.None);
 
             ObjectResult objectResult = result as ObjectResult;
             Assert.IsNotNull(objectResult);
 
-            ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
+            ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
             Assert.AreEqual(500, objectResult.StatusCode); ;
 
@@ -135,7 +136,7 @@ namespace AddressService.UnitTests
             Assert.AreEqual(1, deserialisedResponse.Errors.Count());
             Assert.AreEqual(AddressServiceErrorCode.UnhandledError, deserialisedResponse.Errors[0].ErrorCode);
 
-            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()));
+            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>(), It.IsAny<CancellationToken>()));
 
             _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error in GetNearbyPostcodes")), It.IsAny<Exception>()));
         }

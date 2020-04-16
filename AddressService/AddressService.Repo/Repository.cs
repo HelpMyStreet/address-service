@@ -204,5 +204,25 @@ namespace AddressService.Repo
                 return result;
             }
         }
+
+        public async Task<IEnumerable<PostcodeWithLatLongDto>> GetAllPostcodeLatitudesAndLongitudesAsync()
+        {
+
+            var query = @"
+SELECT [Postcode]
+      ,[Latitude]
+      ,[Longitude]
+  FROM [Address].[Postcode]
+  WHERE [IsActive] = 1
+";
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                IEnumerable<PostcodeWithLatLongDto> result = await connection.QueryAsync<PostcodeWithLatLongDto>(query,
+                    commandType: CommandType.Text,
+                    commandTimeout: 0);
+
+                return result;
+            }
+        }
     }
 }

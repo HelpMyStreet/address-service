@@ -110,6 +110,7 @@ namespace AddressService.AzureFunction
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
             builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
+            builder.Services.AddMediatR(typeof(IsPostcodeWithinRadiiHandler).Assembly);
 
             IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();
             foreach (var profile in autoMapperProfiles)

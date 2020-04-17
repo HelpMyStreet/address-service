@@ -1,4 +1,6 @@
-﻿using AddressService.Core.Dto;
+﻿using System;
+using System.Collections.Concurrent;
+using AddressService.Core.Dto;
 using AddressService.Core.Utils;
 using AutoMapper;
 using HelpMyStreet.Contracts.AddressService.Request;
@@ -11,54 +13,43 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Core.Contracts;
+using AddressService.Core.Extensions;
 using AddressService.Core.Interfaces.Repositories;
 
 namespace AddressService.Handlers
 {
     public class IsPostcodeWithinRadiiHandler : IRequestHandler<IsPostcodeWithinRadiiRequest, IsPostcodeWithinRadiiResponse>
     {
-        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
-        private readonly IRepository _repository;
+        private readonly IPostcodeCoordinatesGetter _postcodeCoordinatesGetter;
 
-        private static Dictionary<string, LatLongDto> _postcodesWithLatitudeAndLongitudes;
-
-        public IsPostcodeWithinRadiiHandler(IRepository repository)
+        public IsPostcodeWithinRadiiHandler(IPostcodeCoordinatesGetter postcodeCoordinatesGetter)
         {
-            _repository = repository;
+            _postcodeCoordinatesGetter = postcodeCoordinatesGetter;
         }
 
         public async Task<IsPostcodeWithinRadiiResponse> Handle(IsPostcodeWithinRadiiRequest request, CancellationToken cancellationToken)
         {
-            if (_postcodesWithLatitudeAndLongitudes == null)
-            {
-                try
-                {
-                    await _lock.WaitAsync(cancellationToken);
-                    if (_postcodesWithLatitudeAndLongitudes == null)
-                    {
-                        IEnumerable<PostcodeWithLatLongDto> postcodesWithLatitudeAndLongitudes = await _repository.GetAllPostcodeLatitudesAndLongitudesAsync();
-                        _postcodesWithLatitudeAndLongitudes = postcodesWithLatitudeAndLongitudes.ToDictionary(x => x.Postcode, x => new LatLongDto(x.Latitude, x.Longitude));
-                    }
-                }
-                finally
-                {
-                    _lock.Release();
-                }
-            }
-
-            Stopwatch sw = new Stopwatch();
+            var sw = new Stopwatch();
             sw.Start();
-            LatLongDto postcodeToCompareToLatLong = _postcodesWithLatitudeAndLongitudes[request.Postcode];
 
+            request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
+
+            var requiredPostcodes = request.PostcodeWithRadiuses.Select(x => x.Postcode).ToHashSet();
+            requiredPostcodes.Add(request.Postcode);
+
+            var postcodeCoordinates = await _postcodeCoordinatesGetter.GetPostcodeCoordinates(requiredPostcodes);
+
+            // this shouldn't return null due to the postcode not being in the dictionary as it will have been validated at the beginning of the request
+            postcodeCoordinates.TryGetValue(request.Postcode, out CoordinatesDto postcodeToCompareToLatitudeLongitude);
 
             List<int> idsInRadius = new List<int>(request.PostcodeWithRadiuses.Count / 100);
 
-            foreach (var p in request.PostcodeWithRadiuses)
+            foreach (PostcodeWithRadius p in request.PostcodeWithRadiuses)
             {
-                if (_postcodesWithLatitudeAndLongitudes.TryGetValue(p.Postcode, out var postcodeWithLatLong))
+                if (postcodeCoordinates.TryGetValue(p.Postcode, out CoordinatesDto postcodeWithLatLong))
                 {
-                    var isWithinRadius = DistanceCalculator.GetDistance(postcodeToCompareToLatLong.Latitude, postcodeToCompareToLatLong.Longitude, postcodeWithLatLong.Latitude, postcodeWithLatLong.Longitude) <= p.RadiusInMetres;
+                    bool isWithinRadius = DistanceCalculator.GetDistance(postcodeToCompareToLatitudeLongitude.Latitude, postcodeToCompareToLatitudeLongitude.Longitude, postcodeWithLatLong.Latitude, postcodeWithLatLong.Longitude) <= p.RadiusInMetres;
 
                     if (isWithinRadius)
                     {
@@ -67,20 +58,13 @@ namespace AddressService.Handlers
                 }
             }
 
-            //List<int> result = (from pc in _postcodesWithLatitudeAndLongitudes
-            //              join pcr in request.PostcodeWithRadiuses
-            //                  on pc.Key equals pcr.Postcode
-            //              where DistanceCalculator.GetDistance(postcodeToCompareToLatLong.Latitude, postcodeToCompareToLatLong.Longitude, pc.Value.Latitude, pc.Value.Longitude) <= pcr.RadiusInMetres
-            //              select pcr.Id).ToList();
-
-
             IsPostcodeWithinRadiiResponse isPostcodeWithinRadiiResponse = new IsPostcodeWithinRadiiResponse()
             {
                 IdsWithinRadius = idsInRadius
             };
 
             sw.Stop();
-            Debug.WriteLine($"join: {sw.ElapsedMilliseconds}");
+            Debug.WriteLine($"IsPostcodeWithinRadiiHandler Handle: {sw.ElapsedMilliseconds}");
 
             return isPostcodeWithinRadiiResponse;
         }

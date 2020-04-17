@@ -6,10 +6,10 @@ namespace AddressService.Core.Contracts
 {
     public class IsPostcodeWithinRadiiRequest : IRequest<IsPostcodeWithinRadiiResponse>
     {
-        public string Postcode { get; set; }
         [Required]
+        public string Postcode { get; set; }
 
-        //[DataMember(Name = "PostcodeWithRadiuses")]
+        [Required]
         public List<PostcodeWithRadius> PostcodeWithRadiuses { get; set; }
 
     }

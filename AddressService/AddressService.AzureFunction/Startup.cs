@@ -101,6 +101,8 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<INearestPostcodeGetter, NearestPostcodeGetter>();
             builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
 
+            builder.Services.AddTransient<IPostcodeCoordinatesGetter, PostcodeCoordinatesGetter>();
+
             builder.Services.AddTransient<IRegexPostcodeValidator, RegexPostcodeValidator>();
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
 

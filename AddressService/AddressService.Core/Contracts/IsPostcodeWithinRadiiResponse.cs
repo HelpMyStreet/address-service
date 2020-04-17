@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace AddressService.Core.Contracts
 {
+    [DataContract(Name = "isPostcodeWithinRadiiResponse")]
     public class IsPostcodeWithinRadiiResponse
     {
-        //public IEnumerable<PostcodeWithRadiusResult> PostcodeWithRadiusResults { get; set; }
+        [DataMember(Name = "idsWithinRadius")]
         public IEnumerable<int> IdsWithinRadius { get; set; }
     }
 }

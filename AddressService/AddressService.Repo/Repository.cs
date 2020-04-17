@@ -10,10 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using AddressService.Repo.EntityFramework.Entities;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AddressService.Repo
 {
@@ -205,21 +202,17 @@ namespace AddressService.Repo
             }
         }
 
-        public async Task<IEnumerable<PostcodeWithLatLongDto>> GetAllPostcodeLatitudesAndLongitudesAsync()
-        {
 
-            var query = @"
-SELECT [Postcode]
-      ,[Latitude]
-      ,[Longitude]
-  FROM [Address].[Postcode]
-  WHERE [IsActive] = 1
-";
+        public async Task<IEnumerable<PostcodeWithCoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> postcodes)
+        {
+            DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
+            
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
-                IEnumerable<PostcodeWithLatLongDto> result = await connection.QueryAsync<PostcodeWithLatLongDto>(query,
-                    commandType: CommandType.Text,
-                    commandTimeout: 0);
+                IEnumerable<PostcodeWithCoordinatesDto> result = await connection.QueryAsync<PostcodeWithCoordinatesDto>("[Address].[GetPostcodeCoordinates]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { Postcodes = postcodesDataTable },
+                    commandTimeout: 15);
 
                 return result;
             }

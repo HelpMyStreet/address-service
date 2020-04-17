@@ -2,13 +2,18 @@
 
 namespace AddressService.Core.Contracts
 {
+    [DataContract(Name = "postcodeWithRadius")]
     public class PostcodeWithRadius
     {
-        //[DataMember(Name = "id")]
+        // this has shorter property names to makes the requests smaller
+
+        [DataMember(Name = "id")] 
         public int Id { get; set; }
-        //[DataMember(Name = "pc")]
+
+        [DataMember(Name = "pc")]
         public string Postcode { get; set; }
-        //[DataMember(Name = "r")]
+
+        [DataMember(Name = "r")]
         public int RadiusInMetres { get; set; }
     }
 }

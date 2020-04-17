@@ -1,12 +1,12 @@
 ﻿namespace AddressService.Core.Dto
 {
-    public class PostcodeWithLatLongDto
+    public class PostcodeWithCoordinatesDto
     {
-        public PostcodeWithLatLongDto()
+        public PostcodeWithCoordinatesDto()
         {
         }
 
-        public PostcodeWithLatLongDto(string postcode, double latitude, double longitude)
+        public PostcodeWithCoordinatesDto(string postcode, double latitude, double longitude)
         {
             Postcode = postcode;
             Latitude = latitude;
@@ -15,7 +15,7 @@
 
         public string Postcode { get; }
         public double Latitude { get; }
-        public double Longitude { get; }
+        public double Longitude { get;  }
 
     }
 }

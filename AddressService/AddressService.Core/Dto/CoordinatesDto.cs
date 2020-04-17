@@ -1,8 +1,8 @@
 ﻿namespace AddressService.Core.Dto
 {
-    public class LatLongDto
+    public class CoordinatesDto
     {
-        public LatLongDto(double latitude, double longitude)
+        public CoordinatesDto(double latitude, double longitude)
         {
             Latitude = latitude;
             Longitude = longitude;

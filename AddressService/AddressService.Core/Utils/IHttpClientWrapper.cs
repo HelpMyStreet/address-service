@@ -8,6 +8,6 @@ namespace AddressService.Core.Utils
     public interface IHttpClientWrapper
     {
         Task<HttpResponseMessage> GetAsync(HttpClientConfigName httpClientConfigName, string absolutePath, CancellationToken cancellationToken);
-        Task PostAsync(HttpClientConfigName httpClientConfigName, string absolutePath, HttpContent stringContent, CancellationToken cancellationToken);
+        Task PostAsync(HttpClientConfigName httpClientConfigName, string absolutePath, HttpContent content, CancellationToken cancellationToken);
     }
 }

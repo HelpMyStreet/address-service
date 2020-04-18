@@ -1,5 +1,4 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Utils;
+﻿using AddressService.Core.Utils;
 using AddressService.Core.Validation;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
@@ -15,6 +14,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
 
 
 namespace AddressService.AzureFunction

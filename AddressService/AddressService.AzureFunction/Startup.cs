@@ -53,6 +53,7 @@ namespace AddressService.AzureFunction
             }
             else
             {
+                configBuilder.AddUserSecrets(Assembly.GetExecutingAssembly(), false);
                 Console.Write("User secrets not added as ASPNETCORE_ENVIRONMENT environment variable doesn't contain \"localdev\"");
             }
 

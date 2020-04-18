@@ -3,7 +3,6 @@ using AddressService.Core.Extensions;
 using AddressService.Core.Interfaces.Repositories;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,12 +19,9 @@ namespace AddressService.Handlers
             _repository = repository;
         }
 
-        public async Task<IReadOnlyDictionary<string, CoordinatesDto>> GetPostcodeCoordinates(IEnumerable<string> neededPostcodes)
+        public async Task<IReadOnlyDictionary<string, CoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> neededPostcodes)
         {
             IEnumerable<string> allMissingPostCodes = neededPostcodes.Where(x => !_postcodesWithLatitudeAndLongitudes.ContainsKey(x));
-
-            Stopwatch sw2 = new Stopwatch();
-            sw2.Start();
 
             // get coordinates from database in concurrent chunks for speed
             if (allMissingPostCodes.Any())
@@ -64,10 +60,7 @@ namespace AddressService.Handlers
                     requiredPostcodes[neededPostcode] = coordinatesDto;
                 }
             }
-
-            sw2.Stop();
-            Debug.WriteLine($"Getting missing postcodes took: {sw2.ElapsedMilliseconds}");
-
+            
             return requiredPostcodes;
         }
     }

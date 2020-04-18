@@ -161,19 +161,14 @@ namespace AddressService.Repo
 
         public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcode = postcode, DistanceInMetres = distanceInMetres },
                     commandTimeout: 15);
-                sw.Stop();
-                Debug.WriteLine($"GetNearestPostcodesAsync Dapper: {sw.ElapsedMilliseconds}");
 
                 return result;
-
             }
         }
 
@@ -206,7 +201,7 @@ namespace AddressService.Repo
         public async Task<IEnumerable<PostcodeWithCoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> postcodes)
         {
             DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
-            
+
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 IEnumerable<PostcodeWithCoordinatesDto> result = await connection.QueryAsync<PostcodeWithCoordinatesDto>("[Address].[GetPostcodeCoordinates]",

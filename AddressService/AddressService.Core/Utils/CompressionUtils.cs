@@ -2,7 +2,7 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace AddressService.Core.Extensions
+namespace AddressService.Core.Utils
 {
     public class CompressionUtils
     {

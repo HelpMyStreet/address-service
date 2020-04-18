@@ -42,22 +42,7 @@ namespace AddressService.AzureFunction
             {
                 _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-                IsPostcodeWithinRadiiRequest req;
-
-                // Allow requests to be compressed and use a faster deserialiser than the default
-                if (reqAsHttpRequestMessage.Content.Headers.ContentEncoding.Any(x => x.ToLower() == "gzip"))
-                {
-                    Stream inputStream = await reqAsHttpRequestMessage.Content.ReadAsStreamAsync();
-                    using (GZipStream decompressionStream = new GZipStream(inputStream, CompressionMode.Decompress))
-                    {
-                        req = await Utf8Json.JsonSerializer.DeserializeAsync<IsPostcodeWithinRadiiRequest>(decompressionStream);
-                    }
-                }
-                else
-                {
-                    Stream stream = await reqAsHttpRequestMessage.Content.ReadAsStreamAsync();
-                    req = await Utf8Json.JsonSerializer.DeserializeAsync<IsPostcodeWithinRadiiRequest>(stream);
-                }
+                IsPostcodeWithinRadiiRequest req = await HttpRequestMessageCompressionUtils.DeserialiseAsync<IsPostcodeWithinRadiiRequest>(reqAsHttpRequestMessage);
 
                 //This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere). I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
                 if (!await _postcodeValidator.IsPostcodeValidAsync(req.Postcode))

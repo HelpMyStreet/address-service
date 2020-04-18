@@ -38,7 +38,7 @@ namespace AddressService.Handlers
             {
                 if (postcodeCoordinates.TryGetValue(p.Postcode, out CoordinatesDto postcodeWithLatLong))
                 {
-                    var distanceInMetres = DistanceCalculator.GetDistance(postcodeToCompareToLatitudeLongitude.Latitude, postcodeToCompareToLatitudeLongitude.Longitude, postcodeWithLatLong.Latitude, postcodeWithLatLong.Longitude);
+                    double distanceInMetres = DistanceCalculator.GetDistance(postcodeToCompareToLatitudeLongitude.Latitude, postcodeToCompareToLatitudeLongitude.Longitude, postcodeWithLatLong.Latitude, postcodeWithLatLong.Longitude);
                     bool isWithinRadius = distanceInMetres <= p.RadiusInMetres;
 
                     if (isWithinRadius)

@@ -1,6 +1,7 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Core.Utils;
 using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Utils.Utils;
 using MediatR;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace AddressService.Handlers
             // this shouldn't return null due to the postcode not being in the dictionary as it will have been validated at the beginning of the request
             postcodeCoordinates.TryGetValue(request.Postcode, out CoordinatesDto postcodeToCompareToLatitudeLongitude);
 
-            List<int> idsInRadius = new List<int>(request.PostcodeWithRadiuses.Count / 100);
+            List<int> idsInRadius = new List<int>(request.PostcodeWithRadiuses.Count() / 100);
 
             foreach (PostcodeWithRadius p in request.PostcodeWithRadiuses)
             {

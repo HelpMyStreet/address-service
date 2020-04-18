@@ -1,5 +1,6 @@
 ﻿using AddressService.Core.Utils;
 using AddressService.Core.Validation;
+using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
 using MediatR;
@@ -8,13 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using HelpMyStreet.Contracts.AddressService.Request;
 
 
 namespace AddressService.AzureFunction
@@ -37,17 +34,17 @@ namespace AddressService.AzureFunction
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestMessage reqAsHttpRequestMessage,
             CancellationToken cancellationToken)
         {
-            ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode> result;
             try
             {
                 _logger.LogInformation("C# HTTP trigger function processed a request.");
 
+                // accept compressed requests (can't do this with middleware)
                 IsPostcodeWithinRadiiRequest req = await HttpRequestMessageCompressionUtils.DeserialiseAsync<IsPostcodeWithinRadiiRequest>(reqAsHttpRequestMessage);
 
                 //This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere). I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
                 if (!await _postcodeValidator.IsPostcodeValidAsync(req.Postcode))
                 {
-                    result = ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode, "Invalid postcode");
+                    return new OkObjectResult(ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode, "Invalid postcode"));
                 }
 
                 if (req.IsValid(out var validationResults))

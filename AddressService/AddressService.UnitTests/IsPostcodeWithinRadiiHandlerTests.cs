@@ -1,6 +1,5 @@
 ﻿using AddressService.Core.Dto;
 using AddressService.Handlers;
-using HelpMyStreet.Contracts.AddressService.Request;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -8,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 
 namespace AddressService.UnitTests
 {

@@ -1,4 +1,5 @@
-﻿using AddressService.Core.Dto;
+﻿using System;
+using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
 using Moq;
@@ -23,17 +24,17 @@ namespace AddressService.UnitTests
 
             _postcodes1 = new List<PostcodeWithCoordinatesDto>()
             {
-                new PostcodeWithCoordinatesDto("NG1 5FS", -1.155263, -1.155263),
-                new PostcodeWithCoordinatesDto("NG1 5FW", -1.155413, 52.955491), // 68m
-                new PostcodeWithCoordinatesDto("NG1 5BL", -1.154864, 52.955494), // 73m
+                new PostcodeWithCoordinatesDto("NG1 5FS", 52.954885, -1.155263),
+                new PostcodeWithCoordinatesDto("NG1 5FW", 52.955491,-1.155413 ), // 68m
+                new PostcodeWithCoordinatesDto("NG1 5BL", 52.955494, -1.154864), // 73m
               
             };
 
             _postcodes2 = new List<PostcodeWithCoordinatesDto>()
             {
-                new PostcodeWithCoordinatesDto("NG1 6LP", -1.154102, 52.954771), //  79m
-                new PostcodeWithCoordinatesDto("NG1 6LF", 52.954832, -1.153744), // 102m
-                new PostcodeWithCoordinatesDto("NG1 6LA", 52.954446, -1.153885), // 104m
+                new PostcodeWithCoordinatesDto("NG1 6LP", 52.954771, -1.154102 ), //  79m
+                new PostcodeWithCoordinatesDto("NG1 6LF", 52.95483, -1.153744 ), // 102m
+                new PostcodeWithCoordinatesDto("NG1 6LA",52.954446, -1.153885 ), // 104m
 
             };
 

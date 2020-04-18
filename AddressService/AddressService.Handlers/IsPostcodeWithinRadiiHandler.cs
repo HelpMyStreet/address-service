@@ -4,7 +4,6 @@ using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Utils.Utils;
 using MediatR;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ namespace AddressService.Handlers
 {
     public class IsPostcodeWithinRadiiHandler : IRequestHandler<IsPostcodeWithinRadiiRequest, IsPostcodeWithinRadiiResponse>
     {
-
         private readonly IPostcodeCoordinatesGetter _postcodeCoordinatesGetter;
 
         public IsPostcodeWithinRadiiHandler(IPostcodeCoordinatesGetter postcodeCoordinatesGetter)
@@ -23,13 +21,13 @@ namespace AddressService.Handlers
 
         public async Task<IsPostcodeWithinRadiiResponse> Handle(IsPostcodeWithinRadiiRequest request, CancellationToken cancellationToken)
         {
-
             request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
-            var requiredPostcodes = request.PostcodeWithRadiuses.Select(x => x.Postcode).ToHashSet();
+            // not formatting postcodes for speed (they should be sent in in the correct format)
+            HashSet<string> requiredPostcodes = request.PostcodeWithRadiuses.Select(x => x.Postcode).ToHashSet();
             requiredPostcodes.Add(request.Postcode);
 
-            var postcodeCoordinates = await _postcodeCoordinatesGetter.GetPostcodeCoordinatesAsync(requiredPostcodes);
+            IReadOnlyDictionary<string, CoordinatesDto> postcodeCoordinates = await _postcodeCoordinatesGetter.GetPostcodeCoordinatesAsync(requiredPostcodes);
 
             // this shouldn't return null due to the postcode not being in the dictionary as it will have been validated at the beginning of the request
             postcodeCoordinates.TryGetValue(request.Postcode, out CoordinatesDto postcodeToCompareToLatitudeLongitude);
@@ -40,7 +38,8 @@ namespace AddressService.Handlers
             {
                 if (postcodeCoordinates.TryGetValue(p.Postcode, out CoordinatesDto postcodeWithLatLong))
                 {
-                    bool isWithinRadius = DistanceCalculator.GetDistance(postcodeToCompareToLatitudeLongitude.Latitude, postcodeToCompareToLatitudeLongitude.Longitude, postcodeWithLatLong.Latitude, postcodeWithLatLong.Longitude) <= p.RadiusInMetres;
+                    var distanceInMetres = DistanceCalculator.GetDistance(postcodeToCompareToLatitudeLongitude.Latitude, postcodeToCompareToLatitudeLongitude.Longitude, postcodeWithLatLong.Latitude, postcodeWithLatLong.Longitude);
+                    bool isWithinRadius = distanceInMetres <= p.RadiusInMetres;
 
                     if (isWithinRadius)
                     {

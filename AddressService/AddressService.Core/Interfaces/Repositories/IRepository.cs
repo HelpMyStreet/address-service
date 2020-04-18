@@ -12,5 +12,7 @@ namespace AddressService.Core.Interfaces.Repositories
         Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres);
         Task SavePreComputedNearestPostcodes(PreComputedNearestPostcodesDto preComputedNearestPostcodesDto);
         Task<PreComputedNearestPostcodesDto> GetPreComputedNearestPostcodes(string postcode);
+        
+        Task<IEnumerable<PostcodeWithCoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> postcodes);
     }
 }

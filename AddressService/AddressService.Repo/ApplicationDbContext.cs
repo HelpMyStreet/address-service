@@ -100,7 +100,16 @@ namespace AddressService.Repo
                     .IsUnicode(false);
 
                 entity.HasIndex(u => u.Postcode)
+                    .HasName("IX_Postcode_Postcode")
                     .IsUnique();
+
+
+                entity.HasIndex(u => u.Postcode)
+                    .HasName("IXF_Postcode_Postcode")
+                    .IsUnique()
+                    .HasFilter("[IsActive] = 1")
+                    .ForSqlServerInclude(nameof(PostcodeEntity.Latitude), nameof(PostcodeEntity.Longitude));
+               
 
                 entity.Property(e => e.LastUpdated)
                     .IsRequired()

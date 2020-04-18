@@ -21,10 +21,11 @@ namespace AddressService.Core.Utils
             return httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         }
 
-        public Task PostAsync(HttpClientConfigName httpClientConfigName, string absolutePath, HttpContent stringContent, CancellationToken cancellationToken)
+        public Task PostAsync(HttpClientConfigName httpClientConfigName, string absolutePath, HttpContent content, CancellationToken cancellationToken)
         {
             HttpClient httpClient = _httpClientFactory.CreateClient(httpClientConfigName.ToString());
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, absolutePath);
+            request.Content = content;
             return httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         }
 

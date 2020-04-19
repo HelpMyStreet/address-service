@@ -38,7 +38,7 @@ namespace AddressService.Handlers
 
             if (radiusInMetres > 16094 || radiusInMetres < 1)
             {
-                radiusInMetres = maxRadiusInMetres; 
+                radiusInMetres = maxRadiusInMetres;
             }
 
             if (maxNumberOfResults == null)
@@ -49,6 +49,8 @@ namespace AddressService.Handlers
             IEnumerable<NearestPostcodeDto> nearestPostCodes;
             PreComputedNearestPostcodesDto preComputedNearestPostcodes;
 
+            var sw = new Stopwatch();
+            sw.Start();
             preComputedNearestPostcodes = await _repository.GetPreComputedNearestPostcodes(postcode);
 
             if (preComputedNearestPostcodes != null)
@@ -61,8 +63,10 @@ namespace AddressService.Handlers
                 preComputedNearestPostcodes = NearestPostcodeCompressor.CompressNearestPostcodeDtos(postcode, nearestPostCodes);
                 await _repository.SavePreComputedNearestPostcodes(preComputedNearestPostcodes);
             }
+            sw.Stop();
+            Debug.WriteLine($"Getting nearest postcodes took {sw.ElapsedMilliseconds}");
 
-            List<NearestPostcodeDto> orderedNearestPostCodes = nearestPostCodes.Where(x=>x.DistanceInMetres <= radiusInMetres)
+            List<NearestPostcodeDto> orderedNearestPostCodes = nearestPostCodes.Where(x => x.DistanceInMetres <= radiusInMetres)
                 .OrderBy(x => x.DistanceInMetres)
                 .Take((int)maxNumberOfResults)
                 .ToList();

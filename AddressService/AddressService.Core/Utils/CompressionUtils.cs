@@ -2,11 +2,11 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace AddressService.Core.Extensions
+namespace AddressService.Core.Utils
 {
     public class CompressionUtils
     {
-        public static void CopyTo(Stream src, Stream dest)
+        private static void CopyTo(Stream src, Stream dest)
         {
             byte[] bytes = new byte[4096];
 
@@ -27,7 +27,21 @@ namespace AddressService.Core.Extensions
             {
                 using (var gs = new GZipStream(mso, CompressionMode.Compress))
                 {
-                    //msi.CopyTo(gs);
+                    CopyTo(msi, gs);
+                }
+
+                return mso.ToArray();
+            }
+        }
+
+        public static byte[] Zip(byte[] bytes)
+        {
+
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
                     CopyTo(msi, gs);
                 }
 
@@ -42,11 +56,24 @@ namespace AddressService.Core.Extensions
             {
                 using (var gs = new GZipStream(msi, CompressionMode.Decompress))
                 {
-                    //gs.CopyTo(mso);
                     CopyTo(gs, mso);
                 }
 
                 return Encoding.UTF8.GetString(mso.ToArray());
+            }
+        }
+
+        public static byte[] UnzipToBytes(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    CopyTo(gs, mso);
+                }
+
+                return mso.ToArray();
             }
         }
 

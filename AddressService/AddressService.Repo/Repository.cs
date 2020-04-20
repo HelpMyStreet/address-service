@@ -10,10 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using AddressService.Repo.EntityFramework.Entities;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AddressService.Repo
 {
@@ -164,19 +161,14 @@ namespace AddressService.Repo
 
         public async Task<IEnumerable<NearestPostcodeDto>> GetNearestPostcodesAsync(string postcode, double distanceInMetres)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
                 IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcode = postcode, DistanceInMetres = distanceInMetres },
                     commandTimeout: 15);
-                sw.Stop();
-                Debug.WriteLine($"GetNearestPostcodesAsync Dapper: {sw.ElapsedMilliseconds}");
 
                 return result;
-
             }
         }
 
@@ -199,6 +191,22 @@ namespace AddressService.Repo
                 PreComputedNearestPostcodesDto result = await connection.QuerySingleOrDefaultAsync<PreComputedNearestPostcodesDto>("[Address].[GetPreComputedNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcode = postcode },
+                    commandTimeout: 15);
+
+                return result;
+            }
+        }
+
+
+        public async Task<IEnumerable<PostcodeWithCoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> postcodes)
+        {
+            DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
+
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                IEnumerable<PostcodeWithCoordinatesDto> result = await connection.QueryAsync<PostcodeWithCoordinatesDto>("[Address].[GetPostcodeCoordinates]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { Postcodes = postcodesDataTable },
                     commandTimeout: 15);
 
                 return result;

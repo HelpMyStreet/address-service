@@ -2,6 +2,7 @@
 using AddressService.Core.Extensions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using AddressService.Core.Utils;
 
 namespace AddressService.Handlers
 {
@@ -12,18 +13,18 @@ namespace AddressService.Handlers
             PreComputedNearestPostcodesDto preComputedNearestPostcodeses = new PreComputedNearestPostcodesDto();
             preComputedNearestPostcodeses.Postcode = postcode;
 
-            string nearestPostcodesJson = JsonConvert.SerializeObject(nearestPostcodeDtos);
+            byte[] nearestPostcodesBytes = Utf8Json.JsonSerializer.Serialize(nearestPostcodeDtos);
 
-            preComputedNearestPostcodeses.CompressedNearestPostcodes  = CompressionUtils.Zip(nearestPostcodesJson);
+            preComputedNearestPostcodeses.CompressedNearestPostcodes = CompressionUtils.Zip(nearestPostcodesBytes);
 
             return preComputedNearestPostcodeses;
         }
 
         public static IReadOnlyList<NearestPostcodeDto> DecompressPreComputedPostcodes(PreComputedNearestPostcodesDto preComputedNearestPostcodesDto)
         {
-            string decompressedPreComputedNearbyPostcodesJson = CompressionUtils.Unzip(preComputedNearestPostcodesDto.CompressedNearestPostcodes);
+            byte[] decompressedPreComputedNearbyPostcodesBytes = CompressionUtils.UnzipToBytes(preComputedNearestPostcodesDto.CompressedNearestPostcodes);
 
-            List<NearestPostcodeDto> nearbyPostcodeDtos = JsonConvert.DeserializeObject<List<NearestPostcodeDto>>(decompressedPreComputedNearbyPostcodesJson);
+            List<NearestPostcodeDto> nearbyPostcodeDtos = Utf8Json.JsonSerializer.Deserialize<List<NearestPostcodeDto>>(decompressedPreComputedNearbyPostcodesBytes);
 
             return nearbyPostcodeDtos;
         }

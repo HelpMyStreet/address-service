@@ -88,6 +88,7 @@ namespace AddressService.AzureFunction
                 });
 
             }
+
             builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(Logger<>)));
             builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(ILoggerWrapper<>), typeof(LoggerWrapper<>)));
 
@@ -101,6 +102,8 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<INearestPostcodeGetter, NearestPostcodeGetter>();
             builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
 
+            builder.Services.AddTransient<IPostcodeCoordinatesGetter, PostcodeCoordinatesGetter>();
+
             builder.Services.AddTransient<IRegexPostcodeValidator, RegexPostcodeValidator>();
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
 
@@ -109,7 +112,6 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
-            builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
 
             IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();
             foreach (var profile in autoMapperProfiles)

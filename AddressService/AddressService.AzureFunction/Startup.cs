@@ -53,7 +53,6 @@ namespace AddressService.AzureFunction
             }
             else
             {
-                configBuilder.AddUserSecrets(Assembly.GetExecutingAssembly(), false);
                 Console.Write("User secrets not added as ASPNETCORE_ENVIRONMENT environment variable doesn't contain \"localdev\"");
             }
 
@@ -113,8 +112,6 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
-            builder.Services.AddMediatR(typeof(GetNearbyPostcodesHandler).Assembly);
-            builder.Services.AddMediatR(typeof(IsPostcodeWithinRadiiHandler).Assembly);
 
             IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();
             foreach (var profile in autoMapperProfiles)

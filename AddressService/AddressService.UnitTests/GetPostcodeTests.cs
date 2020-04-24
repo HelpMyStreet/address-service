@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Core.Contracts;
 using AddressService.Core.Utils;
 using HelpMyStreet.Contracts.Shared;
 
@@ -129,6 +130,37 @@ namespace AddressService.UnitTests
             _mediator.Verify(x => x.Send(It.IsAny<GetPostcodeRequest>(), It.IsAny<CancellationToken>()));
             
             _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error in GetPostcode")), It.IsAny<Exception>()));
+        }
+
+        [Test]
+        public async Task ValidationFails()
+        {
+            _mediator.Setup(x => x.Send(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>())).Throws<Exception>();
+
+            GetPostcodeRequest req = new GetPostcodeRequest()
+            {
+                Postcode = null
+            };
+
+            GetPostcode getPostcode = new GetPostcode(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+
+            IActionResult result = await getPostcode.Run(req, CancellationToken.None);
+
+            ObjectResult objectResult = result as ObjectResult;
+            Assert.IsNotNull(objectResult);
+
+            ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>;
+            Assert.IsNotNull(deserialisedResponse);
+            Assert.AreEqual(200, objectResult.StatusCode); ;
+
+
+            Assert.IsFalse(deserialisedResponse.HasContent);
+            Assert.IsFalse(deserialisedResponse.IsSuccessful);
+            Assert.AreEqual(1, deserialisedResponse.Errors.Count());
+            Assert.AreEqual(AddressServiceErrorCode.ValidationError, deserialisedResponse.Errors[0].ErrorCode);
+
+            _mediator.Verify(x => x.Send(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+
         }
     }
 }

@@ -50,7 +50,7 @@ namespace AddressService.AzureFunction
                 }
                 else
                 {
-                    return new OkObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode, validationResults));
+                    return new OkObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults));
                 }
             }
             catch (Exception ex)

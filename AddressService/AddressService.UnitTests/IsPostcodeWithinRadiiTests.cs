@@ -59,6 +59,19 @@ namespace AddressService.UnitTests
             return httpRequestMessage;
         }
 
+        private HttpRequestMessage CreateInvalidRequest()
+        {
+            IsPostcodeWithinRadiiRequest req = new IsPostcodeWithinRadiiRequest()
+            {
+                Postcode = null,
+                PostcodeWithRadiuses = new List<PostcodeWithRadius>()
+            };
+
+            var httpRequestMessage = new HttpRequestMessage();
+            httpRequestMessage.Content = new StringContent(JsonConvert.SerializeObject(req));
+            return httpRequestMessage;
+        }
+
         [Test]
         public async Task HappyPath()
         {
@@ -135,6 +148,32 @@ namespace AddressService.UnitTests
             _mediator.Verify(x => x.Send(It.IsAny<IsPostcodeWithinRadiiRequest>(), It.IsAny<CancellationToken>()));
 
             _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error in IsPostcodeWithinRadii")), It.IsAny<Exception>()));
+        }
+
+        [Test]
+        public async Task ValidationFails()
+        {
+            var req = CreateInvalidRequest();
+
+            IsPostcodeWithinRadii isPostcodeWithinRadii = new IsPostcodeWithinRadii(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+
+            IActionResult result = await isPostcodeWithinRadii.Run(req, CancellationToken.None);
+
+            ObjectResult objectResult = result as ObjectResult;
+            Assert.IsNotNull(objectResult);
+
+            ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<IsPostcodeWithinRadiiResponse, AddressServiceErrorCode>;
+            Assert.IsNotNull(deserialisedResponse);
+            Assert.AreEqual(200, objectResult.StatusCode); ;
+
+
+            Assert.IsFalse(deserialisedResponse.HasContent);
+            Assert.IsFalse(deserialisedResponse.IsSuccessful);
+            Assert.AreEqual(1, deserialisedResponse.Errors.Count());
+            Assert.AreEqual(AddressServiceErrorCode.ValidationError, deserialisedResponse.Errors[0].ErrorCode);
+
+            _mediator.Verify(x => x.Send(It.IsAny<IsPostcodeWithinRadiiRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+
         }
     }
 }

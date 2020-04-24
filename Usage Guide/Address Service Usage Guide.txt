@@ -48,12 +48,3 @@ The idea behind it is to not have to change the appsettings to run it locally an
 4) QAS Token
 
 The program needs a token to call QAS.  This is stored in a User Secrets file so the token doesn't get committed to the repository.  There is an example secrets.json file in the UserGuide folder.  This needs to be copied to: %APPDATA%\Microsoft\UserSecrets\2ab26b8f-fafb-4345-a188-210580b87104\secrets.json.  You'll need to create the folder with the '2ab26b8f-fafb-4345-a188-210580b87104' GUID (this is determined in the csproj file) and update the token in secrets.json.
-
-
-5) Example Requests
-
-http://localhost:7071/api/GetPostcode?postcode=NG15FS
-
-http://localhost:7071/api/GetNearbyPostcodes?postcode=NG15FS
-
-http://localhost:7071/api/GetNearbyPostcodesWithoutAddresses?postcode=ng16fe&RadiusInMetres=10000&MaxNumberOfResults=10000

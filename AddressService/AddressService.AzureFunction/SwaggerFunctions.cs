@@ -26,7 +26,7 @@ namespace AddressService.AzureFunction
             HttpRequestMessage req,
             [SwashBuckleClient] ISwashBuckleClient swashBuckleClient)
         {
-            return Task.FromResult(swashBuckleClient.CreateSwaggerUIResponse(req, "swagger/json",));
+            return Task.FromResult(swashBuckleClient.CreateSwaggerUIResponse(req, "swagger/json"));
         }
     }
 }

@@ -31,20 +31,6 @@ The program will first copy the postcode data to the Staging.Postcode_Staging ta
 You can download Feburary 2020's data here: http://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-february-2020.  It is updated every 3 months.
 
 
-3) Connection Strings
-
-  "ConnectionStrings": {
-    "AddressService": "Server=DESKTOP-CRLTBC4\\SQLEXPRESS;Database=address_service;Trusted_Connection=True;"
-  },
-  "ConnectionStringsLocalDev": {
-    "AddressService": "Data Source=127.0.0.1;Initial Catalog=AddressService;Integrated Security=True;MultipleActiveResultSets=True"
-  }
-  
-When running the code locally the connection string in ConnectionStringsLocalDev will be used if the ASPNETCORE_ENVIRONMENT environment variable is set to "localdev".  This can be set by going to the AddressService.AzureFunction project properties and going to Debug.
-
-The idea behind it is to not have to change the appsettings to run it locally and then accidentally check it in.
-
-
-4) QAS Token
+3) QAS Token
 
 The program needs a token to call QAS.  This is stored in a User Secrets file so the token doesn't get committed to the repository.  There is an example secrets.json file in the UserGuide folder.  This needs to be copied to: %APPDATA%\Microsoft\UserSecrets\2ab26b8f-fafb-4345-a188-210580b87104\secrets.json.  You'll need to create the folder with the '2ab26b8f-fafb-4345-a188-210580b87104' GUID (this is determined in the csproj file) and update the token in secrets.json.

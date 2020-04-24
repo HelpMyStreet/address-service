@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,6 +30,8 @@ namespace AddressService.AzureFunction
         }
 
         [FunctionName("GetNearbyPostcodesWithoutAddresses")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>))]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
             GetNearbyPostcodesWithoutAddressesRequest req,

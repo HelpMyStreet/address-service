@@ -1,5 +1,5 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Utils;
+﻿using AddressService.Core.Utils;
+using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
 using MediatR;

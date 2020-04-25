@@ -1,6 +1,7 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Handlers;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;

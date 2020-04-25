@@ -1,5 +1,6 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using MediatR;
 using System;
 using System.Collections.Generic;

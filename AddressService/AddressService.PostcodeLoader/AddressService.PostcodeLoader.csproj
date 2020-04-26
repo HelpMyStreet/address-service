@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AddressService\AddressService.Core\AddressService.Core.csproj" />
+    <ProjectReference Include="..\AddressService.Core\AddressService.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

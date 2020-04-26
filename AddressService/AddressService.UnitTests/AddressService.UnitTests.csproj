@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AddressService.PostcodeLoader\AddressService.PostcodeLoader.csproj" />
     <ProjectReference Include="..\AddressService.AzureFunction\AddressService.AzureFunction.csproj" />
     <ProjectReference Include="..\AddressService.Core\AddressService.Core.csproj" />
     <ProjectReference Include="..\AddressService.Handlers\AddressService.Handlers.csproj" />
     <ProjectReference Include="..\AddressService.Mappers\AddressService.Mappers.csproj" />
+    <ProjectReference Include="..\AddressService.PostcodeLoader\AddressService.PostcodeLoader.csproj" />
     <ProjectReference Include="..\AddressService.Repo\AddressService.Repo.csproj" />
   </ItemGroup>
 

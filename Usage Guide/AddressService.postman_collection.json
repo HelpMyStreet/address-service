@@ -1,8 +1,7 @@
 {
 	"info": {
-		"name": "AddressService",
 		"_postman_id": "1662b204-f8c2-f7d2-08ae-3ba9701d5930",
-		"description": "",
+		"name": "AddressService",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -20,7 +19,10 @@
 						"value": "gzip"
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{url}}/api/GetPostCode?Postcode=ng15fs",
 					"host": [
@@ -33,12 +35,10 @@
 					"query": [
 						{
 							"key": "Postcode",
-							"value": "ng15fs",
-							"equals": true
+							"value": "ng15fs"
 						}
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -56,7 +56,10 @@
 						"value": "gzip"
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{url}}/api/GetNearbyPostcodes?Postcode=ng15fs&RadiusInMetres=1000&MaxNumberOfResults=100",
 					"host": [
@@ -69,22 +72,18 @@
 					"query": [
 						{
 							"key": "Postcode",
-							"value": "ng15fs",
-							"equals": true
+							"value": "ng15fs"
 						},
 						{
 							"key": "RadiusInMetres",
-							"value": "1000",
-							"equals": true
+							"value": "1000"
 						},
 						{
 							"key": "MaxNumberOfResults",
-							"value": "100",
-							"equals": true
+							"value": "100"
 						}
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -102,7 +101,10 @@
 						"value": "gzip"
 					}
 				],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{url}}/api/GetNearbyPostcodesWithoutAddresses?Postcode=ng15fs&RadiusInMetres=1000&MaxNumberOfResults=100",
 					"host": [
@@ -115,58 +117,18 @@
 					"query": [
 						{
 							"key": "Postcode",
-							"value": "ng15fs",
-							"equals": true
+							"value": "ng15fs"
 						},
 						{
 							"key": "RadiusInMetres",
-							"value": "1000",
-							"equals": true
+							"value": "1000"
 						},
 						{
 							"key": "MaxNumberOfResults",
-							"value": "100",
-							"equals": true
+							"value": "100"
 						}
 					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "IsPostcodeWithinRadii",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "x-functions-key",
-						"value": "{{token}}"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "accept-encoding",
-						"value": "gzip"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"Postcode\": \"NG1 5FS\",\n\t\"PostcodeWithRadiuses\": [\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"pc\": \"NG1 6DQ\",\n\t\t\t\"r\": 1000\n\t\t}\n\t]\n}"
-				},
-				"url": {
-					"raw": "{{url}}/api/IsPostcodeWithinRadii",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"IsPostcodeWithinRadii"
-					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -197,8 +159,7 @@
 						"api",
 						"GetPostcodeCoordinates"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		}

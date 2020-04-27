@@ -139,5 +139,34 @@ namespace AddressService.UnitTests
 
             _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error in GetNearbyPostcodes")), It.IsAny<Exception>()));
         }
+
+        [Test]
+        public async Task ValidationFails()
+        {
+            GetNearbyPostcodesRequest req = new GetNearbyPostcodesRequest()
+            {
+                Postcode = null
+            };
+
+            GetNearbyPostcodes getNearbyPostcodes = new GetNearbyPostcodes(_mediator.Object, _postcodeValidator.Object, _logger.Object);
+
+            IActionResult result = await getNearbyPostcodes.Run(req, CancellationToken.None);
+
+            ObjectResult objectResult = result as ObjectResult;
+            Assert.IsNotNull(objectResult);
+
+            ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>;
+            Assert.IsNotNull(deserialisedResponse);
+            Assert.AreEqual(200, objectResult.StatusCode); ;
+
+
+            Assert.IsFalse(deserialisedResponse.HasContent);
+            Assert.IsFalse(deserialisedResponse.IsSuccessful);
+            Assert.AreEqual(1, deserialisedResponse.Errors.Count());
+            Assert.AreEqual(AddressServiceErrorCode.ValidationError, deserialisedResponse.Errors[0].ErrorCode);
+
+            _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+
+        }
     }
 }

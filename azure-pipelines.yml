@@ -37,7 +37,7 @@ steps:
   displayName: DotNetCore test
   inputs:
     command: 'test'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    arguments: -c $(BuildConfiguration) --settings $(System.DefaultWorkingDirectory)/CodeCoverage.runsettings --collect:"XPlat Code Coverage" -- RunConfiguration.DisableAppDomain=true
 
 - task: PublishCodeCoverageResults@1
   displayName: Publish code coverage results

@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "1662b204-f8c2-f7d2-08ae-3ba9701d5930",
+		"name": "AddressService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetPostCode",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{token}}"
+					},
+					{
+						"key": "accept-encoding",
+						"value": "gzip"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/GetPostCode?Postcode=ng15fs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"GetPostCode"
+					],
+					"query": [
+						{
+							"key": "Postcode",
+							"value": "ng15fs"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetNearbyPostcodes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{token}}"
+					},
+					{
+						"key": "accept-encoding",
+						"value": "gzip"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/GetNearbyPostcodes?Postcode=ng15fs&RadiusInMetres=1000&MaxNumberOfResults=100",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"GetNearbyPostcodes"
+					],
+					"query": [
+						{
+							"key": "Postcode",
+							"value": "ng15fs"
+						},
+						{
+							"key": "RadiusInMetres",
+							"value": "1000"
+						},
+						{
+							"key": "MaxNumberOfResults",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetNearbyPostcodesWithoutAddresses",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{token}}"
+					},
+					{
+						"key": "accept-encoding",
+						"value": "gzip"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/api/GetNearbyPostcodesWithoutAddresses?Postcode=ng15fs&RadiusInMetres=1000&MaxNumberOfResults=100",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"GetNearbyPostcodesWithoutAddresses"
+					],
+					"query": [
+						{
+							"key": "Postcode",
+							"value": "ng15fs"
+						},
+						{
+							"key": "RadiusInMetres",
+							"value": "1000"
+						},
+						{
+							"key": "MaxNumberOfResults",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetPostcodeCoordinates",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Postcodes\": [\n\t\t\"NG1 5FS\",\n\t\t\"NG1 6DQ\"\n\t]\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/GetPostcodeCoordinates",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"GetPostcodeCoordinates"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

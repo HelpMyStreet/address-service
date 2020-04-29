@@ -1,30 +1,29 @@
-﻿using System;
+﻿using AddressService.Core.Config;
+using AddressService.Core.Interfaces.Repositories;
+using AddressService.Core.Services.PostcodeIo;
+using AddressService.Core.Services.Qas;
+using AddressService.Core.Utils;
+using AddressService.Core.Validation;
+using AddressService.Handlers;
+using AddressService.Mappers;
+using AddressService.Repo;
+using AutoMapper;
+using MediatR;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
-using AutoMapper;
-using AddressService.Core.Interfaces.Repositories;
-using AddressService.Handlers;
-using AddressService.Mappers;
-using AddressService.Repo;
-using MediatR;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using AddressService.Core.Config;
-using AddressService.Core.Services.PostcodeIo;
-using AddressService.Core.Services.Qas;
-using AddressService.Core.Utils;
-using AddressService.Core.Validation;
-using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
 namespace AddressService.AzureFunction
@@ -41,20 +40,8 @@ namespace AddressService.AzureFunction
             IConfigurationBuilder configBuilder = new ConfigurationBuilder()
                 .SetBasePath(currentDirectory)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
                 .AddEnvironmentVariables();
-            
-            string aspNetCoreEnv = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            bool isLocalDev = aspNetCoreEnv?.ToLower().Trim() == "localdev";
-            if (isLocalDev)
-            {
-                configBuilder.AddUserSecrets(Assembly.GetExecutingAssembly(), false);
-                Console.Write("User secrets added");
-            }
-            else
-            {
-                Console.Write("User secrets not added as ASPNETCORE_ENVIRONMENT environment variable doesn't contain \"localdev\"");
-            }
 
             IConfigurationRoot config = configBuilder.Build();
 
@@ -125,8 +112,7 @@ namespace AddressService.AzureFunction
             IConfigurationSection applicationConfigSettings = config.GetSection("ApplicationConfig");
             builder.Services.Configure<ApplicationConfig>(applicationConfigSettings);
 
-            string connectionStringSection = isLocalDev ? "ConnectionStringsLocalDev" : "ConnectionStrings";
-            IConfigurationSection connectionStringSettings = config.GetSection(connectionStringSection);
+            IConfigurationSection connectionStringSettings = config.GetSection("ConnectionStrings");
             builder.Services.Configure<ConnectionStrings>(connectionStringSettings);
 
             ConnectionStrings connectionStrings = new ConnectionStrings();

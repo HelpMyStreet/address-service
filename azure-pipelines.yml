@@ -37,13 +37,7 @@ steps:
   displayName: DotNetCore test
   inputs:
     command: 'test'
-    arguments: -c $(BuildConfiguration) --settings $(System.DefaultWorkingDirectory)/CodeCoverage.runsettings --collect:"XPlat Code Coverage" -- RunConfiguration.DisableAppDomain=true
-
-- task: PublishCodeCoverageResults@1
-  displayName: Publish code coverage results
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: $(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
 
 - task: DotNetCoreCLI@2
   displayName: DotNetCore publish

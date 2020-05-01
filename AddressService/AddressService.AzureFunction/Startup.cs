@@ -24,6 +24,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using HelpMyStreet.Utils.PollyPolicies;
+using Polly;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
 namespace AddressService.AzureFunction
@@ -45,7 +47,9 @@ namespace AddressService.AzureFunction
 
             IConfigurationRoot config = configBuilder.Build();
 
-
+            // DI doesn't work in startup
+            PollyHttpPolicies pollyHttpPolicies = new PollyHttpPolicies(new PollyHttpPoliciesConfig());
+            
             Dictionary<HttpClientConfigName, ApiConfig> httpClientConfigs = config.GetSection("Apis").Get<Dictionary<HttpClientConfigName, ApiConfig>>();
 
             foreach (KeyValuePair<HttpClientConfigName, ApiConfig> httpClientConfig in httpClientConfigs)
@@ -54,6 +58,8 @@ namespace AddressService.AzureFunction
                 {
                     throw new Exception("Qas requires auth-token header");
                 }
+
+                IAsyncPolicy<HttpResponseMessage> retryPolicy = httpClientConfig.Value.IsExternal ? pollyHttpPolicies.ExternalHttpRetryPolicy : pollyHttpPolicies.InternalHttpRetryPolicy;
 
                 builder.Services.AddHttpClient(httpClientConfig.Key.ToString(), c =>
                 {
@@ -72,7 +78,7 @@ namespace AddressService.AzureFunction
                 {
                     MaxConnectionsPerServer = httpClientConfig.Value.MaxConnectionsPerServer ?? 15,
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                });
+                }).AddPolicyHandler(retryPolicy);
 
             }
 

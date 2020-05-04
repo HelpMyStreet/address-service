@@ -22,9 +22,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+    <PackageReference Include="NewRelic.Agent.Api" Version="8.27.139" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />
-    <PackageReference Include="NewRelic.Agent" Version="8.26.630" />
+    <PackageReference Include="NewRelic.Agent" Version="8.27.139" />
     <PackageReference Include="AzureFunctions.Extensions.Swashbuckle" Version="1.4.4" />
 	</ItemGroup>
 	<ItemGroup>

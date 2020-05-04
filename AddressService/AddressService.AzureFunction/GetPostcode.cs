@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Threading;
@@ -28,6 +29,7 @@ namespace AddressService.AzureFunction
             _logger = logger;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetPostcode")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>))]
@@ -38,6 +40,7 @@ namespace AddressService.AzureFunction
 
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("AddressService", "GetPostcode");
                 _logger.LogInformation("C# HTTP trigger function processed a request.");
 
                 // This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere).  I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
@@ -58,7 +61,7 @@ namespace AddressService.AzureFunction
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unhandled error in GetPostcode", ex);
+                LogError.Log(_logger, ex, req);
                 return new ObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError,"Internal Error")) {StatusCode = StatusCodes.Status500InternalServerError};
             }
         }

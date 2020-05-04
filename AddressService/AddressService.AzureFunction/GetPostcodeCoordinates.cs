@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -26,6 +27,7 @@ namespace AddressService.AzureFunction
             _logger = logger;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetPostcodeCoordinates")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetPostcodeCoordinatesRequest, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetPostcodeCoordinatesRequest, AddressServiceErrorCode>))]
@@ -35,6 +37,7 @@ namespace AddressService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("AddressService", "GetPostcodeCoordinates");
                 _logger.LogInformation("C# HTTP trigger function processed a request.");
 
                 // accept compressed requests (can't do this with middleware)
@@ -52,7 +55,7 @@ namespace AddressService.AzureFunction
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unhandled error in GetPostcodeCoordinates", ex);
+                LogError.Log(_logger, ex, reqAsHttpRequestMessage);
                 return new ObjectResult(ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }

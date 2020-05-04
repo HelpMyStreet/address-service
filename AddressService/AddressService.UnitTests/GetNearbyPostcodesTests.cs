@@ -137,7 +137,7 @@ namespace AddressService.UnitTests
 
             _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesRequest>(), It.IsAny<CancellationToken>()));
 
-            _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error in GetNearbyPostcodes")), It.IsAny<Exception>()));
+            _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error")), It.IsAny<Exception>()));
         }
 
         [Test]

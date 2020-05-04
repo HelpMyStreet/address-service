@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Threading;
@@ -28,6 +29,7 @@ namespace AddressService.AzureFunction
             _logger = logger;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetPostcodes")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>))]
@@ -38,6 +40,7 @@ namespace AddressService.AzureFunction
 
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("AddressService", "GetPostcodes");
                 _logger.LogInformation("C# HTTP trigger function processed a request.");
 
                 GetPostcodesResponse response = await _mediator.Send(req, cancellationToken);
@@ -45,7 +48,7 @@ namespace AddressService.AzureFunction
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unhandled error in GetPostcodes", ex);
+                LogError.Log(_logger, ex, req);
                 return new ObjectResult(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError,"Internal Error")) {StatusCode = StatusCodes.Status500InternalServerError};
             }
         }

@@ -3,6 +3,7 @@ using AddressService.Handlers;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.UnitTests
 {

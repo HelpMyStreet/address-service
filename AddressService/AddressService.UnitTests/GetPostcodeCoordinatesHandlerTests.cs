@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.UnitTests
 {
@@ -15,15 +16,15 @@ namespace AddressService.UnitTests
     {
         private Mock<IPostcodeCoordinatesGetter> _postcodeCoordinatesGetter;
 
-        private IReadOnlyDictionary<string, CoordinatesDto> _postcodeCoordinates;
+        private IReadOnlyDictionary<string, PostcodeCoordinateDto> _postcodeCoordinates;
         [SetUp]
         public void SetUp()
         {
 
-            _postcodeCoordinates = new Dictionary<string, CoordinatesDto>()
+            _postcodeCoordinates = new Dictionary<string, PostcodeCoordinateDto>()
             {
-                { "NG1 5FS", new CoordinatesDto(52.954885, -1.155263)},
-                { "NG1 5BL", new CoordinatesDto(52.955494, -1.154864)}, 
+                { "NG1 5FS", new PostcodeCoordinateDto("NG1 5FS", 52.954885, -1.155263)},
+                { "NG1 5BL", new PostcodeCoordinateDto("NG1 5BL",52.955494, -1.154864)}, 
 
             };
 

@@ -15,8 +15,13 @@
 						"value": "{{token}}"
 					},
 					{
-						"key": "accept-encoding",
+						"key": "Accept-Encoding",
 						"value": "gzip"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -52,8 +57,13 @@
 						"value": "{{token}}"
 					},
 					{
-						"key": "accept-encoding",
+						"key": "Accept-Encoding",
 						"value": "gzip"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -97,8 +107,13 @@
 						"value": "{{token}}"
 					},
 					{
-						"key": "accept-encoding",
+						"key": "Accept-Encoding",
 						"value": "gzip"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -142,6 +157,11 @@
 						"value": "{{token}}"
 					},
 					{
+						"key": "Accept-Encoding",
+						"value": "gzip",
+						"type": "text"
+					},
+					{
 						"key": "Content-Type",
 						"value": "application/json"
 					}
@@ -158,6 +178,63 @@
 					"path": [
 						"api",
 						"GetPostcodeCoordinates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetNumberOfAddressesInBoundary",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"Postcodes\": [\n\t\t\"NG1 5FS\",\n\t\t\"NG1 6DQ\"\n\t]\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/GetNumberOfAddressesInBoundary?SWLatitude= 52.919500&SWLongitude=-1.161945&NELatitude=52.945368&NELongitude=-1.100696",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"GetNumberOfAddressesInBoundary"
+					],
+					"query": [
+						{
+							"key": "SWLatitude",
+							"value": " 52.919500"
+						},
+						{
+							"key": "SWLongitude",
+							"value": "-1.161945"
+						},
+						{
+							"key": "NELatitude",
+							"value": "52.945368"
+						},
+						{
+							"key": "NELongitude",
+							"value": "-1.100696"
+						}
 					]
 				}
 			},

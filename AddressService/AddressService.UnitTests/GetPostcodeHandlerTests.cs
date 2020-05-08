@@ -9,13 +9,14 @@ using NUnit.Framework;
 using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Core.Utils;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.UnitTests
 {
     public class GetPostcodeHandlerTests
     {
         private Mock<IMapper> _mapper;
-        private Mock<IPostcodeGetter> _postcodeGetter;
+        private Mock<IPostcodeAndAddressGetter> _postcodeGetter;
         private Mock<IAddressDetailsSorter> _addressDetailsSorter;
 
         [SetUp]
@@ -29,7 +30,7 @@ namespace AddressService.UnitTests
             _mapper = new Mock<IMapper>();
             _mapper.Setup(x => x.Map<PostcodeDto, GetPostcodeResponse>(It.IsAny<PostcodeDto>())).Returns(getNearbyGetPostcodesResponse);
 
-            _postcodeGetter = new Mock<IPostcodeGetter>();
+            _postcodeGetter = new Mock<IPostcodeAndAddressGetter>();
             _postcodeGetter.SetupAllProperties();
 
             _addressDetailsSorter = new Mock<IAddressDetailsSorter>();

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.UnitTests
 {
@@ -17,7 +18,7 @@ namespace AddressService.UnitTests
     {
         private Mock<INearestPostcodeGetter> _nearestPostcodeGetter;
         private Mock<IMapper> _mapper;
-        private Mock<IPostcodeGetter> _postcodeGetter;
+        private Mock<IPostcodeAndAddressGetter> _postcodeGetter;
         private Mock<IAddressDetailsSorter> _addressDetailsSorter;
 
         [SetUp]
@@ -81,7 +82,7 @@ namespace AddressService.UnitTests
                 },
             };
 
-            _postcodeGetter = new Mock<IPostcodeGetter>();
+            _postcodeGetter = new Mock<IPostcodeAndAddressGetter>();
 
             _postcodeGetter.Setup(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())).ReturnsAsync(postcodeDtos);
 

@@ -1,8 +1,8 @@
-﻿using AddressService.Core.Dto;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using AddressService.Core.Dto;
 
-namespace AddressService.Handlers
+namespace AddressService.Handlers.BusinessLogic
 {
     public interface INearestPostcodeGetter
     {

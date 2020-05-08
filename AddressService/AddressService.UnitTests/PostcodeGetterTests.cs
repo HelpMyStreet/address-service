@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.UnitTests
 {
@@ -20,7 +21,7 @@ namespace AddressService.UnitTests
         private Mock<IQasService> _qasService;
         private Mock<IQasMapper> _qasMapper;
         private Mock<IFriendlyNameGenerator> _friendlyNameGenerator;
-        private Mock<ILoggerWrapper<PostcodeGetter>> _logger;
+        private Mock<ILoggerWrapper<PostcodeAndAddressGetter>> _logger;
 
         private PostcodeDto _missingPostcodeDtosFromQas;
         private IEnumerable<PostcodeDto> _postcodeDtosInDbs;
@@ -87,7 +88,7 @@ namespace AddressService.UnitTests
             _friendlyNameGenerator = new Mock<IFriendlyNameGenerator>();
             _friendlyNameGenerator.Setup(x => x.GenerateFriendlyName(It.IsAny<PostcodeDto>()));
 
-            _logger = new Mock<ILoggerWrapper<PostcodeGetter>>();
+            _logger = new Mock<ILoggerWrapper<PostcodeAndAddressGetter>>();
 
             _logger.SetupAllProperties();
         }
@@ -96,7 +97,7 @@ namespace AddressService.UnitTests
         public async Task PostCodesAreRetrievedFromQasAndDatabase()
         {
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
+            PostcodeAndAddressGetter postcodeAndAddressGetter = new PostcodeAndAddressGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
 
             List<string> postcodes = new List<string>()
             {
@@ -104,7 +105,7 @@ namespace AddressService.UnitTests
                 "NG15FS"
             };
 
-            IEnumerable<PostcodeDto> result = await postcodeGetter.GetPostcodesAsync(postcodes, cancellationToken);
+            IEnumerable<PostcodeDto> result = await postcodeAndAddressGetter.GetPostcodesAsync(postcodes, cancellationToken);
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
 
@@ -131,9 +132,9 @@ namespace AddressService.UnitTests
         public async Task MissingPostCodeIsRetrievedFromQas()
         {
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
+            PostcodeAndAddressGetter postcodeAndAddressGetter = new PostcodeAndAddressGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
 
-            PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng1 6dq", cancellationToken);
+            PostcodeDto result = await postcodeAndAddressGetter.GetPostcodeAsync("ng1 6dq", cancellationToken);
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
             _repository.Verify(x => x.SaveAddressesAndFriendlyNameAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Once);
@@ -151,9 +152,9 @@ namespace AddressService.UnitTests
         public async Task PostCodeIsRetrievedFromDatabase()
         {
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
+            PostcodeAndAddressGetter postcodeAndAddressGetter = new PostcodeAndAddressGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
 
-            PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng15fs", cancellationToken);
+            PostcodeDto result = await postcodeAndAddressGetter.GetPostcodeAsync("ng15fs", cancellationToken);
 
             _repository.Verify(x => x.GetPostcodesAsync(It.IsAny<IEnumerable<string>>()), Times.Once);
             _repository.Verify(x => x.SaveAddressesAndFriendlyNameAsync(It.IsAny<IEnumerable<PostcodeDto>>()), Times.Never);
@@ -174,9 +175,9 @@ namespace AddressService.UnitTests
             _friendlyNameGenerator.Setup(x => x.GenerateFriendlyName(It.IsAny<PostcodeDto>())).Throws<Exception>();
 
             CancellationToken cancellationToken = new CancellationToken();
-            PostcodeGetter postcodeGetter = new PostcodeGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
+            PostcodeAndAddressGetter postcodeAndAddressGetter = new PostcodeAndAddressGetter(_repository.Object, _qasService.Object, _qasMapper.Object, _friendlyNameGenerator.Object, _logger.Object);
 
-            PostcodeDto result = await postcodeGetter.GetPostcodeAsync("ng1 6dq", cancellationToken);
+            PostcodeDto result = await postcodeAndAddressGetter.GetPostcodeAsync("ng1 6dq", cancellationToken);
 
             _logger.Verify(x => x.LogWarning(It.Is<string>(y => y.Contains("Error generating friendly name")), It.IsAny<Exception>()));
 

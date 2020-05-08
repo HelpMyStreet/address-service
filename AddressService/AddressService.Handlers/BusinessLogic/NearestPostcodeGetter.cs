@@ -1,13 +1,13 @@
-﻿using AddressService.Core.Config;
-using AddressService.Core.Dto;
-using AddressService.Core.Interfaces.Repositories;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AddressService.Core.Config;
+using AddressService.Core.Dto;
+using AddressService.Core.Interfaces.Repositories;
+using Microsoft.Extensions.Options;
 
-namespace AddressService.Handlers
+namespace AddressService.Handlers.BusinessLogic
 {
     public class NearestPostcodeGetter : INearestPostcodeGetter
     {

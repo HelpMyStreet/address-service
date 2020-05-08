@@ -1,12 +1,14 @@
-﻿namespace AddressService.Core.Dto
+﻿using HelpMyStreet.Utils.Dtos;
+
+namespace AddressService.Core.Dto
 {
-    public class PostcodeWithCoordinatesDto
+    public class PostcodeCoordinateDto : ILatitudeLongitude
     {
-        public PostcodeWithCoordinatesDto()
+        public PostcodeCoordinateDto()
         {
         }
 
-        public PostcodeWithCoordinatesDto(string postcode, double latitude, double longitude)
+        public PostcodeCoordinateDto(string postcode, double latitude, double longitude)
         {
             Postcode = postcode;
             Latitude = latitude;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.Handlers
 {
@@ -22,7 +23,7 @@ namespace AddressService.Handlers
         {
             IEnumerable<string> requiredPostcodes = request.Postcodes.Where(x => !String.IsNullOrWhiteSpace(x));
 
-            IReadOnlyDictionary<string, CoordinatesDto> postcodeCoordinateDtos = await _postcodeCoordinatesGetter.GetPostcodeCoordinatesAsync(requiredPostcodes);
+            IReadOnlyDictionary<string, PostcodeCoordinateDto> postcodeCoordinateDtos = await _postcodeCoordinatesGetter.GetPostcodeCoordinatesAsync(requiredPostcodes);
             
             IEnumerable<PostcodeCoordinate> postcodeCoordinates = postcodeCoordinateDtos.Select(x => new PostcodeCoordinate()
             {

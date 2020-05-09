@@ -80,6 +80,13 @@ namespace AddressService.UnitTests
                             AddressLine2 = "2_addressline2",
                             AddressLine3 = "2_addressline1",
                             Locality = "2_locality"
+                        },
+                        new AddressDetailsDto()
+                        {
+                            AddressLine1 = "3_addressline1",
+                            AddressLine2 = "3_addressline2",
+                            AddressLine3 = "3_addressline1",
+                            Locality = "3_locality"
                         }
                     }
                 }
@@ -129,11 +136,11 @@ namespace AddressService.UnitTests
             Assert.AreEqual("1_addressline1", returnedMissingPostCodeAddressFromDb.FirstOrDefault().AddressLine3);
             Assert.AreEqual("1_locality", returnedMissingPostCodeAddressFromDb.FirstOrDefault().Locality);
 
-            Assert.AreEqual(1, returnedMissingPostCodeAddressFromQas.Count());
-            Assert.AreEqual("2_addressline1", returnedMissingPostCodeAddressFromQas.FirstOrDefault().AddressLine1);
-            Assert.AreEqual("2_addressline2", returnedMissingPostCodeAddressFromQas.FirstOrDefault().AddressLine2);
-            Assert.AreEqual("2_addressline1", returnedMissingPostCodeAddressFromQas.FirstOrDefault().AddressLine3);
-            Assert.AreEqual("2_locality", returnedMissingPostCodeAddressFromQas.FirstOrDefault().Locality);
+            Assert.AreEqual(2, returnedMissingPostCodeAddressFromQas.Count());
+            Assert.AreEqual("2_addressline1", returnedMissingPostCodeAddressFromQas.FirstOrDefault(x=>x.AddressLine1 == "2_addressline1").AddressLine1);
+            Assert.AreEqual("2_addressline2", returnedMissingPostCodeAddressFromQas.FirstOrDefault(x => x.AddressLine1 == "2_addressline1").AddressLine2);
+            Assert.AreEqual("2_addressline1", returnedMissingPostCodeAddressFromQas.FirstOrDefault(x => x.AddressLine1 == "2_addressline1").AddressLine3);
+            Assert.AreEqual("2_locality", returnedMissingPostCodeAddressFromQas.FirstOrDefault(x => x.AddressLine1 == "2_addressline1").Locality);
 
         }
 
@@ -182,7 +189,7 @@ namespace AddressService.UnitTests
             Assert.AreEqual(2, result.Count());
 
             Assert.AreEqual(3, result.FirstOrDefault(x => x.Postcode == "NG1 1AA").NumberOfAddresses);
-            Assert.AreEqual(1, result.FirstOrDefault(x => x.Postcode == "NG1 1AB").NumberOfAddresses);
+            Assert.AreEqual(2, result.FirstOrDefault(x => x.Postcode == "NG1 1AB").NumberOfAddresses);
         }
 
     }

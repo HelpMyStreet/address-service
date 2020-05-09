@@ -91,8 +91,7 @@ namespace AddressService.Handlers.BusinessLogic
             HashSet<string> postcodesFromQas = missingPostcodeDtos.Select(x => x.Postcode).ToHashSet();
             IEnumerable<string> postcodesThatHaveNoAddressess = postcodesWithoutAddresses.Where(x => !postcodesFromQas.Contains(x));
             _postcodesWithoutAddressesCache.AddRange(postcodesThatHaveNoAddressess);
-
-
+            
             IEnumerable<PostcodeWithNumberOfAddressesDto> missingPostCodesWithNumberOfAddresses = missingPostcodeDtos.GroupBy(x => x.Postcode)
 
                 .Select(x => new PostcodeWithNumberOfAddressesDto()

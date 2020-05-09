@@ -6,6 +6,6 @@ namespace AddressService.Handlers.BusinessLogic
 {
     public interface IPostcodeCoordinatesGetter
     {
-        Task<IReadOnlyDictionary<string, PostcodeCoordinateDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> neededPostcodes);
+        Task<IReadOnlyDictionary<string, CoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> neededPostcodes);
     }
 }

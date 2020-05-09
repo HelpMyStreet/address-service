@@ -1,8 +1,7 @@
 ﻿using AddressService.Core.Contracts;
 using AddressService.Core.Dto;
+using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers.BusinessLogic;
-using AddressService.Handlers.Cache;
-using HelpMyStreet.Utils.Extensions;
 using MediatR;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,25 +12,21 @@ namespace AddressService.Handlers
 {
     public class GetNumberOfAddressesPerPostcodeInBoundaryHandler : IRequestHandler<GetNumberOfAddressesPerPostcodeInBoundaryRequest, GetNumberOfAddressesPerPostcodeInBoundaryResponse>
     {
-        private readonly IPostcodeCache _postcodeCache;
+        private readonly IRepository _repository;
         private readonly IPostcodeAndAddressGetter _postcodeAndAddressGetter;
 
-        public GetNumberOfAddressesPerPostcodeInBoundaryHandler(IPostcodeCache postcodeCache, IPostcodeAndAddressGetter postcodeAndAddressGetter)
+        public GetNumberOfAddressesPerPostcodeInBoundaryHandler(IRepository repository, IPostcodeAndAddressGetter postcodeAndAddressGetter)
         {
-            _postcodeCache = postcodeCache;
+            _repository = repository;
             _postcodeAndAddressGetter = postcodeAndAddressGetter;
         }
 
         public async Task<GetNumberOfAddressesPerPostcodeInBoundaryResponse> Handle(GetNumberOfAddressesPerPostcodeInBoundaryRequest request, CancellationToken cancellationToken)
         {
-            IReadOnlyDictionary<string, PostcodeCoordinateDto> postcodesWithCoordinates = await _postcodeCache.GetAllPostcodeCoordinatesAsync();
+            IEnumerable<string> postCodesWithinBoundary = await _repository.GetPostcodesInBoundaryAsync(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude);
 
-            // slow... takes about 800-900ms to filter 1.7m postcodes on my machine
-            IEnumerable<PostcodeCoordinateDto> postCodesWithinBoundary = postcodesWithCoordinates.Values.WhereWithinBoundary(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude).ToList();
 
-            IEnumerable<string> postcodes = postCodesWithinBoundary.Select(x => x.Postcode);
-
-            IEnumerable<PostcodeWithNumberOfAddressesDto> postCodesWithNumberOfAddresses = await _postcodeAndAddressGetter.GetNumberOfAddressesPerPostcodeAsync(postcodes, cancellationToken);
+            IEnumerable<PostcodeWithNumberOfAddressesDto> postCodesWithNumberOfAddresses = await _postcodeAndAddressGetter.GetNumberOfAddressesPerPostcodeAsync(postCodesWithinBoundary, cancellationToken);
 
             GetNumberOfAddressesPerPostcodeInBoundaryResponse getNumberOfAddressesPerPostcodeInBoundaryResponse = new GetNumberOfAddressesPerPostcodeInBoundaryResponse()
             {

@@ -1,28 +1,61 @@
 ﻿using AddressService.Core.Dto;
-using AddressService.Handlers.Cache;
+using AddressService.Core.Extensions;
+using AddressService.Core.Interfaces.Repositories;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AddressService.Handlers.BusinessLogic
 {
-    public class PostcodeCoordinatesGetter : IPostcodeCoordinatesGetter
+    public class PostcodeCoordinatesGetter  : IPostcodeCoordinatesGetter
     {
-        private readonly IPostcodeCache _postcodeCache;
+        private readonly IRepository _repository;
 
-        public PostcodeCoordinatesGetter(IPostcodeCache postcodeCache)
+        private static readonly ConcurrentDictionary<string, CoordinatesDto> _postcodesWithLatitudeAndLongitudes = new ConcurrentDictionary<string, CoordinatesDto>();
+
+        public PostcodeCoordinatesGetter(IRepository repository)
         {
-            _postcodeCache = postcodeCache;
+            _repository = repository;
         }
 
-        public async Task<IReadOnlyDictionary<string, PostcodeCoordinateDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> neededPostcodes)
+        public async Task<IReadOnlyDictionary<string, CoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> neededPostcodes)
         {
-            IReadOnlyDictionary<string, PostcodeCoordinateDto> postcodeCoordinates = await _postcodeCache.GetAllPostcodeCoordinatesAsync();
+            IEnumerable<string> allMissingPostCodes = neededPostcodes.Where(x => !_postcodesWithLatitudeAndLongitudes.ContainsKey(x));
 
-            Dictionary<string, PostcodeCoordinateDto> requiredPostcodes = new Dictionary<string, PostcodeCoordinateDto>();
-
-            foreach (string neededPostcode in neededPostcodes)
+            // get coordinates from database in concurrent chunks for speed
+            if (allMissingPostCodes.Any())
             {
-                if (postcodeCoordinates.TryGetValue(neededPostcode, out var coordinatesDto))
+                IEnumerable<IEnumerable<string>> chunkedMissingPostCodes = allMissingPostCodes.ChunkBy(2500);
+
+                List<Task<IEnumerable<PostcodeWithCoordinatesDto>>> missingPostCodeChunkTasks = new List<Task<IEnumerable<PostcodeWithCoordinatesDto>>>();
+
+                foreach (IEnumerable<string> missingPostcodesChunk in chunkedMissingPostCodes)
+                {
+                    Task<IEnumerable<PostcodeWithCoordinatesDto>> missingPostCodeTask = _repository.GetPostcodeCoordinatesAsync(missingPostcodesChunk);
+
+                    missingPostCodeChunkTasks.Add(missingPostCodeTask);
+                }
+
+                while (missingPostCodeChunkTasks.Count > 0)
+                {
+                    Task<IEnumerable<PostcodeWithCoordinatesDto>> finishedTask = await Task.WhenAny(missingPostCodeChunkTasks);
+                    missingPostCodeChunkTasks.Remove(finishedTask);
+
+                    IEnumerable<PostcodeWithCoordinatesDto> missingPostCodeChunk = await finishedTask;
+
+                    foreach (PostcodeWithCoordinatesDto postcode in missingPostCodeChunk)
+                    {
+                        _postcodesWithLatitudeAndLongitudes.TryAdd(postcode.Postcode, new CoordinatesDto(postcode.Latitude, postcode.Longitude));
+                    }
+                }
+            }
+
+            Dictionary<string, CoordinatesDto> requiredPostcodes = new Dictionary<string, CoordinatesDto>();
+
+            foreach (var neededPostcode in neededPostcodes)
+            {
+                if (_postcodesWithLatitudeAndLongitudes.TryGetValue(neededPostcode, out var coordinatesDto))
                 {
                     requiredPostcodes[neededPostcode] = coordinatesDto;
                 }

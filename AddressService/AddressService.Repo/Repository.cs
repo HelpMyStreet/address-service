@@ -9,10 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using AddressService.Repo.EntityFramework.Entities;
 
 namespace AddressService.Repo
 {
@@ -200,59 +197,19 @@ namespace AddressService.Repo
         }
 
 
-        public async Task<IEnumerable<PostcodeCoordinateDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> postcodes)
+        public async Task<IEnumerable<PostcodeWithCoordinatesDto>> GetPostcodeCoordinatesAsync(IEnumerable<string> postcodes)
         {
             DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
 
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
-                IEnumerable<PostcodeCoordinateDto> result = await connection.QueryAsync<PostcodeCoordinateDto>("[Address].[GetPostcodeCoordinates]",
+                IEnumerable<PostcodeWithCoordinatesDto> result = await connection.QueryAsync<PostcodeWithCoordinatesDto>("[Address].[GetPostcodeCoordinates]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcodes = postcodesDataTable },
                     commandTimeout: 15);
 
                 return result;
             }
-        }
-
-        public async Task<IEnumerable<PostcodeCoordinateDto>> GetPostcodeCoordinatesAsync(int fromId, int toId)
-        {
-            string query = @"
-SELECT [Postcode]
-      ,[Latitude]
-      ,[Longitude]
-  FROM [AddressService].[Address].[Postcode]
-  WHERE [IsActive]  = 1
-  AND [Id] BETWEEN @fromId AND @toId
-";
-
-            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
-            {
-                IEnumerable<PostcodeCoordinateDto> result = await connection.QueryAsync<PostcodeCoordinateDto>(query,
-                    commandType: CommandType.Text,
-                    param: new { fromId = fromId, toId = toId },
-                    commandTimeout: 15);
-
-                return result;
-            }
-        }
-
-        public async Task<int> GetMinPostcodeIdAsync()
-        {
-            int result = await _context.Set<PostcodeEntity>().Where(x=>x.IsActive).MinAsync(x => x.Id);
-            return result;
-        }
-
-        public async Task<int> GetMaxPostcodeIdAsync()
-        {
-            int result = await _context.Set<PostcodeEntity>().Where(x => x.IsActive).MaxAsync(x => x.Id);
-            return result;
-        }
-
-        public async Task<int> GetNumberOfPostcodesAsync()
-        {
-            int result = await _context.Set<PostcodeEntity>().CountAsync(x => x.IsActive);
-            return result;
         }
 
         public async Task<IEnumerable<PostcodeWithNumberOfAddressesDto>> GetNumberOfAddressesPerPostcodeAsync(IEnumerable<string> postcodes)
@@ -264,6 +221,28 @@ SELECT [Postcode]
                 IEnumerable<PostcodeWithNumberOfAddressesDto> result = await connection.QueryAsync<PostcodeWithNumberOfAddressesDto>("[Address].[GetNumberOfAddressesPerPostcode]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcodes = postcodesDataTable },
+                    commandTimeout: 15);
+
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetPostcodesInBoundaryAsync(double swLatitude, double swLongitude, double neLatitude, double neLongitude)
+        {
+            string query = @"
+SELECT [Postcode]
+  FROM [Address].[Postcode]
+  where [Latitude] >= @swLatitude
+  AND [Latitude] <= @neLatitude
+  AND [Longitude] >= @swLongitude
+  AND [Longitude] <= @neLongitude
+";
+
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                IEnumerable<string> result = await connection.QueryAsync<string>(query,
+                    commandType: CommandType.Text,
+                    param: new { swLatitude = swLatitude, swLongitude = swLongitude, neLatitude = neLatitude , neLongitude = neLongitude },
                     commandTimeout: 15);
 
                 return result;

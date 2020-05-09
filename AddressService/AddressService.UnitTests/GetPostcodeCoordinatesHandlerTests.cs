@@ -16,15 +16,15 @@ namespace AddressService.UnitTests
     {
         private Mock<IPostcodeCoordinatesGetter> _postcodeCoordinatesGetter;
 
-        private IReadOnlyDictionary<string, PostcodeCoordinateDto> _postcodeCoordinates;
+        private IReadOnlyDictionary<string, CoordinatesDto> _postcodeCoordinates;
         [SetUp]
         public void SetUp()
         {
 
-            _postcodeCoordinates = new Dictionary<string, PostcodeCoordinateDto>()
+            _postcodeCoordinates = new Dictionary<string, CoordinatesDto>()
             {
-                { "NG1 5FS", new PostcodeCoordinateDto("NG1 5FS", 52.954885, -1.155263)},
-                { "NG1 5BL", new PostcodeCoordinateDto("NG1 5BL",52.955494, -1.154864)}, 
+                { "NG1 5FS", new CoordinatesDto("NG1 5FS", 52.954885, -1.155263)},
+                { "NG1 5BL", new CoordinatesDto("NG1 5BL",52.955494, -1.154864)}, 
 
             };
 

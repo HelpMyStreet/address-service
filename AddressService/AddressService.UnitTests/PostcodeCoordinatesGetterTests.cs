@@ -14,8 +14,8 @@ namespace AddressService.UnitTests
     public class PostcodeCoordinatesGetterTests
     {
         private Mock<IRepository> _repository;
-        private IEnumerable<PostcodeCoordinateDto> _postcodes1;
-        private IEnumerable<PostcodeCoordinateDto> _postcodes2;
+        private IEnumerable<CoordinatesDto> _postcodes1;
+        private IEnumerable<CoordinatesDto> _postcodes2;
 
         [SetUp]
         public void SetUp()
@@ -23,19 +23,19 @@ namespace AddressService.UnitTests
             _repository = new Mock<IRepository>();
 
 
-            _postcodes1 = new List<PostcodeCoordinateDto>()
+            _postcodes1 = new List<CoordinatesDto>()
             {
-                new PostcodeCoordinateDto("NG1 5FS", 52.954885, -1.155263),
-                new PostcodeCoordinateDto("NG1 5FW", 52.955491,-1.155413 ), // 68m
-                new PostcodeCoordinateDto("NG1 5BL", 52.955494, -1.154864), // 73m
+                new CoordinatesDto("NG1 5FS", 52.954885, -1.155263),
+                new CoordinatesDto("NG1 5FW", 52.955491,-1.155413 ), // 68m
+                new CoordinatesDto("NG1 5BL", 52.955494, -1.154864), // 73m
               
             };
 
-            _postcodes2 = new List<PostcodeCoordinateDto>()
+            _postcodes2 = new List<CoordinatesDto>()
             {
-                new PostcodeCoordinateDto("NG1 6LP", 52.954771, -1.154102 ), //  79m
-                new PostcodeCoordinateDto("NG1 6LF", 52.95483, -1.153744 ), // 102m
-                new PostcodeCoordinateDto("NG1 6LA",52.954446, -1.153885 ), // 104m
+                new CoordinatesDto("NG1 6LP", 52.954771, -1.154102 ), //  79m
+                new CoordinatesDto("NG1 6LF", 52.95483, -1.153744 ), // 102m
+                new CoordinatesDto("NG1 6LA",52.954446, -1.153885 ), // 104m
 
             };
 

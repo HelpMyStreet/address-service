@@ -6,7 +6,6 @@ using AddressService.Core.Utils;
 using AddressService.Core.Validation;
 using AddressService.Handlers;
 using AddressService.Handlers.BusinessLogic;
-using AddressService.Handlers.Cache;
 using AddressService.Mappers;
 using AddressService.Repo;
 using AutoMapper;
@@ -108,7 +107,6 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
 
             builder.Services.AddTransient<IBatchedDataGetter, BatchedDataGetter>();
-            builder.Services.AddTransient<IPostcodeCache, PostcodeCache>();
 
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
 

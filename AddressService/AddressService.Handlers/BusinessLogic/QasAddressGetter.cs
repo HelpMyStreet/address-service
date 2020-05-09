@@ -19,9 +19,9 @@ namespace AddressService.Handlers.BusinessLogic
         private readonly IQasService _qasService;
         private readonly IQasMapper _qasMapper;
         private readonly IFriendlyNameGenerator _friendlyNameGenerator;
-        private readonly ILoggerWrapper<PostcodeAndAddressGetter> _logger;
+        private readonly ILoggerWrapper<QasAddressGetter> _logger;
 
-        public QasAddressGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper, IFriendlyNameGenerator friendlyNameGenerator, ILoggerWrapper<PostcodeAndAddressGetter> logger)
+        public QasAddressGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper, IFriendlyNameGenerator friendlyNameGenerator, ILoggerWrapper<QasAddressGetter> logger)
         {
             _repository = repository;
             _qasService = qasService;

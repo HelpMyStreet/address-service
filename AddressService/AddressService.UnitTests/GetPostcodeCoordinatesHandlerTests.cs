@@ -23,8 +23,8 @@ namespace AddressService.UnitTests
 
             _postcodeCoordinates = new Dictionary<string, CoordinatesDto>()
             {
-                { "NG1 5FS", new CoordinatesDto("NG1 5FS", 52.954885, -1.155263)},
-                { "NG1 5BL", new CoordinatesDto("NG1 5BL",52.955494, -1.154864)}, 
+                { "NG1 5FS", new CoordinatesDto( 52.954885, -1.155263)},
+                { "NG1 5BL", new CoordinatesDto(52.955494, -1.154864)}, 
 
             };
 

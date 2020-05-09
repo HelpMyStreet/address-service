@@ -98,6 +98,7 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IPostcodeAndAddressGetter, PostcodeAndAddressGetter>();
 
             builder.Services.AddTransient<IPostcodeCoordinatesGetter, PostcodeCoordinatesGetter>();
+            builder.Services.AddSingleton<IPostcodesWithoutAddressesCache, PostcodesWithoutAddressesCache>();
 
             builder.Services.AddTransient<IRegexPostcodeValidator, RegexPostcodeValidator>();
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();

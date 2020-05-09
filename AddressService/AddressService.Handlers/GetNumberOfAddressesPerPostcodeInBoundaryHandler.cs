@@ -24,8 +24,7 @@ namespace AddressService.Handlers
         public async Task<GetNumberOfAddressesPerPostcodeInBoundaryResponse> Handle(GetNumberOfAddressesPerPostcodeInBoundaryRequest request, CancellationToken cancellationToken)
         {
             IEnumerable<string> postCodesWithinBoundary = await _repository.GetPostcodesInBoundaryAsync(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude);
-
-
+            
             IEnumerable<PostcodeWithNumberOfAddressesDto> postCodesWithNumberOfAddresses = await _postcodeAndAddressGetter.GetNumberOfAddressesPerPostcodeAsync(postCodesWithinBoundary, cancellationToken);
 
             GetNumberOfAddressesPerPostcodeInBoundaryResponse getNumberOfAddressesPerPostcodeInBoundaryResponse = new GetNumberOfAddressesPerPostcodeInBoundaryResponse()

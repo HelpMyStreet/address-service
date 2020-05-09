@@ -1,21 +1,20 @@
-﻿using AddressService.AzureFunction;
-using AddressService.Core.Validation;
-using HelpMyStreet.Contracts.AddressService.Request;
-using HelpMyStreet.Contracts.AddressService.Response;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.AzureFunction;
 using AddressService.Core.Utils;
+using AddressService.Core.Validation;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
 
-namespace AddressService.UnitTests
+namespace AddressService.UnitTests.AzureFunctions
 {
     public class GetNearbyPostcodesTests
     {

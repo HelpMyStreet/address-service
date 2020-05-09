@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using AddressService.Core.Dto;
+using AddressService.Core.Utils;
 using AddressService.Handlers;
+using AddressService.Handlers.BusinessLogic;
 using AutoMapper;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using Moq;
 using NUnit.Framework;
-using System.Threading;
-using System.Threading.Tasks;
-using AddressService.Core.Utils;
-using AddressService.Handlers.BusinessLogic;
 
-namespace AddressService.UnitTests
+namespace AddressService.UnitTests.Handlers
 {
     public class GetPostcodeHandlerTests
     {

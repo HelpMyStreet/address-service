@@ -1,16 +1,16 @@
-﻿using AddressService.Core.Contracts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AddressService.Core.Contracts;
 using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
 using AddressService.Handlers.BusinessLogic;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace AddressService.UnitTests
+namespace AddressService.UnitTests.Handlers
 {
     public class GetNumberOfAddressesPerPostcodeInBoundaryHandlerTests
     {

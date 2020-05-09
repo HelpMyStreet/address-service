@@ -229,19 +229,10 @@ namespace AddressService.Repo
 
         public async Task<IEnumerable<string>> GetPostcodesInBoundaryAsync(double swLatitude, double swLongitude, double neLatitude, double neLongitude)
         {
-            string query = @"
-SELECT [Postcode]
-  FROM [Address].[Postcode]
-  where [Latitude] >= @swLatitude
-  AND [Latitude] <= @neLatitude
-  AND [Longitude] >= @swLongitude
-  AND [Longitude] <= @neLongitude
-";
-
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
-                IEnumerable<string> result = await connection.QueryAsync<string>(query,
-                    commandType: CommandType.Text,
+                IEnumerable<string> result = await connection.QueryAsync<string>("[Address].[GetPostcodesInBoundary]",
+                    commandType: CommandType.StoredProcedure,
                     param: new { swLatitude = swLatitude, swLongitude = swLongitude, neLatitude = neLatitude , neLongitude = neLongitude },
                     commandTimeout: 15);
 

@@ -1,5 +1,5 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Utils;
+﻿using AddressService.Core.Utils;
+using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
 using MediatR;
@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
-using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace AddressService.AzureFunction
             _logger = logger;
         }
 
-        [FunctionName("GetNumberOfAddressesInBoundary")]
+        [FunctionName("GetNumberOfAddressesPerPostcodeInBoundary")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetNumberOfAddressesPerPostcodeInBoundaryResponse, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetNumberOfAddressesPerPostcodeInBoundaryResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(

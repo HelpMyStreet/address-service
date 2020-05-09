@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
-    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.77" />
+    <PackageReference Include="HelpMyStreet.Utils" Version="1.1.79" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
   </ItemGroup>

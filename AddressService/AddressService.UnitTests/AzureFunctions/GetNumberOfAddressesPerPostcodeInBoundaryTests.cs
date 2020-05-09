@@ -1,6 +1,6 @@
 ﻿using AddressService.AzureFunction;
-using AddressService.Core.Contracts;
 using AddressService.Core.Utils;
+using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
 using MediatR;
@@ -50,10 +50,10 @@ namespace AddressService.UnitTests.AzureFunctions
         {
             GetNumberOfAddressesPerPostcodeInBoundaryRequest req = new GetNumberOfAddressesPerPostcodeInBoundaryRequest()
             {
-                SWLatitude = 1,
-                SWLongitude = 2,
-                NELatitude = 3,
-                NELongitude = 4
+                SwLatitude = 1,
+                SwLongitude = 2,
+                NeLatitude = 3,
+                NeLongitude = 4
             };
 
             GetNumberOfAddressesPerPostcodeInBoundary GetNumberOfAddressesPerPostcodeInBoundary = new GetNumberOfAddressesPerPostcodeInBoundary(_mediator.Object, _logger.Object);
@@ -80,10 +80,10 @@ namespace AddressService.UnitTests.AzureFunctions
             _mediator.Setup(x => x.Send(It.IsAny<GetNumberOfAddressesPerPostcodeInBoundaryRequest>(), It.IsAny<CancellationToken>())).Throws<Exception>();
             GetNumberOfAddressesPerPostcodeInBoundaryRequest req = new GetNumberOfAddressesPerPostcodeInBoundaryRequest()
             {
-                SWLatitude = 1,
-                SWLongitude = 2,
-                NELatitude = 3,
-                NELongitude = 4
+                SwLatitude = 1,
+                SwLongitude = 2,
+                NeLatitude = 3,
+                NeLongitude = 4
             };
 
             GetNumberOfAddressesPerPostcodeInBoundary GetNumberOfAddressesPerPostcodeInBoundary = new GetNumberOfAddressesPerPostcodeInBoundary(_mediator.Object, _logger.Object);
@@ -114,10 +114,10 @@ namespace AddressService.UnitTests.AzureFunctions
 
             GetNumberOfAddressesPerPostcodeInBoundaryRequest req = new GetNumberOfAddressesPerPostcodeInBoundaryRequest()
             {
-                SWLatitude = 999,
-                SWLongitude = 2,
-                NELatitude = 3,
-                NELongitude = 4
+                SwLatitude = 999, // invalid
+                SwLongitude = 2,
+                NeLatitude = 3,
+                NeLongitude = 4
             };
 
             GetNumberOfAddressesPerPostcodeInBoundary GetNumberOfAddressesPerPostcodeInBoundary = new GetNumberOfAddressesPerPostcodeInBoundary(_mediator.Object, _logger.Object);

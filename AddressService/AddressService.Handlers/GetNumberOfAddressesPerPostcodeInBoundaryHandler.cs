@@ -1,7 +1,8 @@
-﻿using AddressService.Core.Contracts;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers.BusinessLogic;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 using MediatR;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace AddressService.Handlers
 
         public async Task<GetNumberOfAddressesPerPostcodeInBoundaryResponse> Handle(GetNumberOfAddressesPerPostcodeInBoundaryRequest request, CancellationToken cancellationToken)
         {
-            IEnumerable<string> postCodesWithinBoundary = await _repository.GetPostcodesInBoundaryAsync(request.SWLatitude, request.SWLongitude, request.NELatitude, request.NELongitude);
+            IEnumerable<string> postCodesWithinBoundary = await _repository.GetPostcodesInBoundaryAsync(request.SwLatitude, request.SwLongitude, request.NeLatitude, request.NeLongitude);
             
             IEnumerable<PostcodeWithNumberOfAddressesDto> postCodesWithNumberOfAddresses = await _postcodeAndAddressGetter.GetNumberOfAddressesPerPostcodeAsync(postCodesWithinBoundary, cancellationToken);
 

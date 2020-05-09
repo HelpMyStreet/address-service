@@ -184,7 +184,7 @@
 			"response": []
 		},
 		{
-			"name": "GetNumberOfAddressesInBoundary",
+			"name": "GetNumberOfAddressesPerPostcodeInBoundary",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},

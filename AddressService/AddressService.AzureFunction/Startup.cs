@@ -106,9 +106,7 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();
 
             builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
-
-            builder.Services.AddTransient<IBatchedDataGetter, BatchedDataGetter>();
-
+            
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
 
             IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();

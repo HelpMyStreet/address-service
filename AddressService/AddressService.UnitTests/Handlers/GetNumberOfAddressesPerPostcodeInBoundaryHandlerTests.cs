@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AddressService.Core.Contracts;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AddressService.Handlers;
 using AddressService.Handlers.BusinessLogic;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using HelpMyStreet.Contracts.AddressService.Request;
+using HelpMyStreet.Contracts.AddressService.Response;
 
 namespace AddressService.UnitTests.Handlers
 {
@@ -54,10 +55,10 @@ namespace AddressService.UnitTests.Handlers
         {
             GetNumberOfAddressesPerPostcodeInBoundaryRequest request = new GetNumberOfAddressesPerPostcodeInBoundaryRequest()
             {
-                SWLatitude = 1,
-                SWLongitude = 2,
-                NELatitude = 3,
-                NELongitude = 4
+                SwLatitude = 1,
+                SwLongitude = 2,
+                NeLatitude = 3,
+                NeLongitude = 4
             };
 
             GetNumberOfAddressesPerPostcodeInBoundaryHandler getNumberOfAddressesPerPostcodeInBoundaryHandler = new GetNumberOfAddressesPerPostcodeInBoundaryHandler(_repository.Object, _postcodeAndAddressGetter.Object);

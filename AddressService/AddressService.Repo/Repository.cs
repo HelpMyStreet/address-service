@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace AddressService.Repo
@@ -207,6 +206,34 @@ namespace AddressService.Repo
                 IEnumerable<PostcodeWithCoordinatesDto> result = await connection.QueryAsync<PostcodeWithCoordinatesDto>("[Address].[GetPostcodeCoordinates]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcodes = postcodesDataTable },
+                    commandTimeout: 15);
+
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<PostcodeWithNumberOfAddressesDto>> GetNumberOfAddressesPerPostcodeAsync(IEnumerable<string> postcodes)
+        {
+            DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
+
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                IEnumerable<PostcodeWithNumberOfAddressesDto> result = await connection.QueryAsync<PostcodeWithNumberOfAddressesDto>("[Address].[GetNumberOfAddressesPerPostcode]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { Postcodes = postcodesDataTable },
+                    commandTimeout: 15);
+
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetPostcodesInBoundaryAsync(double swLatitude, double swLongitude, double neLatitude, double neLongitude)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
+            {
+                IEnumerable<string> result = await connection.QueryAsync<string>("[Address].[GetPostcodesInBoundary]",
+                    commandType: CommandType.StoredProcedure,
+                    param: new { swLatitude = swLatitude, swLongitude = swLongitude, neLatitude = neLatitude , neLongitude = neLongitude },
                     commandTimeout: 15);
 
                 return result;

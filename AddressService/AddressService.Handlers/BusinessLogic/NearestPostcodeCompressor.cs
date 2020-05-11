@@ -1,10 +1,8 @@
-﻿using AddressService.Core.Dto;
-using AddressService.Core.Extensions;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AddressService.Core.Dto;
 using AddressService.Core.Utils;
 
-namespace AddressService.Handlers
+namespace AddressService.Handlers.BusinessLogic
 {
     public class NearestPostcodeCompressor
     {

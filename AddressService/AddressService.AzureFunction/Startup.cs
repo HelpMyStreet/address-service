@@ -5,9 +5,11 @@ using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
 using AddressService.Core.Validation;
 using AddressService.Handlers;
+using AddressService.Handlers.BusinessLogic;
 using AddressService.Mappers;
 using AddressService.Repo;
 using AutoMapper;
+using HelpMyStreet.Utils.PollyPolicies;
 using MediatR;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Host.Bindings;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +27,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
-using HelpMyStreet.Utils.PollyPolicies;
-using Polly;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
 namespace AddressService.AzureFunction
@@ -93,9 +94,11 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IPostcodeIoService, PostcodeIoService>();
 
             builder.Services.AddTransient<INearestPostcodeGetter, NearestPostcodeGetter>();
-            builder.Services.AddTransient<IPostcodeGetter, PostcodeGetter>();
+            builder.Services.AddTransient<IQasAddressGetter, QasAddressGetter>();
+            builder.Services.AddTransient<IPostcodeAndAddressGetter, PostcodeAndAddressGetter>();
 
             builder.Services.AddTransient<IPostcodeCoordinatesGetter, PostcodeCoordinatesGetter>();
+            builder.Services.AddSingleton<IPostcodesWithoutAddressesCache, PostcodesWithoutAddressesCache>();
 
             builder.Services.AddTransient<IRegexPostcodeValidator, RegexPostcodeValidator>();
             builder.Services.AddTransient<IPostcodeValidator, PostcodeValidator>();
@@ -103,7 +106,7 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IAddressDetailsSorter, AddressDetailsSorter>();
 
             builder.Services.AddTransient<IFriendlyNameGenerator, FriendlyNameGenerator>();
-
+            
             builder.Services.AddMediatR(typeof(GetPostcodeHandler).Assembly);
 
             IEnumerable<Type> autoMapperProfiles = typeof(PostCodeProfile).Assembly.GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x)).ToList();

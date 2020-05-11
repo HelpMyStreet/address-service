@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AddressService.Handlers
+namespace AddressService.Handlers.BusinessLogic
 {
-    public class PostcodeCoordinatesGetter : IPostcodeCoordinatesGetter
+    public class PostcodeCoordinatesGetter  : IPostcodeCoordinatesGetter
     {
         private readonly IRepository _repository;
 
@@ -60,7 +60,7 @@ namespace AddressService.Handlers
                     requiredPostcodes[neededPostcode] = coordinatesDto;
                 }
             }
-            
+
             return requiredPostcodes;
         }
     }

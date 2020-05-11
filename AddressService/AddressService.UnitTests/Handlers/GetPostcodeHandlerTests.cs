@@ -1,21 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using AddressService.Core.Dto;
+using AddressService.Core.Utils;
 using AddressService.Handlers;
+using AddressService.Handlers.BusinessLogic;
 using AutoMapper;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using Moq;
 using NUnit.Framework;
-using System.Threading;
-using System.Threading.Tasks;
-using AddressService.Core.Utils;
 
-namespace AddressService.UnitTests
+namespace AddressService.UnitTests.Handlers
 {
     public class GetPostcodeHandlerTests
     {
         private Mock<IMapper> _mapper;
-        private Mock<IPostcodeGetter> _postcodeGetter;
+        private Mock<IPostcodeAndAddressGetter> _postcodeGetter;
         private Mock<IAddressDetailsSorter> _addressDetailsSorter;
 
         [SetUp]
@@ -29,7 +30,7 @@ namespace AddressService.UnitTests
             _mapper = new Mock<IMapper>();
             _mapper.Setup(x => x.Map<PostcodeDto, GetPostcodeResponse>(It.IsAny<PostcodeDto>())).Returns(getNearbyGetPostcodesResponse);
 
-            _postcodeGetter = new Mock<IPostcodeGetter>();
+            _postcodeGetter = new Mock<IPostcodeAndAddressGetter>();
             _postcodeGetter.SetupAllProperties();
 
             _addressDetailsSorter = new Mock<IAddressDetailsSorter>();

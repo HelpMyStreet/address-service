@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AddressService.Core.Dto;
 
-namespace AddressService.Handlers
+namespace AddressService.Handlers.BusinessLogic
 {
     public interface IPostcodeCoordinatesGetter
     {

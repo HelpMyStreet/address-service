@@ -1,0 +1,6 @@
+﻿<ModulePaths>
+  <Exclude>
+    <ModulePath>.*AddressService.UnitTests.dll</ModulePath>
+    <ModulePath>.*AddressService.Repo.dll</ModulePath>
+  </Exclude>
+</ModulePaths>

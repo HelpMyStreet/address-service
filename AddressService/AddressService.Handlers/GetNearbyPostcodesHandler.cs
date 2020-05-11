@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AddressService.Handlers.BusinessLogic;
 
 namespace AddressService.Handlers
 {
@@ -16,14 +17,14 @@ namespace AddressService.Handlers
     {
         private readonly INearestPostcodeGetter _nearestPostcodeGetter;
         private readonly IMapper _mapper;
-        private readonly IPostcodeGetter _postcodeGetter;
+        private readonly IPostcodeAndAddressGetter _postcodeAndAddressGetter;
         private readonly IAddressDetailsSorter _addressDetailsSorter;
 
-        public GetNearbyPostcodesHandler(INearestPostcodeGetter nearestPostcodeGetter, IMapper mapper, IPostcodeGetter postcodeGetter, IAddressDetailsSorter addressDetailsSorter)
+        public GetNearbyPostcodesHandler(INearestPostcodeGetter nearestPostcodeGetter, IMapper mapper, IPostcodeAndAddressGetter postcodeAndAddressGetter, IAddressDetailsSorter addressDetailsSorter)
         {
             _nearestPostcodeGetter = nearestPostcodeGetter;
             _mapper = mapper;
-            _postcodeGetter = postcodeGetter;
+            _postcodeAndAddressGetter = postcodeAndAddressGetter;
             _addressDetailsSorter = addressDetailsSorter;
         }
 
@@ -37,7 +38,7 @@ namespace AddressService.Handlers
             IEnumerable<string> nearestPostcodes = nearestPostcodeDtos.Select(x => x.Postcode).ToList();
 
             // get postcodes
-            IEnumerable<PostcodeDto> postcodeDtos = await _postcodeGetter.GetPostcodesAsync(nearestPostcodes, cancellationToken);
+            IEnumerable<PostcodeDto> postcodeDtos = await _postcodeAndAddressGetter.GetPostcodesAsync(nearestPostcodes, cancellationToken);
 
             // create response
             GetNearbyPostcodesResponse getNearbyPostcodesResponse = new GetNearbyPostcodesResponse();

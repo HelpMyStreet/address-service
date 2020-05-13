@@ -30,7 +30,6 @@ namespace AddressService.AzureFunction
         {
             try
             {
-                NewRelic.Api.Agent.NewRelic.SetTransactionName("AddressService", nameof(HealthCheck));
                 _logger.LogInformation("C# HTTP trigger function processed health check request.");
 
                 return new OkObjectResult("I'm alive!");

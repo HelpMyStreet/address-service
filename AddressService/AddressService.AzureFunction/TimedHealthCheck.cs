@@ -17,7 +17,7 @@ namespace AddressService.AzureFunction
         [FunctionName("TimedHealthCheck")]
         public void Run([TimerTrigger("%TimedHealthCheckCronExpression%")] TimerInfo timerInfo)
         {
-            _logger.LogInformation($"Health check CRON trigger executed at : {DateTime.Now}");
+            _logger.LogInformation($"Health check CRON trigger executed at : {DateTimeOffset.Now}");
         }
     }
 }

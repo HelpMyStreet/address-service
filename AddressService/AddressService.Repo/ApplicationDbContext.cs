@@ -1,5 +1,7 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using Microsoft.Azure.Services.AppAuthentication;
 
 namespace AddressService.Repo
 {
@@ -12,6 +14,12 @@ namespace AddressService.Repo
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            SqlConnection conn = (SqlConnection)Database.GetDbConnection();
+
+            if (conn.DataSource.Contains("database.windows.net"))
+            {
+                conn.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+            }
         }
 
         public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }

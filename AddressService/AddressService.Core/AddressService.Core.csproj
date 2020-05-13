@@ -9,6 +9,7 @@
     <PackageReference Include="HelpMyStreet.Utils" Version="1.1.47" />
     <PackageReference Include="Marvin.StreamExtensions" Version="1.1.0" />
     <PackageReference Include="MediatR" Version="8.0.1" />
+    <PackageReference Include="NewRelic.Agent.Api" Version="8.27.139" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />

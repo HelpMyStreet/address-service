@@ -127,7 +127,7 @@ namespace AddressService.UnitTests
 
             _mediator.Verify(x => x.Send(It.IsAny<GetPostcodeRequest>(), It.IsAny<CancellationToken>()));
             
-            _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error")), It.IsAny<Exception>()));
+            _logger.Verify(x => x.LogErrorAndNotifyNewRelic(It.Is<string>(y => y.Contains("Unhandled error")), It.IsAny<Exception>(), It.IsAny<GetPostcodeRequest>()));
         }
 
         [Test]

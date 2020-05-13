@@ -34,3 +34,15 @@ You can download Feburary 2020's data here: http://geoportal.statistics.gov.uk/d
 3) QAS Token
 
 The program needs a token to call QAS.  This is stored in a User Secrets file so the token doesn't get committed to the repository.  There is an example secrets.json file in the UserGuide folder.  This needs to be copied to: %APPDATA%\Microsoft\UserSecrets\2ab26b8f-fafb-4345-a188-210580b87104\secrets.json.  You'll need to create the folder with the '2ab26b8f-fafb-4345-a188-210580b87104' GUID (this is determined in the csproj file) and update the token in secrets.json.
+
+
+4) Since the introduction of a timed trigger you will need the following in a local.settings.json file:
+
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "TimedHealthCheckCronExpression": "*/5   *   *   *   *"
+  }
+}

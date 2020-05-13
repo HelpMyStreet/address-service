@@ -23,7 +23,7 @@ namespace AddressService.AzureFunction
 
 
         [Transaction(Web = true)]
-        [FunctionName(nameof(HealthCheck))]
+        [FunctionName("HealthCheck")]
         public IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             CancellationToken cancellationToken)

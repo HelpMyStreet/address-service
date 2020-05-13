@@ -129,7 +129,7 @@ namespace AddressService.UnitTests
 
             _mediator.Verify(x => x.Send(It.IsAny<GetPostcodeCoordinatesRequest>(), It.IsAny<CancellationToken>()));
 
-            _loggerWrapper.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error")), It.IsAny<Exception>()));
+            _loggerWrapper.Verify(x => x.LogErrorAndNotifyNewRelic(It.Is<string>(y => y.Contains("Unhandled error")), It.IsAny<Exception>()));
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace AddressService.UnitTests
 
             ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
-            Assert.AreEqual(200, objectResult.StatusCode); ;
+            Assert.AreEqual(422, objectResult.StatusCode); ;
 
 
             Assert.IsFalse(deserialisedResponse.HasContent);

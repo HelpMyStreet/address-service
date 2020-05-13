@@ -48,7 +48,7 @@ namespace AddressService.AzureFunction
             }
             catch (Exception ex)
             {
-                LogError.Log(_logger, ex, req);
+                _logger.LogErrorAndNotifyNewRelic($"Unhandled error in GetPostcodes", ex, req);
                 return new ObjectResult(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError,"Internal Error")) {StatusCode = StatusCodes.Status500InternalServerError};
             }
         }

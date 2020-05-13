@@ -129,7 +129,7 @@ namespace AddressService.UnitTests.AzureFunctions
 
             ResponseWrapper<GetNumberOfAddressesPerPostcodeInBoundaryResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNumberOfAddressesPerPostcodeInBoundaryResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
-            Assert.AreEqual(200, objectResult.StatusCode); ;
+            Assert.AreEqual(422, objectResult.StatusCode); ;
 
 
             Assert.IsFalse(deserialisedResponse.HasContent);

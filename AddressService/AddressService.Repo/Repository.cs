@@ -3,6 +3,7 @@ using AddressService.Core.Dto;
 using AddressService.Core.Interfaces.Repositories;
 using AutoMapper;
 using Dapper;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -30,6 +31,10 @@ namespace AddressService.Repo
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
                 DataTable postcodesDataTable = CreatePostcodeOnlyDataTable(postcodes);
 
                 Dictionary<int, PostcodeDto> postcodeDictionary = new Dictionary<int, PostcodeDto>();
@@ -74,6 +79,10 @@ namespace AddressService.Repo
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
                 await connection.OpenAsync();
                 SqlTransaction sqlTransaction = connection.BeginTransaction();
                 try
@@ -162,6 +171,11 @@ namespace AddressService.Repo
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
+
                 IEnumerable<NearestPostcodeDto> result = await connection.QueryAsync<NearestPostcodeDto>("[Address].[GetNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcode = postcode, DistanceInMetres = distanceInMetres },
@@ -176,6 +190,11 @@ namespace AddressService.Repo
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
+
                 await connection.ExecuteAsync("[Address].[SavePreComputedNearestPostcodes]",
                    commandType: CommandType.StoredProcedure,
                    param: new { Postcode = preComputedNearestPostcodesDto.Postcode, CompressedNearestPostcodes = preComputedNearestPostcodesDto.CompressedNearestPostcodes },
@@ -187,6 +206,10 @@ namespace AddressService.Repo
         {
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
                 PreComputedNearestPostcodesDto result = await connection.QuerySingleOrDefaultAsync<PreComputedNearestPostcodesDto>("[Address].[GetPreComputedNearestPostcodes]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcode = postcode },
@@ -203,6 +226,10 @@ namespace AddressService.Repo
 
             using (SqlConnection connection = new SqlConnection(_connectionStrings.Value.AddressService))
             {
+                if (connection.DataSource.Contains("database.windows.net"))
+                {
+                    connection.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+                }
                 IEnumerable<PostcodeWithCoordinatesDto> result = await connection.QueryAsync<PostcodeWithCoordinatesDto>("[Address].[GetPostcodeCoordinates]",
                     commandType: CommandType.StoredProcedure,
                     param: new { Postcodes = postcodesDataTable },

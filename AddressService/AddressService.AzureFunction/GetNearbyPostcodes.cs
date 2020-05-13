@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using NewRelic.Api.Agent;
 using System;
 using System.Net;
 using System.Threading;
@@ -29,6 +30,7 @@ namespace AddressService.AzureFunction
             _logger = logger;
         }
 
+        [Transaction(Web = true)]
         [FunctionName("GetNearbyPostcodes")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>))]
@@ -39,12 +41,13 @@ namespace AddressService.AzureFunction
         {
             try
             {
+                NewRelic.Api.Agent.NewRelic.SetTransactionName("AddressService", "GetNearbyPostcodes");
                 _logger.LogInformation("C# HTTP trigger function processed a request.");
 
                 // This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere).  I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
                 if (!await _postcodeValidator.IsPostcodeValidAsync(req.Postcode))
                 {
-                    return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode, "Invalid postcode"));
+                    return new ObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode, "Invalid postcode")) { StatusCode = 422 };
                 }
 
                 if (req.IsValid(out var validationResults))
@@ -54,12 +57,12 @@ namespace AddressService.AzureFunction
                 }
                 else
                 {
-                    return new OkObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults));
+                    return new ObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults)) { StatusCode = 422 };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unhandled error in GetNearbyPostcodes", ex);
+                _logger.LogErrorAndNotifyNewRelic($"Unhandled error in GetNearbyPostcodes", ex, req);
                 return new ObjectResult(ResponseWrapper<GetNearbyPostcodesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }

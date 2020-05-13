@@ -92,9 +92,9 @@ namespace AddressService.UnitTests.AzureFunctions
             GetNearbyPostcodesWithoutAddresses getNearbyPostcodes = new GetNearbyPostcodesWithoutAddresses(_mediator.Object, _postcodeValidator.Object, _logger.Object);
             IActionResult result = await getNearbyPostcodes.Run(req, CancellationToken.None);
 
-            OkObjectResult objectResult = result as OkObjectResult;
+            ObjectResult objectResult = result as ObjectResult;
             Assert.IsNotNull(objectResult);
-            Assert.AreEqual(200, objectResult.StatusCode);
+            Assert.AreEqual(422, objectResult.StatusCode);
 
             ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
@@ -136,7 +136,7 @@ namespace AddressService.UnitTests.AzureFunctions
 
             _mediator.Verify(x => x.Send(It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>(), It.IsAny<CancellationToken>()));
 
-            _logger.Verify(x => x.LogError(It.Is<string>(y => y.Contains("Unhandled error in GetNearbyPostcodes")), It.IsAny<Exception>()));
+            _logger.Verify(x => x.LogErrorAndNotifyNewRelic(It.Is<string>(y => y.Contains("Unhandled error")), It.IsAny<Exception>(), It.IsAny<GetNearbyPostcodesWithoutAddressesRequest>()));
         }
     }
 }

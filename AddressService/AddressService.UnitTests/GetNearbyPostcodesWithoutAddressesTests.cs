@@ -92,9 +92,9 @@ namespace AddressService.UnitTests
             GetNearbyPostcodesWithoutAddresses getNearbyPostcodes = new GetNearbyPostcodesWithoutAddresses(_mediator.Object, _postcodeValidator.Object, _logger.Object);
             IActionResult result = await getNearbyPostcodes.Run(req, CancellationToken.None);
 
-            OkObjectResult objectResult = result as OkObjectResult;
+            ObjectResult objectResult = result as ObjectResult;
             Assert.IsNotNull(objectResult);
-            Assert.AreEqual(200, objectResult.StatusCode);
+            Assert.AreEqual(422, objectResult.StatusCode);
 
             ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);

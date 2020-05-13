@@ -50,7 +50,7 @@ namespace AddressService.AzureFunction
                 }
                 else
                 {
-                    return new OkObjectResult(ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults));
+                    return new ObjectResult(ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults)) { StatusCode = 422 };
                 }
             }
             catch (Exception ex)

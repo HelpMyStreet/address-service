@@ -46,7 +46,7 @@ namespace AddressService.AzureFunction
                 // This validation logic belongs in a custom validation attribute on the Postcode property.  However, validationContext.GetService<IExternalService> always returned null in the validation attribute (despite DI working fine elsewhere).  I didn't want to spend a lot of time finding out why when there is lots to do so I've put the postcode validation logic here for now.
                 if (!await _postcodeValidator.IsPostcodeValidAsync(req.Postcode))
                 {
-                    return new OkObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode,"Invalid postcode"));
+                    return new ObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.InvalidPostcode,"Invalid postcode")) { StatusCode = 422 };
                 }
 
                 if (req.IsValid(out var validationResults))
@@ -56,7 +56,7 @@ namespace AddressService.AzureFunction
                 }
                 else
                 {
-                    return new OkObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults));
+                    return new ObjectResult(ResponseWrapper<GetPostcodeResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.ValidationError, validationResults)) { StatusCode = 422 };
                 }
             }
             catch (Exception ex)

@@ -148,7 +148,7 @@ namespace AddressService.UnitTests
 
             ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode> deserialisedResponse = objectResult.Value as ResponseWrapper<GetPostcodeCoordinatesResponse, AddressServiceErrorCode>;
             Assert.IsNotNull(deserialisedResponse);
-            Assert.AreEqual(200, objectResult.StatusCode); ;
+            Assert.AreEqual(422, objectResult.StatusCode); ;
 
 
             Assert.IsFalse(deserialisedResponse.HasContent);

@@ -14,7 +14,7 @@ namespace AddressService.PostcodeLoader
                 .Build();
 
 
-            string connectionString = config.GetSection("ConnectionStrings:AddressService").Value;
+            string connectionString = config.GetSection("ConnectionStrings:Application").Value;
 
             if (String.IsNullOrWhiteSpace(connectionString))
             {
@@ -42,12 +42,18 @@ namespace AddressService.PostcodeLoader
                 throw new Exception("Can't parse maxInvalidRowsPercentage setting");
             }
 
+            // only truncate PreComputedNearestPostcodes if running the process on the AddressService
+            if (!bool.TryParse(config.GetSection("Settings:isForAddressService").Value, out bool isForAddressService))
+            {
+                throw new Exception("Can't parse isForAddressService setting");
+            }
+
 
             Console.WriteLine("Please enter option (command will run when key is pressed):");
             Console.WriteLine();
             Console.WriteLine("1 - Bulk copy postcodes into staging table ([Staging].[Postcode_Staging]) from ONS Postcode Directory csv file (download from http://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-february-2020).");
             Console.WriteLine();
-            Console.WriteLine("2 - Copy [Address].[Postcodes] to [Staging].[Postcodes_Switch], update/insert postcodes using staging table and switch [Staging].[Postcodes_Switch] to [Address].[Postcodes]. This also truncates the staging table ([Staging].[Postcode_Staging]) and precomputed nearby postcodes so they can be recalculated ([Address].[PreComputedNearestPostcodes]).");
+            Console.WriteLine("2 - Copy [Address].[Postcodes] to [Staging].[Postcodes_Switch], update/insert postcodes using staging table and switch [Staging].[Postcodes_Switch] to [Address].[Postcodes]. This also truncates the staging table ([Staging].[Postcode_Staging]) and precomputed nearby postcodes so they can be recalculated if 'isForAddressService' setting is true in appsettings.json ([Address].[PreComputedNearestPostcodes]).");
             Console.WriteLine();
             Console.WriteLine("3 - Truncate switch table ([Staging].[Postcode_Switch]).  Run when you are happy the updated postcode data has been switched correctly.");
 
@@ -64,7 +70,10 @@ namespace AddressService.PostcodeLoader
             {
                 postcodeLoader.LoadFromStagingTableAndSwitch(connectionString);
                 postcodeLoader.TruncateStagingTable(connectionString);
-                postcodeLoader.TruncatePreComputedNearestPostcodes(connectionString);
+                if (isForAddressService)
+                {
+                    postcodeLoader.TruncatePreComputedNearestPostcodes(connectionString);
+                }
             }
             else if (command.KeyChar == '3')
             {

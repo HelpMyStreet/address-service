@@ -262,7 +262,7 @@ namespace AddressService.PostcodeLoader
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
                 sqlConnection.Open();
-                using (SqlCommand sqlCmd = new SqlCommand("EXEC [Staging].[LoadFromStagingTableAndSwitch]", sqlConnection))
+                using (SqlCommand sqlCmd = new SqlCommand("EXEC [Staging].[LoadPostcodesFromStagingTableAndSwitch]", sqlConnection))
                 {
                     sqlCmd.CommandType = CommandType.Text;
                     sqlCmd.CommandTimeout = 0; // the merge will take a while (takes around 15 minutes on my laptop)

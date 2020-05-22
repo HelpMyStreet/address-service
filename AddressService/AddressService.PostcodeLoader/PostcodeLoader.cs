@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using AddressService.Core.Validation;
+using Microsoft.Azure.Services.AppAuthentication;
+using HelpMyStreet.Utils.Extensions;
 
 namespace AddressService.PostcodeLoader
 {
@@ -47,6 +49,7 @@ namespace AddressService.PostcodeLoader
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
+                sqlConnection.AddAzureToken();
                 sqlConnection.Open();
                 TruncateStagingTable(sqlConnection);
                 SqlTransaction sqlTransaction = sqlConnection.BeginTransaction();
@@ -261,6 +264,7 @@ namespace AddressService.PostcodeLoader
             stopwatch.Start();
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
+                sqlConnection.AddAzureToken();
                 sqlConnection.Open();
                 using (SqlCommand sqlCmd = new SqlCommand("EXEC [Staging].[LoadPostcodesFromStagingTableAndSwitch]", sqlConnection))
                 {
@@ -277,6 +281,7 @@ namespace AddressService.PostcodeLoader
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
+                sqlConnection.AddAzureToken();
                 sqlConnection.Open();
                 using (SqlCommand sqlCmd = new SqlCommand("TRUNCATE TABLE [Staging].[Postcode_Switch]", sqlConnection))
                 {
@@ -292,6 +297,7 @@ namespace AddressService.PostcodeLoader
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
+                sqlConnection.AddAzureToken();
                 sqlConnection.Open();
                 using (SqlCommand sqlCmd = new SqlCommand("TRUNCATE TABLE [Staging].[Postcode_Staging]", sqlConnection))
                 {
@@ -307,6 +313,7 @@ namespace AddressService.PostcodeLoader
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
+                sqlConnection.AddAzureToken();
                 sqlConnection.Open();
                 using (SqlCommand sqlCmd = new SqlCommand("TRUNCATE TABLE [Address].[PreComputedNearestPostcodes]", sqlConnection))
                 {

@@ -1,6 +1,7 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
+using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using Microsoft.Azure.Services.AppAuthentication;
 
 namespace AddressService.Repo
@@ -154,6 +155,8 @@ namespace AddressService.Repo
                     .IsUnique();
 
             });
+
+            modelBuilder.SetupPostcodeCoordinateStagingTable();
         }
     }
 }

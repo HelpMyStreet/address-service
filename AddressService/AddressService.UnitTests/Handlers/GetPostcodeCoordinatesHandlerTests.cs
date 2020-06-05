@@ -1,15 +1,16 @@
-﻿using AddressService.Core.Dto;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AddressService.Core.Dto;
 using AddressService.Handlers;
+using AddressService.Handlers.BusinessLogic;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace AddressService.UnitTests
+namespace AddressService.UnitTests.Handlers
 {
     public class GetPostcodeCoordinatesHandlerTests
     {
@@ -22,7 +23,7 @@ namespace AddressService.UnitTests
 
             _postcodeCoordinates = new Dictionary<string, CoordinatesDto>()
             {
-                { "NG1 5FS", new CoordinatesDto(52.954885, -1.155263)},
+                { "NG1 5FS", new CoordinatesDto( 52.954885, -1.155263)},
                 { "NG1 5BL", new CoordinatesDto(52.955494, -1.154864)}, 
 
             };

@@ -21,7 +21,7 @@ namespace AddressService.Repo
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionStringSettings = configuration.GetSection("ConnectionStringsLocalDev");
+            var connectionStringSettings = configuration.GetSection("ConnectionStrings");
             var connectionStrings = new ConnectionStrings();
             connectionStringSettings.Bind(connectionStrings);
 

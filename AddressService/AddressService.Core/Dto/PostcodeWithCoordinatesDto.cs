@@ -1,4 +1,8 @@
-﻿namespace AddressService.Core.Dto
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace AddressService.Core.Dto
 {
     public class PostcodeWithCoordinatesDto
     {
@@ -15,7 +19,6 @@
 
         public string Postcode { get; }
         public double Latitude { get; }
-        public double Longitude { get;  }
-
+        public double Longitude { get; }
     }
 }

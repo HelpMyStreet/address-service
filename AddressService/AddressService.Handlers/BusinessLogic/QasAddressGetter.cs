@@ -3,27 +3,25 @@ using AddressService.Core.Interfaces.Repositories;
 using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
 using AddressService.Mappers;
-using AutoMapper;
 using HelpMyStreet.Utils.Utils;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AddressService.Handlers
+namespace AddressService.Handlers.BusinessLogic
 {
-    public class PostcodeGetter : IPostcodeGetter
+    public class QasAddressGetter : IQasAddressGetter
     {
+
         private readonly IRepository _repository;
         private readonly IQasService _qasService;
         private readonly IQasMapper _qasMapper;
         private readonly IFriendlyNameGenerator _friendlyNameGenerator;
-        private readonly ILoggerWrapper<PostcodeGetter> _logger;
+        private readonly ILoggerWrapper<QasAddressGetter> _logger;
 
-        public PostcodeGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper, IFriendlyNameGenerator friendlyNameGenerator, ILoggerWrapper<PostcodeGetter> logger)
+        public QasAddressGetter(IRepository repository, IQasService qasService, IQasMapper qasMapper, IFriendlyNameGenerator friendlyNameGenerator, ILoggerWrapper<QasAddressGetter> logger)
         {
             _repository = repository;
             _qasService = qasService;
@@ -32,29 +30,8 @@ namespace AddressService.Handlers
             _logger = logger;
         }
 
-        public async Task<PostcodeDto> GetPostcodeAsync(string postcode, CancellationToken cancellationToken)
+        public async Task<IEnumerable<PostcodeDto>> GetPostCodesAndAddressesFromQasAsync(IEnumerable<string> missingPostcodes, CancellationToken cancellationToken)
         {
-            var postcodes = await GetPostcodesAsync(new List<string>() { postcode }, cancellationToken);
-            var postcodeDto = postcodes.FirstOrDefault();
-            return postcodeDto;
-        }
-
-        public async Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postcodes, CancellationToken cancellationToken)
-        {
-            postcodes = postcodes.Select(x => PostcodeFormatter.FormatPostcode(x)).ToList();
-
-            // get postcodes from database
-            IEnumerable<PostcodeDto> postcodesFromDb = await _repository.GetPostcodesAsync(postcodes);
-            ImmutableHashSet<string> postcodesFromDbHashSet = postcodesFromDb.Select(x => x.Postcode).ToImmutableHashSet();
-
-            // find missing postcodes
-            List<string> missingPostcodes = postcodes.Where(x => !postcodesFromDbHashSet.Contains(x)).ToList();
-
-            if (!missingPostcodes.Any())
-            {
-                return postcodesFromDb;
-            }
-
             // call QAS for missing postcodes and addresses
             List<Task<QasSearchRootResponse>> qasSearchResponseTasks = new List<Task<QasSearchRootResponse>>();
             List<QasSearchRootResponse> qasSearchResponses = new List<QasSearchRootResponse>();
@@ -115,13 +92,8 @@ namespace AddressService.Handlers
             {
                 await _repository.SaveAddressesAndFriendlyNameAsync(missingPostcodeDtos);
             }
-            
-            // add missing postcodes to those originally taken from the DB
-            IEnumerable<PostcodeDto> allPostcodeDtos = postcodesFromDb.Concat(missingPostcodeDtos);
 
-            return allPostcodeDtos;
+            return missingPostcodeDtos;
         }
-
     }
 }
-

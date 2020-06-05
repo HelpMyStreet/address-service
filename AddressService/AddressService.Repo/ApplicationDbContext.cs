@@ -1,6 +1,7 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
+using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using Microsoft.Azure.Services.AppAuthentication;
 
 namespace AddressService.Repo
@@ -117,7 +118,11 @@ namespace AddressService.Repo
                     .IsUnique()
                     .HasFilter("[IsActive] = 1")
                     .ForSqlServerInclude(nameof(PostcodeEntity.Latitude), nameof(PostcodeEntity.Longitude));
-               
+
+                entity.HasIndex(u => new {u.Latitude, u.Longitude})
+                    .ForSqlServerInclude(nameof(PostcodeEntity.Postcode))
+                    .HasName("IXF_Postcode_Latitude_Longitude")
+                    .HasFilter("[IsActive] = 1");
 
                 entity.Property(e => e.LastUpdated)
                     .IsRequired()
@@ -150,6 +155,8 @@ namespace AddressService.Repo
                     .IsUnique();
 
             });
+
+            modelBuilder.SetupPostcodeCoordinateStagingTable();
         }
     }
 }

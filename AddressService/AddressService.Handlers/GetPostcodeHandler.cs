@@ -4,6 +4,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Core.Utils;
+using AddressService.Handlers.BusinessLogic;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Utils.Utils;
@@ -13,13 +14,13 @@ namespace AddressService.Handlers
     public class GetPostcodeHandler : IRequestHandler<GetPostcodeRequest, GetPostcodeResponse>
     {
         private readonly IMapper _mapper;
-        private readonly IPostcodeGetter _postcodeGetter;
+        private readonly IPostcodeAndAddressGetter _postcodeAndAddressGetter;
         private readonly IAddressDetailsSorter _addressDetailsSorter;
 
-        public GetPostcodeHandler(IMapper mapper, IPostcodeGetter postcodeGetter, IAddressDetailsSorter addressDetailsSorter)
+        public GetPostcodeHandler(IMapper mapper, IPostcodeAndAddressGetter postcodeAndAddressGetter, IAddressDetailsSorter addressDetailsSorter)
         {
             _mapper = mapper;
-            _postcodeGetter = postcodeGetter;
+            _postcodeAndAddressGetter = postcodeAndAddressGetter;
             _addressDetailsSorter = addressDetailsSorter;
         }
 
@@ -27,7 +28,7 @@ namespace AddressService.Handlers
         {
             request.Postcode = PostcodeFormatter.FormatPostcode(request.Postcode);
 
-            PostcodeDto postcodeDto = await _postcodeGetter.GetPostcodeAsync(request.Postcode, cancellationToken);
+            PostcodeDto postcodeDto = await _postcodeAndAddressGetter.GetPostcodeAsync(request.Postcode, cancellationToken);
 
             GetPostcodeResponse getNearbyGetPostcodesResponse = _mapper.Map<PostcodeDto, GetPostcodeResponse>(postcodeDto);
             getNearbyGetPostcodesResponse.AddressDetails = _addressDetailsSorter.OrderAddressDetailsResponse(getNearbyGetPostcodesResponse.AddressDetails);

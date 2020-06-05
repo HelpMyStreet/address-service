@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200509114837_GetNumberOfAddressesInBoundary")]
+    partial class GetNumberOfAddressesInBoundary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,32 +127,6 @@ namespace AddressService.Repo.Migrations
                         .IsUnique();
 
                     b.ToTable("PreComputedNearestPostcodes","Address");
-                });
-
-            modelBuilder.Entity("HelpMyStreet.PostcodeCoordinates.EF.Entities.PostcodeStagingEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(true);
-
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(9,6)");
-
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(9,6)");
-
-                    b.Property<string>("Postcode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Postcode_Staging","Staging");
                 });
 
             modelBuilder.Entity("AddressService.Repo.EntityFramework.Entities.AddressDetailsEntity", b =>

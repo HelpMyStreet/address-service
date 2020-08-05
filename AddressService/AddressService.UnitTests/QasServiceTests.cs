@@ -2,6 +2,8 @@
 using AddressService.Core.Dto;
 using AddressService.Core.Services.Qas;
 using AddressService.Core.Utils;
+using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Utils.Utils;
 using Moq;
 using NUnit.Framework;
 using System.Net;

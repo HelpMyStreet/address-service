@@ -2,9 +2,9 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AddressService.Core.Config;
 using AddressService.Core.Dto;
-using AddressService.Core.Utils;
+using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Utils.Utils;
 using Marvin.StreamExtensions;
 
 namespace AddressService.Core.Services.PostcodeIo

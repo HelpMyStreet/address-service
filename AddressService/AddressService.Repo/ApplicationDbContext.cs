@@ -1,8 +1,9 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
 using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Data.SqlClient;
+using AddressService.Repo.Extensions;
 
 namespace AddressService.Repo
 {
@@ -16,11 +17,7 @@ namespace AddressService.Repo
             : base(options)
         {
             SqlConnection conn = (SqlConnection)Database.GetDbConnection();
-
-            if (conn.DataSource.Contains("database.windows.net"))
-            {
-                conn.AccessToken = new AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
-            }
+            conn.AddAzureToken();
         }
 
         public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }

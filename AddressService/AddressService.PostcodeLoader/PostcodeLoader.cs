@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using AddressService.Core.Validation;
-using Microsoft.Azure.Services.AppAuthentication;
-using HelpMyStreet.Utils.Extensions;
+using Microsoft.Data.SqlClient;
+using AddressService.PostcodeLoader.Extensions;
 
 namespace AddressService.PostcodeLoader
 {

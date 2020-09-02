@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AddressService.Handlers.BusinessLogic;
+using HelpMyStreet.Utils.Utils;
 
 namespace AddressService.UnitTests
 {

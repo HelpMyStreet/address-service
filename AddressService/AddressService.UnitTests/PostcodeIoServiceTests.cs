@@ -1,7 +1,7 @@
-﻿using AddressService.Core.Config;
-using AddressService.Core.Dto;
+﻿using AddressService.Core.Dto;
 using AddressService.Core.Services.PostcodeIo;
-using AddressService.Core.Utils;
+using HelpMyStreet.Utils.Enums;
+using HelpMyStreet.Utils.Utils;
 using Moq;
 using NUnit.Framework;
 using System.Net;

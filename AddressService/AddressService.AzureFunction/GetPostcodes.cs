@@ -3,6 +3,7 @@ using AddressService.Core.Validation;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
+using HelpMyStreet.Utils.Utils;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,8 +32,6 @@ namespace AddressService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetPostcodes")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>))]
-        [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] GetPostcodesRequest req,
             CancellationToken cancellationToken)

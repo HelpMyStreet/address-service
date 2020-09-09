@@ -1,4 +1,4 @@
-﻿using AddressService.Core.Utils;
+using AddressService.Core.Utils;
 using HelpMyStreet.Utils.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using NewRelic.Api.Agent;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 

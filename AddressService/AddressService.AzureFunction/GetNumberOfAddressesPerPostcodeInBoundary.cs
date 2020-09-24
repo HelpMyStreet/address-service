@@ -1,4 +1,5 @@
 ﻿using AddressService.Core.Utils;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
@@ -27,8 +28,11 @@ namespace AddressService.AzureFunction
         }
 
         [FunctionName("GetNumberOfAddressesPerPostcodeInBoundary")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetNumberOfAddressesPerPostcodeInBoundaryResponse, AddressServiceErrorCode>))]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetNumberOfAddressesPerPostcodeInBoundaryResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] GetNumberOfAddressesPerPostcodeInBoundaryRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [RequestBodyType(typeof(GetNumberOfAddressesPerPostcodeInBoundaryRequest), "Get Number Of Addresses Per Postcode In Boundary")] GetNumberOfAddressesPerPostcodeInBoundaryRequest req,
             CancellationToken cancellationToken)
         {
             try

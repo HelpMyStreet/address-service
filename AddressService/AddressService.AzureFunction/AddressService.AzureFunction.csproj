@@ -5,8 +5,9 @@
     <UserSecretsId>2ab26b8f-fafb-4345-a188-210580b87104</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.331" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.331" />
+		<PackageReference Include="AzureExtensions.Swashbuckle" Version="3.2.2" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.378" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.378" />
 		<PackageReference Include="Marvin.StreamExtensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />

@@ -1,5 +1,6 @@
 ﻿using AddressService.Core.Utils;
 using AddressService.Core.Validation;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
@@ -33,9 +34,11 @@ namespace AddressService.AzureFunction
 
         [Transaction(Web = true)]
         [FunctionName("GetNearbyPostcodesWithoutAddresses")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>))]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetNearbyPostcodesWithoutAddressesResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-            GetNearbyPostcodesWithoutAddressesRequest req,
+            [RequestBodyType(typeof(GetNearbyPostcodesWithoutAddressesRequest), "get nearby postcodes without addresses")] GetNearbyPostcodesWithoutAddressesRequest req,
             CancellationToken cancellationToken)
         {
             try

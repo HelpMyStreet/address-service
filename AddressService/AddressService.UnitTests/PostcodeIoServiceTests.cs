@@ -1,4 +1,3 @@
-﻿using AddressService.Core.Config;
 using AddressService.Core.Dto;
 using AddressService.Core.Services.PostcodeIo;
 using AddressService.Core.Utils;

@@ -1,9 +1,9 @@
 ﻿using AddressService.Repo.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
 using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using Microsoft.Azure.Services.AppAuthentication;
-using HelpMyStreet.Utils.Extensions;
+using Microsoft.Data.SqlClient;
+using AddressService.Repo.Extensions;
 
 namespace AddressService.Repo
 {

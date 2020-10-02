@@ -1,5 +1,6 @@
 ﻿using AddressService.Core.Utils;
 using AddressService.Core.Validation;
+using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Contracts.AddressService.Response;
 using HelpMyStreet.Contracts.Shared;
@@ -35,7 +36,8 @@ namespace AddressService.AzureFunction
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetPostcodesResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] GetPostcodesRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+            [RequestBodyType(typeof(GetPostcodesRequest), "Get Postcodes")] GetPostcodesRequest req,
             CancellationToken cancellationToken)
         {
 

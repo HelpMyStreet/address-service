@@ -11,6 +11,11 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
+using HelpMyStreet.Utils.Models;
+using HelpMyStreet.Utils.Enums;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Update.Internal;
+using Newtonsoft.Json;
 
 namespace AddressService.Repo
 {
@@ -265,6 +270,44 @@ namespace AddressService.Repo
 
                 return result;
             }
+        }
+
+        public async Task<LocationDetails> GetLocationDetails(Location location)
+        {
+            int locationId = (int)location;
+            var locationdetails = _context.Location.Where(x => x.Id == locationId).FirstOrDefault();
+
+            if(locationdetails ==null)
+            {
+                throw new Exception($"Unable to retrieve location for location {location}");
+            }
+
+            LocationInstructions locationInstructions = null;
+
+            if (!String.IsNullOrEmpty(locationdetails.Instructions))
+            {
+                locationInstructions =  JsonConvert.DeserializeObject<LocationInstructions>(locationdetails.Instructions);
+            }
+
+            return new LocationDetails()
+            {
+                Name = locationdetails.Name,
+                ShortName = locationdetails.ShortName,
+                Location = location,
+                LocationInstructions =  locationInstructions,
+                Address = new Address()
+                {
+                    AddressLine1 = locationdetails.AddressLine1,
+                    AddressLine2 = locationdetails.AddressLine2,
+                    AddressLine3 = locationdetails.AddressLine3,
+                    Postcode = locationdetails.PostCode,
+                    Locality = locationdetails.Locality
+                },
+                Latitude = locationdetails.Latitude,
+                Longitude = locationdetails.Longitude
+            };
+
+            
         }
     }
 }

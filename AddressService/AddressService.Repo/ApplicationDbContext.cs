@@ -23,6 +23,7 @@ namespace AddressService.Repo
         public virtual DbSet<AddressDetailsEntity> AddressDetails { get; set; }
         public virtual DbSet<PostcodeEntity> Postcode { get; set; }
         public virtual DbSet<PreComputedNearestPostcodesEntity> PreComputedNearestPostcodes { get; set; }
+        public virtual DbSet<Location> Location { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,6 +34,51 @@ namespace AddressService.Repo
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.ToTable("Location", "Address");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.AddressLine1)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AddressLine2)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AddressLine3)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Instructions).IsUnicode(false);
+
+                entity.Property(e => e.Latitude).HasColumnType("decimal(9, 6)");
+
+                entity.Property(e => e.Locality)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Longitude).HasColumnType("decimal(9, 6)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PostCode)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ShortName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<AddressDetailsEntity>(entity =>
             {
                 entity.ToTable("AddressDetail", "Address");
@@ -130,7 +176,6 @@ namespace AddressService.Repo
                     .IsRequired()
                     .HasDefaultValue(true);
             });
-
 
             modelBuilder.Entity<PreComputedNearestPostcodesEntity>(entity =>
             {

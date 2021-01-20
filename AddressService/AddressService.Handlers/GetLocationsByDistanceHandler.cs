@@ -29,19 +29,19 @@ namespace AddressService.Handlers
         {
             var postcodeDetails = await _repository.GetPostcodeCoordinatesAsync(new List<string>() { request.Postcode });
 
-            if(postcodeDetails == null)
+            if (postcodeDetails == null)
             {
                 throw new Exception($"Unable to retrieve post code details for {request.Postcode}");
             }
 
-            if(postcodeDetails.Count()!=1)
+            if (postcodeDetails.Count() != 1)
             {
                 throw new Exception($"Only expecting 1 row in collection for {request.Postcode}. {postcodeDetails.Count()} rows returned");
             }
 
             var allLocations = _repository.GetAllLocations();
 
-            if (allLocations == null && allLocations.Count()==0)
+            if (allLocations == null || allLocations?.Count() == 0)
             {
                 throw new Exception($"Unable to retrieve any locations");
             }
@@ -49,24 +49,22 @@ namespace AddressService.Handlers
             DistanceCalculator distanceCalculator = new DistanceCalculator();
             PostcodeWithCoordinatesDto requestPostCode = postcodeDetails.First();
 
-            var locationDistances =  allLocations.Where(x => distanceCalculator.GetDistanceInMiles(
-                (double)requestPostCode.Latitude,
-                (double)requestPostCode.Longitude,
-                (double)x.Latitude,
-                (double)x.Longitude) <= request.MaxDistance)
-                .Select(x=> new LocationDistance()
-                {
-                    Location = x.Location,
-                    DistanceFromPostCode = distanceCalculator.GetDistanceInMiles(
+            var locationDistances = allLocations.Select(x => new LocationDistance()
+            {
+                Location = x.Location,
+                DistanceFromPostCode = distanceCalculator.GetDistanceInMiles(
                         requestPostCode.Latitude,
                         requestPostCode.Longitude,
                         (double)x.Latitude,
                         (double)x.Longitude)
-                }).ToList();
+            }
+            ).ToList();
 
             return new GetLocationsByDistanceResponse()
             {
                 LocationDistances = locationDistances
+                    .Where(x=> x.DistanceFromPostCode<=request.MaxDistance)
+                    .OrderBy(x=> x.DistanceFromPostCode).ToList()
             };
         }
     }

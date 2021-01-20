@@ -8,6 +8,7 @@ namespace AddressService.Core.Interfaces.Repositories
 {
     public interface IRepository
     {
+        List<LocationDetails> GetAllLocations();
         Task<LocationDetails> GetLocationDetails(Location location);
         Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postcodes);
         Task SaveAddressesAndFriendlyNameAsync(IEnumerable<PostcodeDto> postCodes);

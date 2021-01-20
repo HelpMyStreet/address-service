@@ -4,6 +4,7 @@ using HelpMyStreet.PostcodeCoordinates.EF.Extensions;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Data.SqlClient;
 using AddressService.Repo.Extensions;
+using AddressService.Repo.Helpers;
 
 namespace AddressService.Repo
 {
@@ -77,6 +78,8 @@ namespace AddressService.Repo
                     .IsRequired()
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.SetLocations();
             });
 
             modelBuilder.Entity<AddressDetailsEntity>(entity =>

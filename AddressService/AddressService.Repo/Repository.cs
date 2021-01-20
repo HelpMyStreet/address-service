@@ -272,6 +272,34 @@ namespace AddressService.Repo
             }
         }
 
+        private LocationDetails MapEFLocationToLocationDetails(EntityFramework.Entities.Location location)
+        {
+            LocationInstructions locationInstructions = null;
+
+            if (!String.IsNullOrEmpty(location.Instructions))
+            {
+                locationInstructions = JsonConvert.DeserializeObject<LocationInstructions>(location.Instructions);
+            }
+
+            return new LocationDetails()
+            {
+                Name = location.Name,
+                ShortName = location.ShortName,
+                Location = (Location) location.Id,
+                LocationInstructions = locationInstructions,
+                Address = new Address()
+                {
+                    AddressLine1 = location.AddressLine1,
+                    AddressLine2 = location.AddressLine2,
+                    AddressLine3 = location.AddressLine3,
+                    Postcode = location.PostCode,
+                    Locality = location.Locality
+                },
+                Latitude = location.Latitude,
+                Longitude = location.Longitude
+            };
+        }
+
         public async Task<LocationDetails> GetLocationDetails(Location location)
         {
             int locationId = (int)location;
@@ -282,32 +310,20 @@ namespace AddressService.Repo
                 throw new Exception($"Unable to retrieve location for location {location}");
             }
 
-            LocationInstructions locationInstructions = null;
+            return MapEFLocationToLocationDetails(locationdetails);
+        }
 
-            if (!String.IsNullOrEmpty(locationdetails.Instructions))
+        public List<LocationDetails> GetAllLocations()
+        {
+            List<LocationDetails> allLocations = new List<LocationDetails>();
+            var locations = _context.Location.ToList();
+
+            foreach(EntityFramework.Entities.Location l in locations)
             {
-                locationInstructions =  JsonConvert.DeserializeObject<LocationInstructions>(locationdetails.Instructions);
+                allLocations.Add(MapEFLocationToLocationDetails(l));
             }
 
-            return new LocationDetails()
-            {
-                Name = locationdetails.Name,
-                ShortName = locationdetails.ShortName,
-                Location = location,
-                LocationInstructions =  locationInstructions,
-                Address = new Address()
-                {
-                    AddressLine1 = locationdetails.AddressLine1,
-                    AddressLine2 = locationdetails.AddressLine2,
-                    AddressLine3 = locationdetails.AddressLine3,
-                    Postcode = locationdetails.PostCode,
-                    Locality = locationdetails.Locality
-                },
-                Latitude = locationdetails.Latitude,
-                Longitude = locationdetails.Longitude
-            };
-
-            
+            return allLocations;
         }
     }
 }

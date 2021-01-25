@@ -34,7 +34,7 @@ namespace AddressService.AzureFunction
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<GetLocationResponse, AddressServiceErrorCode>))]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError, Type = typeof(ResponseWrapper<GetLocationResponse, AddressServiceErrorCode>))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]
             [RequestBodyType(typeof(GetLocationRequest), "Get Location")] GetLocationRequest req,
             CancellationToken cancellationToken)
         {

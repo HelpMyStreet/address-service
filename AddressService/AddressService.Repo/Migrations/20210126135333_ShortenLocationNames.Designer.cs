@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210126135333_ShortenLocationNames")]
+    partial class ShortenLocationNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,7 +234,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.033522m,
                             Name = "Sidings Medical Practice, Boston",
                             PostCode = "PE21 8EG",
-                            ShortName = "Boston (Sidings Medical Practice)"
+                            ShortName = " Boston (Sidings Medical Practice)"
                         },
                         new
                         {

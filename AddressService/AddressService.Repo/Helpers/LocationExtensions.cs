@@ -42,7 +42,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.PilgramHospitalBolton,
                 Name = "Pilgrim Hospital, Boston",
-                ShortName = "Pilgrim Hospital, Boston",
+                ShortName = "Boston (Pilgrim Hospital)",
                 AddressLine1 = "Sibsey Road",
                 AddressLine2 = "Boston",
                 AddressLine3 = "",
@@ -57,7 +57,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.LouthCommunityHospital,
                 Name = "Louth Community Hospital",
-                ShortName = "Louth Community Hospital",
+                ShortName = "Louth",
                 AddressLine1 = "High Holme Rd",
                 AddressLine2 = "Louth",
                 AddressLine3 = "",
@@ -72,7 +72,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.TableTennisClubGrantham,
                 Name = "Table Tennis Club, Grantham",
-                ShortName = "Table Tennis Club, Grantham",
+                ShortName = "Grantham",
                 AddressLine1 = "Grantham Meres Leisure Centre Table Tennis Club",
                 AddressLine2 = "Grantham Meres Leisure Centre",
                 AddressLine3 = "Trent Road",
@@ -87,7 +87,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.WaddingtonBranchSurgerySouthLincoln,
                 Name = "Waddington Branch Surgery, South Lincoln",
-                ShortName = "Waddington Branch Surgery, South Lincoln",
+                ShortName = "Lincoln South (Waddington Branch Surgery)",
                 AddressLine1 = "Cliff Villages Medical Practice",
                 AddressLine2 = "Mere Rd",
                 AddressLine3 = "Waddington",
@@ -102,7 +102,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.StMarysMedicalPracticeStamford,
                 Name = "St Marys Medical Practice, Stamford",
-                ShortName = "St Marys Medical Practice, Stamford",
+                ShortName = "Stamford",
                 AddressLine1 = "Lakeside Healthcare at Stamford",
                 AddressLine2 = "Wharf Rd",
                 AddressLine3 = "Stamford",
@@ -117,7 +117,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.FranklinHallSpilsby,
                 Name = "Franklin Hall, Spilsby",
-                ShortName = "Franklin Hall, Spilsby",
+                ShortName = "Spilsby",
                 AddressLine1 = "Franklin Hall",
                 AddressLine2 = "Halton Road",
                 AddressLine3 = "Spilsby",
@@ -132,7 +132,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.SidingsMedicalPracticeBoston,
                 Name = "Sidings Medical Practice, Boston",
-                ShortName = "Sidings Medical Practice, Boston",
+                ShortName = " Boston (Sidings Medical Practice)",
                 AddressLine1 = "Sidings Medical Practice",
                 AddressLine2 = "14 Sleaford Rd",
                 AddressLine3 = "Boston",
@@ -147,7 +147,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.RustonsSportsAndSocialClubLincoln,
                 Name = "Rustons Sports and Social Club, Lincoln",
-                ShortName = "Rustons Sports and Social Club, Lincoln",
+                ShortName = "Lincoln (Rustons Sports and Social Club)",
                 AddressLine1 = "Ruston Sports & Social Club",
                 AddressLine2 = "Newark Road",
                 AddressLine3 = "Lincoln",
@@ -162,7 +162,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.PortlandMedicalPracticeLincoln,
                 Name = "Portland Medical Practice, Lincoln",
-                ShortName = "Portland Medical Practice, Lincoln",
+                ShortName = "Lincoln (Portland Medical Practice)",
                 AddressLine1 = "Portland Medical Practice",
                 AddressLine2 = "60 Portland St",
                 AddressLine3 = "Lincoln",

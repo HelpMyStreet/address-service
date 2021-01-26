@@ -132,7 +132,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.SidingsMedicalPracticeBoston,
                 Name = "Sidings Medical Practice, Boston",
-                ShortName = " Boston (Sidings Medical Practice)",
+                ShortName = "Boston (Sidings Medical Practice)",
                 AddressLine1 = "Sidings Medical Practice",
                 AddressLine2 = "14 Sleaford Rd",
                 AddressLine3 = "Boston",

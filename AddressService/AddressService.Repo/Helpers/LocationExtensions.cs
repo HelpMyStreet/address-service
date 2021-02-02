@@ -21,6 +21,23 @@ namespace AddressService.Repo.Helpers
                 Close = "Location close"
             };
         }
+
+        private static LocationInstructions GetApexPCNInstructions()
+        {
+            return new LocationInstructions()
+            {                
+                Steps = new System.Collections.Generic.List<Step>()
+                {
+                   new Step()
+                   {
+                       Heading = "Information", 
+                       Detail = "Please make sure to arrive 15 minutes before the start of your shift and bring clothing " +
+                       "appropriate for the weather on the day as you may be asked to spend some time outside during your shift."
+                    },             
+                }                
+            };
+        }
+
         public static void SetLocations(this EntityTypeBuilder<Location> entity)
         {
             entity.HasData(new Location
@@ -146,8 +163,8 @@ namespace AddressService.Repo.Helpers
             entity.HasData(new Location
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.RustonsSportsAndSocialClubLincoln,
-                Name = "Rustons Sports and Social Club, Lincoln",
-                ShortName = "Lincoln (Rustons Sports and Social Club)",
+                Name = "Ruston Sports and Social Club, Lincoln",
+                ShortName = "Lincoln (Ruston Sports and Social Club)",
                 AddressLine1 = "Ruston Sports & Social Club",
                 AddressLine2 = "Newark Road",
                 AddressLine3 = "Lincoln",
@@ -155,7 +172,7 @@ namespace AddressService.Repo.Helpers
                 PostCode = "LN6 8RN",
                 Longitude = (decimal)-0.574294,
                 Latitude = (decimal)53.196498,
-                Instructions = JsonConvert.SerializeObject(GetDummyInstructions())
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
             });
 
             entity.HasData(new Location

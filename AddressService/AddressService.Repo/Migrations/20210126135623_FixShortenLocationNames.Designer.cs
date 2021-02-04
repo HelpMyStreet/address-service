@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210126135623_FixShortenLocationNames")]
+    partial class FixShortenLocationNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,13 +242,13 @@ namespace AddressService.Repo.Migrations
                             AddressLine1 = "Ruston Sports & Social Club",
                             AddressLine2 = "Newark Road",
                             AddressLine3 = "Lincoln",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
+                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
                             Latitude = 53.196498m,
                             Locality = "",
                             Longitude = -0.574294m,
-                            Name = "Ruston Sports and Social Club, Lincoln",
+                            Name = "Rustons Sports and Social Club, Lincoln",
                             PostCode = "LN6 8RN",
-                            ShortName = "Lincoln (Ruston Sports and Social Club)"
+                            ShortName = "Lincoln (Rustons Sports and Social Club)"
                         },
                         new
                         {

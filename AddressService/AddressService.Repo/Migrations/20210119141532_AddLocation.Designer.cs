@@ -4,18 +4,20 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210119141532_AddLocation")]
+    partial class AddLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .HasAnnotation("ProductVersion", "3.1.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -120,148 +122,6 @@ namespace AddressService.Repo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Location","Address");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AddressLine1 = "Greetwell Road",
-                            AddressLine2 = "Lincoln",
-                            AddressLine3 = "",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.234482m,
-                            Locality = "Lincolnshire",
-                            Longitude = -0.51499m,
-                            Name = "Lincoln County Hospital",
-                            PostCode = "LN2 5QY",
-                            ShortName = "Lincoln County Hospital"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AddressLine1 = "Sibsey Road",
-                            AddressLine2 = "Boston",
-                            AddressLine3 = "",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 52.993149m,
-                            Locality = "Lincolnshire",
-                            Longitude = -0.00684m,
-                            Name = "Pilgrim Hospital, Boston",
-                            PostCode = "PE21 9QS",
-                            ShortName = "Boston (Pilgrim Hospital)"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AddressLine1 = "High Holme Rd",
-                            AddressLine2 = "Louth",
-                            AddressLine3 = "",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.371208m,
-                            Locality = "Lincolnshire",
-                            Longitude = -0.00451m,
-                            Name = "Louth Community Hospital",
-                            PostCode = "LN11 0EU",
-                            ShortName = "Louth"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AddressLine1 = "Grantham Meres Leisure Centre Table Tennis Club",
-                            AddressLine2 = "Grantham Meres Leisure Centre",
-                            AddressLine3 = "Trent Road",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 52.903179m,
-                            Locality = "Grantham",
-                            Longitude = -0.66045m,
-                            Name = "Table Tennis Club, Grantham",
-                            PostCode = "NG31 7XQ",
-                            ShortName = "Grantham"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AddressLine1 = "Cliff Villages Medical Practice",
-                            AddressLine2 = "Mere Rd",
-                            AddressLine3 = "Waddington",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.165936m,
-                            Locality = "Lincoln",
-                            Longitude = -0.535592m,
-                            Name = "Waddington Branch Surgery, South Lincoln",
-                            PostCode = "LN5 9NX",
-                            ShortName = "Lincoln South (Waddington Branch Surgery)"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AddressLine1 = "Lakeside Healthcare at Stamford",
-                            AddressLine2 = "Wharf Rd",
-                            AddressLine3 = "Stamford",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 52.650925m,
-                            Locality = "",
-                            Longitude = -0.477465m,
-                            Name = "St Marys Medical Practice, Stamford",
-                            PostCode = "PE9 2DH",
-                            ShortName = "Stamford"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AddressLine1 = "Franklin Hall",
-                            AddressLine2 = "Halton Road",
-                            AddressLine3 = "Spilsby",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.1723m,
-                            Locality = "",
-                            Longitude = 0.099136m,
-                            Name = "Franklin Hall, Spilsby",
-                            PostCode = "PE23 5LA",
-                            ShortName = "Spilsby"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            AddressLine1 = "Sidings Medical Practice",
-                            AddressLine2 = "14 Sleaford Rd",
-                            AddressLine3 = "Boston",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 52.975942m,
-                            Locality = "",
-                            Longitude = -0.033522m,
-                            Name = "Sidings Medical Practice, Boston",
-                            PostCode = "PE21 8EG",
-                            ShortName = "Boston (Sidings Medical Practice)"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            AddressLine1 = "Ruston Sports & Social Club",
-                            AddressLine2 = "Newark Road",
-                            AddressLine3 = "Lincoln",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
-                            Latitude = 53.196498m,
-                            Locality = "",
-                            Longitude = -0.574294m,
-                            Name = "Ruston Sports and Social Club, Lincoln",
-                            PostCode = "LN6 8RN",
-                            ShortName = "Lincoln (Ruston Sports and Social Club)"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            AddressLine1 = "Portland Medical Practice",
-                            AddressLine2 = "60 Portland St",
-                            AddressLine3 = "Lincoln",
-                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.22372m,
-                            Locality = "",
-                            Longitude = -0.539074m,
-                            Name = "Portland Medical Practice, Lincoln",
-                            PostCode = "LN5 7LB",
-                            ShortName = "Lincoln (Portland Medical Practice)"
-                        });
                 });
 
             modelBuilder.Entity("AddressService.Repo.EntityFramework.Entities.PostcodeEntity", b =>

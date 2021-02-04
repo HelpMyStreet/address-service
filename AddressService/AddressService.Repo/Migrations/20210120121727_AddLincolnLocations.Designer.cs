@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210120121727_AddLincolnLocations")]
+    partial class AddLincolnLocations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,7 +150,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.00684m,
                             Name = "Pilgrim Hospital, Boston",
                             PostCode = "PE21 9QS",
-                            ShortName = "Boston (Pilgrim Hospital)"
+                            ShortName = "Pilgrim Hospital, Boston"
                         },
                         new
                         {
@@ -162,7 +164,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.00451m,
                             Name = "Louth Community Hospital",
                             PostCode = "LN11 0EU",
-                            ShortName = "Louth"
+                            ShortName = "Louth Community Hospital"
                         },
                         new
                         {
@@ -176,7 +178,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.66045m,
                             Name = "Table Tennis Club, Grantham",
                             PostCode = "NG31 7XQ",
-                            ShortName = "Grantham"
+                            ShortName = "Table Tennis Club, Grantham"
                         },
                         new
                         {
@@ -190,7 +192,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.535592m,
                             Name = "Waddington Branch Surgery, South Lincoln",
                             PostCode = "LN5 9NX",
-                            ShortName = "Lincoln South (Waddington Branch Surgery)"
+                            ShortName = "Waddington Branch Surgery, South Lincoln"
                         },
                         new
                         {
@@ -204,7 +206,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.477465m,
                             Name = "St Marys Medical Practice, Stamford",
                             PostCode = "PE9 2DH",
-                            ShortName = "Stamford"
+                            ShortName = "St Marys Medical Practice, Stamford"
                         },
                         new
                         {
@@ -218,7 +220,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = 0.099136m,
                             Name = "Franklin Hall, Spilsby",
                             PostCode = "PE23 5LA",
-                            ShortName = "Spilsby"
+                            ShortName = "Franklin Hall, Spilsby"
                         },
                         new
                         {
@@ -232,7 +234,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.033522m,
                             Name = "Sidings Medical Practice, Boston",
                             PostCode = "PE21 8EG",
-                            ShortName = "Boston (Sidings Medical Practice)"
+                            ShortName = "Sidings Medical Practice, Boston"
                         },
                         new
                         {
@@ -240,13 +242,13 @@ namespace AddressService.Repo.Migrations
                             AddressLine1 = "Ruston Sports & Social Club",
                             AddressLine2 = "Newark Road",
                             AddressLine3 = "Lincoln",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
+                            Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
                             Latitude = 53.196498m,
                             Locality = "",
                             Longitude = -0.574294m,
-                            Name = "Ruston Sports and Social Club, Lincoln",
+                            Name = "Rustons Sports and Social Club, Lincoln",
                             PostCode = "LN6 8RN",
-                            ShortName = "Lincoln (Ruston Sports and Social Club)"
+                            ShortName = "Rustons Sports and Social Club, Lincoln"
                         },
                         new
                         {
@@ -260,7 +262,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.539074m,
                             Name = "Portland Medical Practice, Lincoln",
                             PostCode = "LN5 7LB",
-                            ShortName = "Lincoln (Portland Medical Practice)"
+                            ShortName = "Portland Medical Practice, Lincoln"
                         });
                 });
 

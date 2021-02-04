@@ -11,6 +11,11 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
+using HelpMyStreet.Utils.Models;
+using HelpMyStreet.Utils.Enums;
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Update.Internal;
+using Newtonsoft.Json;
 
 namespace AddressService.Repo
 {
@@ -265,6 +270,60 @@ namespace AddressService.Repo
 
                 return result;
             }
+        }
+
+        private LocationDetails MapEFLocationToLocationDetails(EntityFramework.Entities.Location location)
+        {
+            LocationInstructions locationInstructions = null;
+
+            if (!String.IsNullOrEmpty(location.Instructions))
+            {
+                locationInstructions = JsonConvert.DeserializeObject<LocationInstructions>(location.Instructions);
+            }
+
+            return new LocationDetails()
+            {
+                Name = location.Name,
+                ShortName = location.ShortName,
+                Location = (Location) location.Id,
+                LocationInstructions = locationInstructions,
+                Address = new Address()
+                {
+                    AddressLine1 = location.AddressLine1,
+                    AddressLine2 = location.AddressLine2,
+                    AddressLine3 = location.AddressLine3,
+                    Postcode = location.PostCode,
+                    Locality = location.Locality
+                },
+                Latitude = location.Latitude,
+                Longitude = location.Longitude
+            };
+        }
+
+        public async Task<LocationDetails> GetLocationDetails(Location location)
+        {
+            int locationId = (int)location;
+            var locationdetails = _context.Location.Where(x => x.Id == locationId).FirstOrDefault();
+
+            if(locationdetails ==null)
+            {
+                throw new Exception($"Unable to retrieve location for location {location}");
+            }
+
+            return MapEFLocationToLocationDetails(locationdetails);
+        }
+
+        public List<LocationDetails> GetAllLocations()
+        {
+            List<LocationDetails> allLocations = new List<LocationDetails>();
+            var locations = _context.Location.ToList();
+
+            foreach(EntityFramework.Entities.Location l in locations)
+            {
+                allLocations.Add(MapEFLocationToLocationDetails(l));
+            }
+
+            return allLocations;
         }
     }
 }

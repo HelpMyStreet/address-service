@@ -47,6 +47,7 @@ namespace AddressService.AzureFunction
             catch (Exception exc)
             {
                 _logger.LogErrorAndNotifyNewRelic("Exception occured in GetLocations", exc);
+                _logger.LogError(exc.ToString(),exc);
                 return new ObjectResult(ResponseWrapper<GetLocationsResponse, AddressServiceErrorCode>.CreateUnsuccessfulResponse(AddressServiceErrorCode.UnhandledError, "Internal Error")) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }

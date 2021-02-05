@@ -327,10 +327,10 @@ namespace AddressService.Repo
             return allLocations;
         }
 
-        public async Task<List<LocationDetails>> GetLocations(List<LocationRequest> request)
+        public async Task<List<LocationDetails>> GetLocations(List<Location> locations)
         {
-            var locations = request.Select(x => (int)x.Location).ToList();
-            var locationdetails = _context.Location.Where(x => locations.Contains(x.Id)).ToList();
+            var locationids = locations.Select(x => (int)x).ToList();
+            var locationdetails = _context.Location.Where(x => locationids.Contains(x.Id)).ToList();
 
             if (locationdetails == null)
             {

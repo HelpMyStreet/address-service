@@ -11,7 +11,7 @@ namespace AddressService.Core.Interfaces.Repositories
     {
         List<LocationDetails> GetAllLocations();
         Task<LocationDetails> GetLocationDetails(Location location);
-        Task<List<LocationDetails>> GetLocations(List<LocationRequest> request);
+        Task<List<LocationDetails>> GetLocations(List<Location> locations);
 
         Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postcodes);
         Task SaveAddressesAndFriendlyNameAsync(IEnumerable<PostcodeDto> postCodes);

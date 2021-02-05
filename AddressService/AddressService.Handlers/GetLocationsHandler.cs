@@ -25,7 +25,7 @@ namespace AddressService.Handlers
         {
             return new GetLocationsResponse()
             {
-                LocationDetails = await _repository.GetLocations(request.LocationRequests)
+                LocationDetails = await _repository.GetLocations(request.LocationsRequests.Locations)
             };
         }
     }

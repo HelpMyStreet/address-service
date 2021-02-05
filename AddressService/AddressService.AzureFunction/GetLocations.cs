@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using NewRelic.Api.Agent;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Threading;
@@ -41,6 +42,8 @@ namespace AddressService.AzureFunction
 
             try
             {
+                var input = JsonConvert.SerializeObject(req);
+                _logger.LogInformation(input);
                 GetLocationsResponse response = await _mediator.Send(req, cancellationToken);
                 return new OkObjectResult(ResponseWrapper<GetLocationsResponse, AddressServiceErrorCode>.CreateSuccessfulResponse(response));
             }

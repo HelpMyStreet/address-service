@@ -52,4 +52,4 @@ steps:
   displayName: Publish Build Artefacts
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'drop'
+    artifactName: 'drop' 

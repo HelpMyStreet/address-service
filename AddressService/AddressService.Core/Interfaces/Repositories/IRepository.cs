@@ -1,4 +1,5 @@
 ﻿using AddressService.Core.Dto;
+using HelpMyStreet.Contracts.AddressService.Request;
 using HelpMyStreet.Utils.Enums;
 using HelpMyStreet.Utils.Models;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace AddressService.Core.Interfaces.Repositories
     {
         List<LocationDetails> GetAllLocations();
         Task<LocationDetails> GetLocationDetails(Location location);
+        Task<List<LocationDetails>> GetLocations(List<Location> locations);
+
         Task<IEnumerable<PostcodeDto>> GetPostcodesAsync(IEnumerable<string> postcodes);
         Task SaveAddressesAndFriendlyNameAsync(IEnumerable<PostcodeDto> postCodes);
         Task<bool> IsPostcodeInDbAndActive(string postcode);

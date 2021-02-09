@@ -16,6 +16,7 @@ using HelpMyStreet.Utils.Enums;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using Newtonsoft.Json;
+using HelpMyStreet.Contracts.AddressService.Request;
 
 namespace AddressService.Repo
 {
@@ -324,6 +325,26 @@ namespace AddressService.Repo
             }
 
             return allLocations;
+        }
+
+        public async Task<List<LocationDetails>> GetLocations(List<Location> locations)
+        {
+            var locationids = locations.Select(x => (int)x).ToList();
+            var locationdetails = _context.Location.Where(x => locationids.Contains(x.Id)).ToList();
+
+            if (locationdetails == null)
+            {
+                throw new Exception($"Unable to retrieve location for location");
+            }
+
+            List<LocationDetails> result = new List<LocationDetails>();
+
+            foreach(EntityFramework.Entities.Location ld in locationdetails)
+            {
+                result.Add(MapEFLocationToLocationDetails(ld));
+            }
+
+            return result;
         }
     }
 }

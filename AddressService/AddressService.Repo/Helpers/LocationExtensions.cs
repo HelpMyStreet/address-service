@@ -119,7 +119,7 @@ namespace AddressService.Repo.Helpers
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.StMarysMedicalPracticeStamford,
                 Name = "St. Mary’s Medical Centre, Stamford",
-                ShortName = "Stamford",
+                ShortName = "Stamford (St. Mary’s Medical Centre)",
                 AddressLine1 = "St. Mary’s Medical Centre",
                 AddressLine2 = "Wharf Road",
                 AddressLine3 = "Stamford",

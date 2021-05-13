@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210426103335_FE-848-UpdateStamfordAddress")]
+    partial class FE848UpdateStamfordAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,7 +206,7 @@ namespace AddressService.Repo.Migrations
                             Longitude = -0.477465m,
                             Name = "St. Mary’s Medical Centre, Stamford",
                             PostCode = "PE9 2DH",
-                            ShortName = "Stamford (St. Mary’s Medical Centre)"
+                            ShortName = "Stamford"
                         },
                         new
                         {

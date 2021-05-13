@@ -118,12 +118,12 @@ namespace AddressService.Repo.Helpers
             entity.HasData(new Location
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.StMarysMedicalPracticeStamford,
-                Name = "St Marys Medical Practice, Stamford",
-                ShortName = "Stamford",
-                AddressLine1 = "Lakeside Healthcare at Stamford",
-                AddressLine2 = "Wharf Rd",
+                Name = "St. Mary’s Medical Centre, Stamford",
+                ShortName = "Stamford (St. Mary’s Medical Centre)",
+                AddressLine1 = "St. Mary’s Medical Centre",
+                AddressLine2 = "Wharf Road",
                 AddressLine3 = "Stamford",
-                Locality = "",
+                Locality = "Lincolnshire",
                 PostCode = "PE9 2DH",
                 Longitude = (decimal)-0.477465,
                 Latitude = (decimal)52.650925,

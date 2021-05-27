@@ -73,15 +73,15 @@ namespace AddressService.Repo.Helpers
             entity.HasData(new Location
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.LouthCommunityHospital,
-                Name = "Louth Community Hospital",
-                ShortName = "Louth",
-                AddressLine1 = "High Holme Rd",
-                AddressLine2 = "Louth",
-                AddressLine3 = "",
+                Name = "Louth County Hospital",
+                ShortName = "Louth County Hospital",
+                AddressLine1 = "Louth County Hospital",
+                AddressLine2 = "High Holme Road",
+                AddressLine3 = "Louth",
                 Locality = "Lincolnshire",
                 PostCode = "LN11 0EU",
-                Longitude = (decimal)-0.004510,
-                Latitude = (decimal)53.371208,
+                Longitude = (decimal)-0.008582,
+                Latitude = (decimal)53.371010,
                 Instructions = JsonConvert.SerializeObject(GetDummyInstructions())
             });
 

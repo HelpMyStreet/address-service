@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210517144113_AddMansfieldCVSLocations")]
+    partial class AddMansfieldCVSLocations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,16 +155,16 @@ namespace AddressService.Repo.Migrations
                         new
                         {
                             Id = -3,
-                            AddressLine1 = "Louth County Hospital",
-                            AddressLine2 = "High Holme Road",
-                            AddressLine3 = "Louth",
+                            AddressLine1 = "High Holme Rd",
+                            AddressLine2 = "Louth",
+                            AddressLine3 = "",
                             Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.37101m,
+                            Latitude = 53.371208m,
                             Locality = "Lincolnshire",
-                            Longitude = -0.008582m,
-                            Name = "Louth County Hospital",
+                            Longitude = -0.00451m,
+                            Name = "Louth Community Hospital",
                             PostCode = "LN11 0EU",
-                            ShortName = "Louth County Hospital"
+                            ShortName = "Louth"
                         },
                         new
                         {

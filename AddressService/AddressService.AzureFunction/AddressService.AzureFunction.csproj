@@ -6,8 +6,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="AzureExtensions.Swashbuckle" Version="3.2.2" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.652" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.652" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.734" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.734" />
 		<PackageReference Include="Marvin.StreamExtensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
@@ -32,13 +32,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Handlers\AddressService.Handlers.csproj">
-			<Name>AddressService.Handlers</Name>
 		</ProjectReference>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Mappers\AddressService.Mappers.csproj">
-			<Name>AddressService.Mappers</Name>
 		</ProjectReference>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Repo\AddressService.Repo.csproj">
-			<Name>AddressService.Repo</Name>
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>

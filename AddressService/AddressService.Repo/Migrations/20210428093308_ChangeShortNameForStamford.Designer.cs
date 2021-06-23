@@ -4,14 +4,16 @@ using AddressService.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AddressService.Repo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210428093308_ChangeShortNameForStamford")]
+    partial class ChangeShortNameForStamford
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,16 +155,16 @@ namespace AddressService.Repo.Migrations
                         new
                         {
                             Id = -3,
-                            AddressLine1 = "Louth County Hospital",
-                            AddressLine2 = "High Holme Road",
-                            AddressLine3 = "Louth",
+                            AddressLine1 = "High Holme Rd",
+                            AddressLine2 = "Louth",
+                            AddressLine3 = "",
                             Instructions = "{\"Intro\":\"Location intro\",\"Steps\":[{\"Heading\":\"Heading 1\",\"Detail\":\"Detail 1\"},{\"Heading\":\"Heading 2\",\"Detail\":\"Detail 2\"}],\"Close\":\"Location close\"}",
-                            Latitude = 53.37101m,
+                            Latitude = 53.371208m,
                             Locality = "Lincolnshire",
-                            Longitude = -0.008582m,
-                            Name = "Louth County Hospital",
+                            Longitude = -0.00451m,
+                            Name = "Louth Community Hospital",
                             PostCode = "LN11 0EU",
-                            ShortName = "Louth County Hospital"
+                            ShortName = "Louth"
                         },
                         new
                         {
@@ -261,76 +263,6 @@ namespace AddressService.Repo.Migrations
                             Name = "Portland Medical Practice, Lincoln",
                             PostCode = "LN5 7LB",
                             ShortName = "Lincoln (Portland Medical Practice)"
-                        },
-                        new
-                        {
-                            Id = -11,
-                            AddressLine1 = "Wickes Site",
-                            AddressLine2 = "134 Chesterfield Rd S",
-                            AddressLine3 = "Mansfield",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
-                            Latitude = 53.1554539m,
-                            Locality = "",
-                            Longitude = -1.2070261m,
-                            Name = "Mansfield (Wickes Site)",
-                            PostCode = "NG19 7AP",
-                            ShortName = "Mansfield (Wickes Site)"
-                        },
-                        new
-                        {
-                            Id = -12,
-                            AddressLine1 = "Gamston Community Hall",
-                            AddressLine2 = "Ambleside",
-                            AddressLine3 = "Gamston",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
-                            Latitude = 52.9239686m,
-                            Locality = "Nottingham",
-                            Longitude = -1.1017603m,
-                            Name = "Gamston Community Hall",
-                            PostCode = "NG2 6PS",
-                            ShortName = "Gamston Community Hall"
-                        },
-                        new
-                        {
-                            Id = -13,
-                            AddressLine1 = "Richard Herrod Centre",
-                            AddressLine2 = "Foxhill Road",
-                            AddressLine3 = "Carlton",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
-                            Latitude = 52.970209m,
-                            Locality = "Nottingham",
-                            Longitude = -1.1022945m,
-                            Name = "Richard Herrod Centre",
-                            PostCode = "NG4 1RL",
-                            ShortName = "Richard Herrod Centre"
-                        },
-                        new
-                        {
-                            Id = -14,
-                            AddressLine1 = "University of Nottingham King's Meadow Campus",
-                            AddressLine2 = "Lenton Lane",
-                            AddressLine3 = "",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
-                            Latitude = 52.936097m,
-                            Locality = "Nottingham",
-                            Longitude = -1.1771646m,
-                            Name = "King's Meadow Campus",
-                            PostCode = "NG7 2NR",
-                            ShortName = "King's Meadow Campus"
-                        },
-                        new
-                        {
-                            Id = -15,
-                            AddressLine1 = "Forest Recreation Ground",
-                            AddressLine2 = "Gregory Boulevard",
-                            AddressLine3 = "Forest Fields",
-                            Instructions = "{\"Intro\":null,\"Steps\":[{\"Heading\":\"Information\",\"Detail\":\"Please make sure to arrive 15 minutes before the start of your shift and bring clothing appropriate for the weather on the day as you may be asked to spend some time outside during your shift.\"}],\"Close\":null}",
-                            Latitude = 52.967112m,
-                            Locality = "Nottingham",
-                            Longitude = -1.1681477m,
-                            Name = "Forest Recreation Ground",
-                            PostCode = "NG7 6HB",
-                            ShortName = "Forest Recreation Ground"
                         });
                 });
 

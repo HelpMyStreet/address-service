@@ -14,14 +14,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.652" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.652" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.734" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.734" />
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Core\AddressService.Core.csproj">
-			<Name>AddressService.Core</Name>
 		</ProjectReference>
 		<ProjectReference Include="..\AddressService.Mappers\AddressService.Mappers.csproj" />
 	</ItemGroup>

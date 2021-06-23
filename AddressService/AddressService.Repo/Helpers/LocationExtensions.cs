@@ -73,15 +73,15 @@ namespace AddressService.Repo.Helpers
             entity.HasData(new Location
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.LouthCommunityHospital,
-                Name = "Louth Community Hospital",
-                ShortName = "Louth",
-                AddressLine1 = "High Holme Rd",
-                AddressLine2 = "Louth",
-                AddressLine3 = "",
+                Name = "Louth County Hospital",
+                ShortName = "Louth County Hospital",
+                AddressLine1 = "Louth County Hospital",
+                AddressLine2 = "High Holme Road",
+                AddressLine3 = "Louth",
                 Locality = "Lincolnshire",
                 PostCode = "LN11 0EU",
-                Longitude = (decimal)-0.004510,
-                Latitude = (decimal)53.371208,
+                Longitude = (decimal)-0.008582,
+                Latitude = (decimal)53.371010,
                 Instructions = JsonConvert.SerializeObject(GetDummyInstructions())
             });
 
@@ -118,12 +118,12 @@ namespace AddressService.Repo.Helpers
             entity.HasData(new Location
             {
                 Id = (int)HelpMyStreet.Utils.Enums.Location.StMarysMedicalPracticeStamford,
-                Name = "St Marys Medical Practice, Stamford",
-                ShortName = "Stamford",
-                AddressLine1 = "Lakeside Healthcare at Stamford",
-                AddressLine2 = "Wharf Rd",
+                Name = "St. Mary’s Medical Centre, Stamford",
+                ShortName = "Stamford (St. Mary’s Medical Centre)",
+                AddressLine1 = "St. Mary’s Medical Centre",
+                AddressLine2 = "Wharf Road",
                 AddressLine3 = "Stamford",
-                Locality = "",
+                Locality = "Lincolnshire",
                 PostCode = "PE9 2DH",
                 Longitude = (decimal)-0.477465,
                 Latitude = (decimal)52.650925,
@@ -190,6 +190,81 @@ namespace AddressService.Repo.Helpers
                 Instructions = JsonConvert.SerializeObject(GetDummyInstructions())
             });
 
+
+            entity.HasData(new Location
+            {
+                Id = (int)HelpMyStreet.Utils.Enums.Location.MansfieldWickesSite,
+                Name = "Mansfield (Wickes Site)",
+                ShortName = "Mansfield (Wickes Site)",
+                AddressLine1 = "Wickes Site",
+                AddressLine2 = "134 Chesterfield Rd S",
+                AddressLine3 = "Mansfield",
+                Locality = "",
+                PostCode = "NG19 7AP",
+                Longitude = (decimal)-1.2070261,
+                Latitude = (decimal)53.1554539,
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
+            });
+
+            entity.HasData(new Location
+            {
+                Id = (int)HelpMyStreet.Utils.Enums.Location.GamstonCommunityHall,
+                Name = "Gamston Community Hall",
+                ShortName = "Gamston Community Hall",
+                AddressLine1 = "Gamston Community Hall",
+                AddressLine2 = "Ambleside",
+                AddressLine3 = "Gamston",
+                Locality = "Nottingham",
+                PostCode = "NG2 6PS",
+                Longitude = (decimal)-1.1017603,
+                Latitude = (decimal)52.9239686,
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
+            });
+
+            entity.HasData(new Location
+            {
+                Id = (int)HelpMyStreet.Utils.Enums.Location.RichardHerrodCentre,
+                Name = "Richard Herrod Centre",
+                ShortName = "Richard Herrod Centre",
+                AddressLine1 = "Richard Herrod Centre",
+                AddressLine2 = "Foxhill Road",
+                AddressLine3 = "Carlton",
+                Locality = "Nottingham",
+                PostCode = "NG4 1RL",
+                Longitude = (decimal)-1.1022945,
+                Latitude = (decimal)52.970209,
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
+            });
+
+            entity.HasData(new Location
+            {
+                Id = (int)HelpMyStreet.Utils.Enums.Location.KingsMeadowCampus,
+                Name = "King's Meadow Campus",
+                ShortName = "King's Meadow Campus",
+                AddressLine1 = "University of Nottingham King's Meadow Campus",
+                AddressLine2 = "Lenton Lane",
+                AddressLine3 = "",
+                Locality = "Nottingham",
+                PostCode = "NG7 2NR",
+                Longitude = (decimal)-1.1771646,
+                Latitude = (decimal)52.936097,
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
+            });
+
+            entity.HasData(new Location
+            {
+                Id = (int)HelpMyStreet.Utils.Enums.Location.ForestRecreationGround,
+                Name = "Forest Recreation Ground",
+                ShortName = "Forest Recreation Ground",
+                AddressLine1 = "Forest Recreation Ground",
+                AddressLine2 = "Gregory Boulevard",
+                AddressLine3 = "Forest Fields",
+                Locality = "Nottingham",
+                PostCode = "NG7 6HB",
+                Longitude = (decimal)-1.1681477,
+                Latitude = (decimal)52.967112,
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
+            });
         }
     }
 }

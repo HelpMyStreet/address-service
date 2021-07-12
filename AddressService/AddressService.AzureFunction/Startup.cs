@@ -29,6 +29,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using UserService.Core.Utils;
 
 [assembly: FunctionsStartup(typeof(AddressService.AzureFunction.Startup))]
 namespace AddressService.AzureFunction
@@ -94,7 +95,7 @@ namespace AddressService.AzureFunction
             builder.Services.AddTransient<IQasService, QasService>();
 
             builder.Services.AddTransient<IPostcodeIoService, PostcodeIoService>();
-
+            builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
             builder.Services.AddTransient<INearestPostcodeGetter, NearestPostcodeGetter>();
             builder.Services.AddTransient<IQasAddressGetter, QasAddressGetter>();
             builder.Services.AddTransient<IPostcodeAndAddressGetter, PostcodeAndAddressGetter>();

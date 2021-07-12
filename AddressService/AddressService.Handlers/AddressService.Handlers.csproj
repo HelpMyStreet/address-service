@@ -14,8 +14,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.734" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.734" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.782" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.782" />
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
 	</ItemGroup>

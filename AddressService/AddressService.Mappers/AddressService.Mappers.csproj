@@ -7,8 +7,8 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.0.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.734" />
-		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.734" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Contracts" Version="1.1.782" />
+		<PackageReference Include="HelpMyStreet.CoreV3.Utils" Version="1.1.782" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference ReplaceParameters="true" Include="..\AddressService.Core\AddressService.Core.csproj">

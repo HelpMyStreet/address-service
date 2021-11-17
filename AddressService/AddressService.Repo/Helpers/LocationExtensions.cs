@@ -265,6 +265,21 @@ namespace AddressService.Repo.Helpers
                 Latitude = (decimal)52.967112,
                 Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
             });
+
+            entity.HasData(new Location
+            {
+                Id = (int)HelpMyStreet.Utils.Enums.Location.RichmondMedicalCentre,
+                Name = "Richmond Medical Centre (Village Site formerly Crossroads Medical Practice)",
+                ShortName = "Lincoln (Richmond Medical Centre)",
+                AddressLine1 = "Richmond Medical Centre",
+                AddressLine2 = "Lincoln Road",
+                AddressLine3 = "Lincoln",
+                Locality = "",
+                PostCode = "LN6 8NH",
+                Longitude = (decimal)-0.587134,
+                Latitude = (decimal)53.183432,
+                Instructions = JsonConvert.SerializeObject(GetApexPCNInstructions())
+            });
         }
     }
 }
